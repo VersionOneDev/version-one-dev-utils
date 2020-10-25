@@ -1,0 +1,57 @@
+{
+  "name": "version-one-dev-utils",
+  "version": "0.0.1",
+  "author": "Version One Development Ltd",
+  "description": "Version One Dev Utils",
+  "license": "MIT",
+  "main": "index.js",
+  "homepage": "https://versionone.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VersionOneDev/version-one-dev-utils.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "husky": "^4.3.0",
+    "npm-check-updates": "^9.2.2",
+    "prettier": "^2.1.2",
+    "react-scripts": "^4.0.0"
+  },
+  "scripts": {
+    "update": "ncu -u",
+    "lint": "eslint utils/"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "eslint:recommended",
+      "plugin:prettier/recommended",
+      "plugin:react/recommended"
+    ],
+    "settings": {
+      "react": {
+        "version": "17"
+      }
+    },
+    "parser": "babel-eslint",
+    "env": {
+      "es6": true,
+      "node": true,
+      "browser": true
+    },
+    "rules": {
+      "no-console": 0,
+      "prettier/prettier": "error"
+    }
+  }
+}
