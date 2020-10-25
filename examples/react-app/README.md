@@ -8,6 +8,5 @@
 
 ```
 $ mkdir new-app/
-$ cp -rf version-one-utils/examples/react-app/* new-app/
+$ cp -rfT version-one-utils/examples/react-app/ new-app/
 ```
-
