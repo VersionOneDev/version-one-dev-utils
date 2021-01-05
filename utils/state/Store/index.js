@@ -20,7 +20,8 @@ export const Store = (...appStores) => {
 };
 
 export const dispatch = (action) => {
-  // /const store = action.split("/")[0];
-  console.log(store);
+  const thisStore = action.split("/")[0];
+  const thisAction = action.split("/")[1];
+  //store.dispatch(thisStore.thisAction());
   store.dispatch(ErrorsStore.clear());
 };
