@@ -9,7 +9,7 @@ export function App() {
   // React.useEffect(() => {
   //   dispatch(ItemStore.actions.get(1));
   // }, [dispatch]);
-  React.useEffect(() => dispatch("errors/clear"));
+  React.useEffect(() => dispatch("characters/add"));
 
   return <h1>React App</h1>;
 }
