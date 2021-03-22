@@ -1,4 +1,5 @@
 import { createAction as createActionI } from "@reduxjs/toolkit";
+import PropTypes from "prop-types";
 
 export const statuses = { PENDING: "/pending", ERROR: "/error" };
 
@@ -43,6 +44,18 @@ const waitForValue = async (result) => await result;
 
 export const createAction = (store, type, handler) => {
   const action = (payload, key) => (dispatch, getState) => {
+    // Validate payload - will throw a warning in the console if invalid.
+    if (handler.propTypes) {
+      PropTypes.checkPropTypes(
+        handler.propTypes,
+        payload,
+        "prop",
+        `${store}.actions.${type}`
+      );
+
+      PropTypes.resetWarningCache();
+    }
+
     // ReduxThunk thunk will pass a dispatch function but Storybook won't
     // Only do the work if using ReduxThunk
     if (dispatch) {
@@ -80,7 +93,6 @@ export const createAction = (store, type, handler) => {
     }
   };
 
-  //action.byKey = (...keys) => keys.flat().map((key) => ({ store, type, key }));
   action.toString = () => `${store}/${type}`;
   action.byKey = (key) => `${action.toString()}/${key}`;
   action.success = createActionI(action.toString(), prepareAction);

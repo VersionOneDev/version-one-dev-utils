@@ -1,13 +1,19 @@
 import { createStore } from "version-one-dev-utils";
 
+import PropTypes from "prop-types";
+
 const get = ({ id = "" }) =>
   fetch(`https://jsonplaceholder.typicode.com/todos/${id}`).then((response) =>
     response.json()
   );
 
+get.propTypes = {
+  id: PropTypes.number.isRequired,
+};
+
 get.success = (state, action) => ({
   ...state,
-  [action.payload.id]: state[action.payload.id] || action.payload,
+  [action.payload.id]: action.payload || state[action.payload.id],
 });
 
 export const ItemStore = createStore({
