@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "../useSelector";
 import { compareActionTargets } from "../utils/compareActionTargets";
 
 export const useErrors = (...targets) => {

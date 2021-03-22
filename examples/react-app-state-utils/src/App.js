@@ -1,14 +1,33 @@
 import React from "react";
-import { useDispatch } from "version-one-dev-utils";
+import { useSelector, usePending } from "version-one-dev-utils";
 
 import { ItemStore } from "./stores/ItemStore";
 
 export function App() {
-  const dispatch = useDispatch();
+  const items = useSelector((state) => state.ItemStore || {});
+
+  // Pending function will watch all get actions
+  const getPending = usePending(ItemStore.actions.get);
 
   React.useEffect(() => {
-    dispatch(ItemStore.actions.get(1));
-  }, [dispatch]);
+    ItemStore.actions.get({ id: 1 }, 1);
+  }, []);
 
-  return <h1>React App</h1>;
+  return (
+    <div>
+      <h1>React App</h1>
+      {Object.values(items).map((item) => (
+        <p key={item.id}>{JSON.stringify(item)}</p>
+      ))}
+
+      {
+        // Only show loading when key is 10
+        getPending(ItemStore.actions.get.byKey(10)) && <p>Loading...</p>
+      }
+
+      <button onClick={() => ItemStore.actions.get({ id: 10 }, 10)}>
+        Click me
+      </button>
+    </div>
+  );
 }

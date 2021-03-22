@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { useSelector, shallowEqual } from "react-redux";
+import { shallowEqual } from "react-redux";
+import { useSelector } from "../useSelector";
 import { compareActionTargets } from "../utils/compareActionTargets";
 
 export const usePending = (...targets) => {
