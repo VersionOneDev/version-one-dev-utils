@@ -16,6 +16,7 @@ export function App() {
       <button onClick={() => ItemStore.actions.get({ id: 10 }, 10)}>
         Click me
       </button>
+      <button onClick={() => ItemStore.actions.reset()}>Reset</button>
     </div>
   );
 }

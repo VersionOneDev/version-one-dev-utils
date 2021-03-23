@@ -2,9 +2,12 @@ import { useMemo } from "react";
 import { useSelector } from "../useSelector";
 import { compareActionTargets } from "../utils/compareActionTargets";
 
+import { Store } from "../Store";
+
 export const useErrors = (...targets) => {
   const passed = useSelector(
-    (state) => {
+    () => {
+      const state = Store.getState();
       let errors = state.errors;
       // If there is no errors state then give up
       if (!errors || !errors.length) return [];
@@ -26,7 +29,7 @@ export const useErrors = (...targets) => {
     return (...filters) => {
       // If there are no filters then try to return the first error.
       if (!filters.length) {
-        return passed.length ? passed[0].message : null;
+        return passed.length ? passed[0].value : null;
       }
 
       const error = passed.find((error) =>
@@ -34,7 +37,7 @@ export const useErrors = (...targets) => {
       );
 
       if (error) {
-        return error.message;
+        return error.value;
       }
     };
   }, [passed]);

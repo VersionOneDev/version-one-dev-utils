@@ -1,5 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { createAction } from "./createAction";
+import PropTypes from "prop-types";
 
 import { Store } from "../Store";
 
@@ -7,9 +8,11 @@ export const createStore = ({
   name = "",
   initialState = {},
   actions = {},
-  ...other
+  propTypes,
 }) => {
   /* Default actions */
+
+  // TODO -Fix default actions
 
   // Reset the store to it's initial state.
   const reset = () => {};
@@ -43,18 +46,40 @@ export const createStore = ({
     if (def.success) reducerMethods[`${name}/${type}`] = def.success;
   });
 
-  const reducer = createReducer(initialState, reducerMethods);
+  const mergedReducerMethods = createReducer(initialState, reducerMethods);
+  let reducer;
+
+  // Apply propTypes check to state
+  if (propTypes) {
+    reducer = (state, action) => {
+      const result = mergedReducerMethods(state, action);
+
+      if (propTypes) {
+        PropTypes.checkPropTypes(
+          { result: propTypes },
+          { result },
+          "state",
+          action.type
+        );
+        PropTypes.resetWarningCache();
+      }
+
+      return result;
+    };
+  } else {
+    reducer = mergedReducerMethods;
+  }
 
   Store.add(name, reducer);
 
   return {
     name,
     initialState,
+    propTypes,
     reducer,
     byKey: (key) => `${name}/*/${key}`,
     toString: () => name,
     actions: parsedActions,
     getState: () => Store.getState()[name] || initialState,
-    ...other,
   };
 };

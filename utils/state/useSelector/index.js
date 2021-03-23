@@ -1,8 +1,8 @@
-import { useLayoutEffect, useReducer, useRef } from "react";
+import { useContext, useLayoutEffect, useReducer, useRef } from "react";
 
 import { unstable_batchedUpdates } from "react-dom";
 
-import { Store } from "../Store";
+import { Store, StoreContext } from "../Store";
 
 // Set up a batch to limit calls to render
 const listeners = [];
@@ -15,11 +15,10 @@ Store.subscribe(() => {
 
 const Subscribe = (listener) => {
   listeners.push(listener);
-  return () => listeners.splice(listeners.indexOf(cb), 1);
+  return () => listeners.splice(listeners.indexOf(listener), 1);
 };
 
 // Hook
-
 export const useSelector = (selector, equalityFn = (a, b) => a === b) => {
   // Toggle between 0 and 1 to force a render
   const [, forceRender] = useReducer((s) => (s ? 0 : 1), 0);
@@ -28,7 +27,10 @@ export const useSelector = (selector, equalityFn = (a, b) => a === b) => {
   const latestStoreState = useRef();
   const latestSelectedState = useRef();
 
-  const storeState = Store.getState();
+  const context = useContext(StoreContext);
+
+  const storeState = context || Store.getState();
+
   let selectedState;
 
   if (
@@ -48,9 +50,9 @@ export const useSelector = (selector, equalityFn = (a, b) => a === b) => {
 
   useLayoutEffect(() => {
     return Subscribe(() => {
-      latestStoreState.current = Store.getState();
+      latestStoreState.current = context || Store.getState();
 
-      const newSelectedState = latestSelector.current(Store.getState());
+      const newSelectedState = latestSelector.current(latestStoreState.current);
 
       if (equalityFn(newSelectedState, latestSelectedState.current)) {
         return;
@@ -60,7 +62,7 @@ export const useSelector = (selector, equalityFn = (a, b) => a === b) => {
 
       forceRender();
     });
-  }, [forceRender]);
+  }, [forceRender, context, equalityFn]);
 
   return selectedState;
 };

@@ -3,9 +3,12 @@ import { shallowEqual } from "react-redux";
 import { useSelector } from "../useSelector";
 import { compareActionTargets } from "../utils/compareActionTargets";
 
+import { Store } from "../Store";
+
 export const usePending = (...targets) => {
   const passed = useSelector(
-    (state) => {
+    () => {
+      const state = Store.getState();
       let pending = state.pending;
       // If there is no pending state then give up
       if (!pending || !pending.length) return [];

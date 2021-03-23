@@ -17,7 +17,7 @@ export const ErrorsStore = {
       action.type.includes(statuses.ERROR) &&
       !state.find((error) => error.type === path)
     ) {
-      return [...state, { type: path, message: action.error }];
+      return [...state, { type: path, value: action.error }];
     } else if (state.find((error) => error.type === path)) {
       return state.filter((error) => error.type !== path);
     }

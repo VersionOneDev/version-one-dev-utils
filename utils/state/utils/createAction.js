@@ -11,11 +11,11 @@ export const getType = (action) => {
   return type;
 };
 
-export const getKey = (action) =>
-  action.meta && action.meta.key ? "/" + action.meta.key : "";
+export const getKey = (action) => (action.key ? "/" + action.key : "");
 
-const prepareAction = (key, payload, error) => ({
-  meta: { key },
+const prepareAction = (props, key, payload, error) => ({
+  key,
+  props,
   payload,
   error,
 });
@@ -23,7 +23,7 @@ const prepareAction = (key, payload, error) => ({
 /**
  * Wait for the action to be processed and return a value.
  */
-const waitForValue = async (result) => await result;
+const waitForValue = async (value) => await value;
 
 /**
  * CREATING ACTIONS:
@@ -34,21 +34,31 @@ const waitForValue = async (result) => await result;
  *
  * Examples:
  *
- * const myAction = (payload) => payload;
+ * const myAction = (props) => props;
  *
- * const myAction = (payload) => Promise.resolve(payload);
+ * const myAction = (props) => Promise.resolve(props);
  *
- * const myAction = (payload) => (resolve, reject) => setInterval(resolve, 2000, payload);
+ * const myAction = (props) => (resolve, reject) => setInterval(resolve, 2000, props);
  *
  */
 
 export const createAction = (store, type, handler) => {
-  const action = (payload, key) => (dispatch, getState) => {
+  const action = (props, key) => (dispatch, getState) => {
+    // Check props is an object
+    if (props) {
+      const propsType = typeof props;
+      if (propsType !== "object") {
+        throw new Error(
+          `Invalid type ${propsType} passed to ${store}.actions.${type}, props must be an object`
+        );
+      }
+    }
+
     // Validate payload - will throw a warning in the console if invalid.
     if (handler.propTypes) {
       PropTypes.checkPropTypes(
         handler.propTypes,
-        payload,
+        props,
         "prop",
         `${store}.actions.${type}`
       );
@@ -66,30 +76,33 @@ export const createAction = (store, type, handler) => {
         };
 
         const dispatchSuccess = (value) =>
-          resolve(dispatch(action.success(key, value)));
+          resolve(dispatch(action.success(props, key, value)));
 
         const dispatchError = (error) =>
-          reject(dispatch(action.error(key, null, error)));
+          reject(dispatch(action.error(props, key, null, error)));
 
-        // Get the result from the action handler
-        const result = handler(payload, actionApi);
+        // Get the payload from the action handler
+        try {
+          const payload = handler(props, actionApi);
 
-        if (result instanceof Function) {
-          // Dispatch pending action and run the callback
-          dispatch(action.pending(key));
-          result(dispatchSuccess, dispatchError);
-        } else {
-          // Dispatch pending action if promise
-          if (result.then && result.catch) {
-            dispatch(action.pending(key));
+          if (payload instanceof Function) {
+            // Dispatch pending action and run the callback
+            dispatch(action.pending(props, key));
+            payload(dispatchSuccess, dispatchError);
+          } else if (payload.then && payload.catch) {
+            // Dispatch pending action if promise
+            dispatch(action.pending(props, key));
+            waitForValue(payload).then(dispatchSuccess).catch(dispatchError);
+          } else {
+            dispatchSuccess(payload);
           }
-
-          waitForValue(result).then(dispatchSuccess).catch(dispatchError);
+        } catch (error) {
+          dispatchError(error);
         }
       });
     } else {
       // Return the action for logging in Storybook
-      return Promise.resolve({ type: action.toString(), payload });
+      return Promise.resolve({ type: action.toString(), props, key });
     }
   };
 
