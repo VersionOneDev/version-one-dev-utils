@@ -118,5 +118,7 @@ export const createAction = (store, type, handler) => {
     prepareAction
   );
 
+  action.propTypes = handler.propTypes;
+
   return action;
 };
