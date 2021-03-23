@@ -1,9 +1,18 @@
 import { createReducer } from "@reduxjs/toolkit";
-
 import { createAction } from "./createAction";
+import PropTypes from "prop-types";
 
-export const createStore = (name, initialState, actionDefs) => {
+import { Store } from "../Store";
+
+export const createStore = ({
+  name = "",
+  initialState = {},
+  actions = {},
+  propTypes,
+}) => {
   /* Default actions */
+
+  // TODO -Fix default actions
 
   // Reset the store to it's initial state.
   const reset = () => {};
@@ -18,27 +27,59 @@ export const createStore = (name, initialState, actionDefs) => {
   merge.success = (state, action) => ({ ...state, ...action.payload });
 
   /* Compose all actions. */
-  const defaultActionDefs = { reset, replace, merge };
-  const actions = {};
+  const defaultActions = { reset, replace, merge };
+  const parsedActions = {};
   const reducerMethods = {};
 
-  const allDefs = { ...defaultActionDefs, ...actionDefs };
+  const allActions = { ...defaultActions, ...actions };
 
-  Object.keys(allDefs).forEach((type) => {
-    const def = allDefs[type];
-    actions[type] = createAction(name, type, def);
+  Object.keys(allActions).forEach((type) => {
+    const def = allActions[type];
+    const action = createAction(name, type, def);
+    const dispatchedAction = (payload, key) =>
+      Store.dispatch(action(payload, key));
+    // Copy action extras
+    for (var key in action) dispatchedAction[key] = action[key];
+    parsedActions[type] = dispatchedAction;
+
     // Set reducer methods
     if (def.success) reducerMethods[`${name}/${type}`] = def.success;
   });
 
-  const reducer = createReducer(initialState, reducerMethods);
+  const mergedReducerMethods = createReducer(initialState, reducerMethods);
+  let reducer;
+
+  // Apply propTypes check to state
+  if (propTypes) {
+    reducer = (state, action) => {
+      const result = mergedReducerMethods(state, action);
+
+      if (propTypes) {
+        PropTypes.checkPropTypes(
+          { result: propTypes },
+          { result },
+          "state",
+          action.type
+        );
+        PropTypes.resetWarningCache();
+      }
+
+      return result;
+    };
+  } else {
+    reducer = mergedReducerMethods;
+  }
+
+  Store.add(name, reducer);
 
   return {
     name,
     initialState,
+    propTypes,
     reducer,
     byKey: (key) => `${name}/*/${key}`,
     toString: () => name,
-    ...actions,
+    actions: parsedActions,
+    getState: () => Store.getState()[name] || initialState,
   };
 };

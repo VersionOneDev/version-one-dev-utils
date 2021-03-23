@@ -1,14 +1,22 @@
 import React from "react";
-import { useDispatch } from "version-one-dev-utils";
 
 import { ItemStore } from "./stores/ItemStore";
 
+import { Items } from "./containers/Items";
+
 export function App() {
-  const dispatch = useDispatch();
-
   React.useEffect(() => {
-    dispatch(ItemStore.actions.get(1));
-  }, [dispatch]);
+    ItemStore.actions.get({ id: 1 }, 1);
+  }, []);
 
-  return <h1>React App</h1>;
+  return (
+    <div>
+      <h1>React App</h1>
+      <Items />
+      <button onClick={() => ItemStore.actions.get({ id: 10 }, 10)}>
+        Click me
+      </button>
+      <button onClick={() => ItemStore.actions.reset()}>Reset</button>
+    </div>
+  );
 }
