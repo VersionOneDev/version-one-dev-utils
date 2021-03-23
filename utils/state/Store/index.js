@@ -25,7 +25,6 @@ const reducers = {
   },
   deleted: [],
   reduce: (state, action) => {
-    console.log(state, action);
     // If any reducers have been removed, clean up their state first
     if (reducers.deleted.length) {
       state = { ...state };
