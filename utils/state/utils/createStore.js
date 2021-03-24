@@ -36,10 +36,9 @@ export const createStore = ({
   Object.keys(allActions).forEach((type) => {
     const def = allActions[type];
     const action = createAction(name, type, def);
-    const dispatchedAction = (payload, key) =>
-      Store.dispatch(action(payload, key));
-    // Copy action extras
-    for (var key in action) dispatchedAction[key] = action[key];
+    const dispatchedAction = (props, key) => Store.dispatch(action(props, key));
+    // Copy action properties
+    for (let key in action) dispatchedAction[key] = action[key];
     parsedActions[type] = dispatchedAction;
 
     // Set reducer methods

@@ -3,13 +3,10 @@ import { shallowEqual } from "react-redux";
 import { useSelector } from "../useSelector";
 import { compareActionTargets } from "../utils/compareActionTargets";
 
-import { Store } from "../Store";
-
 export const usePending = (...targets) => {
   const passed = useSelector(
-    () => {
-      const state = Store.getState();
-      let pending = state.pending;
+    (state) => {
+      let pending = state.PendingStore;
       // If there is no pending state then give up
       if (!pending || !pending.length) return [];
 
@@ -27,7 +24,9 @@ export const usePending = (...targets) => {
   );
 
   return useMemo(() => {
-    return (...filters) => {
+    const pending = !!passed.length;
+
+    const filterPending = (...filters) => {
       // If there are no filters then just see if anything is pending.
       if (!filters.length) {
         return !!passed.length;
@@ -37,5 +36,7 @@ export const usePending = (...targets) => {
         passed.some((action) => compareActionTargets(target, action))
       );
     };
+
+    return { pending, filterPending };
   }, [passed]);
 };

@@ -3,14 +3,14 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import ReduxThunk from "redux-thunk";
 
 import { PendingStore } from "../PendingStore";
-import { ErrorsStore } from "../ErrorsStore";
+import { ErrorStore } from "../ErrorStore";
 
 export const StoreContext = createContext();
 export const StoreProvider = StoreContext.Provider;
 
 const map = {
-  errors: ErrorsStore.reducer,
-  pending: PendingStore.reducer,
+  ErrorStore: ErrorStore.reducer,
+  PendingStore: PendingStore.reducer,
 };
 
 // APPLY STATE WHEN REDUCER IS ADDED!!!
