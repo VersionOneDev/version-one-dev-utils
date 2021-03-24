@@ -6,7 +6,7 @@ export { downcase } from "./utils/string/downcase";
 export { useDispatch } from "react-redux";
 export { Store } from "./utils/state/Store";
 export { PendingStore } from "./utils/state/PendingStore";
-export { ErrorsStore } from "./utils/state/ErrorsStore";
+export { ErrorStore } from "./utils/state/ErrorStore";
 export { usePending } from "./utils/state/usePending";
 export { useErrors } from "./utils/state/useErrors";
 export { useSelector } from "./utils/state/useSelector";
