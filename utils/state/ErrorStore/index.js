@@ -3,13 +3,13 @@ import { createAction } from "@reduxjs/toolkit";
 import { statuses, getType, getKey } from "../utils/createAction";
 import { compareActionTargets } from "../utils/compareActionTargets";
 
-const clear = createAction("errors/clear");
+const clear = createAction("ErrorStore/clear");
 
-export const ErrorsStore = {
-  name: "errors",
+export const ErrorStore = {
+  name: "ErrorStore",
   reducer: (state = [], action) => {
     const path = getType(action) + getKey(action);
-    if (action.type === "errors/clear") {
+    if (action.type === "ErrorStore/clear") {
       return state.filter(
         (error) => !compareActionTargets(action.payload, error.type)
       );

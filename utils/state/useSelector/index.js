@@ -28,7 +28,6 @@ export const useSelector = (selector, equalityFn = (a, b) => a === b) => {
   const latestSelectedState = useRef();
 
   const context = useContext(StoreContext);
-
   const storeState = context || Store.getState();
 
   let selectedState;

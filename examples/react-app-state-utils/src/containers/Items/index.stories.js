@@ -2,6 +2,7 @@ import React from "react";
 import { MockStore } from "version-one-dev-utils/storybook/MockStore";
 
 import { Items } from ".";
+import { ItemStore } from "../../stores/ItemStore";
 
 const Stories = {
   title: "Containers/Items",
@@ -28,10 +29,11 @@ Default.args = {
   props: {},
 };
 
-export const Two = Default.bind({});
-Two.args = {
+export const Pending = Default.bind({});
+Pending.args = {
   ...Default.args,
   state: {
+    PendingStore: [ItemStore.actions.get.byKey(1)],
     ItemStore: {},
   },
 };

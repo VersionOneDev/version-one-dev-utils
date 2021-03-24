@@ -11,11 +11,12 @@ export const getType = (action) => {
   return type;
 };
 
-export const getKey = (action) => (action.key ? "/" + action.key : "");
+export const getKey = (action) => {
+  return action.meta && action.meta.key ? "/" + action.meta.key : "";
+};
 
 const prepareAction = (props, key, payload, error) => ({
-  key,
-  props,
+  meta: { key, props },
   payload,
   error,
 });
