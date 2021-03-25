@@ -1,5 +1,5 @@
 import React from "react";
-import { MockStore } from "version-one-dev-utils/storybook/MockStore";
+import { MockStore, MockRouter } from "version-one-dev-utils/storybook";
 
 import { Items } from ".";
 import { ItemStore } from "../../stores/ItemStore";
@@ -15,7 +15,9 @@ export const Default = (args) => {
   const { state, props } = args;
   return (
     <MockStore state={state}>
-      <Items {...props} />
+      <MockRouter path="/items">
+        <Items {...props} />
+      </MockRouter>
     </MockStore>
   );
 };

@@ -1,5 +1,10 @@
 import React from "react";
-import { useSelector, usePending, useErrors } from "version-one-dev-utils";
+import {
+  useSelector,
+  usePending,
+  useErrors,
+  useRoutes,
+} from "version-one-dev-utils";
 
 import { ItemStore } from "../../stores/ItemStore";
 
@@ -8,6 +13,9 @@ export function Items() {
 
   const { pending, filterPending } = usePending(ItemStore.actions.get);
   const { error, filterErrors } = useErrors(ItemStore.actions.get);
+
+  const { location } = useRoutes();
+  console.log("location", location);
 
   return (
     <div>

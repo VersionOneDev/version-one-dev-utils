@@ -2,6 +2,9 @@
 export { upcase } from "./utils/string/upcase";
 export { downcase } from "./utils/string/downcase";
 
+// utils/routes
+export { RouteProvider, useRoutes } from "./utils/routes";
+
 // utils/state
 export { useDispatch } from "react-redux";
 export { Store } from "./utils/state/Store";
