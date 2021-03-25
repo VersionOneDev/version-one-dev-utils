@@ -1,9 +1,16 @@
 import { createContext, useContext, useMemo } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 
 const context = createContext({});
 
 export const RouteProvider = context.Provider;
+
+const getQuery = (str) => {
+  const v = {};
+  const p = new URLSearchParams(str);
+  for (const [key, value] of p) v[key] = value;
+  return v;
+};
 
 const parseQuery = (params = {}) => {
   const parts = Object.keys(params).map((key) => `${key}=${params[key]}`);
@@ -25,6 +32,7 @@ export const useRoutes = () => {
   const routes = useContext(context);
   const history = useHistory();
   const location = useLocation();
+  const params = useParams();
 
   const value = useMemo(
     () => ({
@@ -33,8 +41,9 @@ export const useRoutes = () => {
         history.push(getPath(route, params, query)),
       link: getPath,
       location,
+      query: getQuery(location.search),
     }),
-    [history, location, routes]
+    [history, location, routes, params]
   );
 
   return value;
