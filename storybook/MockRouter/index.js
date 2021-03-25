@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { Router } from "react-router-dom";
+import { Router, Route } from "react-router-dom";
 import { createMemoryHistory } from "history";
 import PropTypes from "prop-types";
 import { action } from "@storybook/addon-actions";
@@ -26,16 +26,23 @@ export const MockRouter = (props) => {
     return () => unlisten();
   }, [actionHandler]);
 
-  return React.createElement(Router, { history: history.current }, children);
+  return React.createElement(
+    Router,
+    { history: history.current },
+    React.createElement(Route, { path: props.route }, children)
+  );
 };
 
 MockRouter.defaultProps = {
+  route: "*",
   path: "/",
 };
 
 MockRouter.propTypes = {
   /** The path to render. */
   path: PropTypes.string,
+  /** The route to test. */
+  route: PropTypes.string,
   /** Additional state to pass to a route. */
   state: PropTypes.object,
   /** Children to render. */

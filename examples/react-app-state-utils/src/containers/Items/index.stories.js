@@ -15,7 +15,7 @@ export const Default = (args) => {
   const { state, props } = args;
   return (
     <MockStore state={state}>
-      <MockRouter path="/items">
+      <MockRouter path="/id1" route="/:id">
         <Items {...props} />
       </MockRouter>
     </MockStore>

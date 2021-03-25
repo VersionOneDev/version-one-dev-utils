@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import {
   useSelector,
   usePending,
@@ -16,6 +17,8 @@ export function Items() {
 
   const { location } = useRoutes();
   console.log("location", location);
+  const params = useParams();
+  console.log("params", params);
 
   return (
     <div>

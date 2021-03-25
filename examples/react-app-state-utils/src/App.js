@@ -7,7 +7,7 @@ import { ItemStore } from "./stores/ItemStore";
 import { Items } from "./containers/Items";
 
 const routes = {
-  HOME: "/",
+  HOME: "/:id",
 };
 
 export function App() {
