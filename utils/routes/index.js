@@ -42,6 +42,7 @@ export const useRoutes = () => {
       link: getPath,
       location,
       query: getQuery(location.search),
+      params,
     }),
     [history, location, routes, params]
   );
