@@ -13,7 +13,9 @@ const getQuery = (str) => {
 };
 
 const parseQuery = (params = {}) => {
-  const parts = Object.keys(params).map((key) => `${key}=${params[key]}`);
+  const parts = Object.keys(params)
+    .filter((key) => params[key])
+    .map((key) => `${key}=${params[key]}`);
   return parts.length ? `?${parts.join("&")}` : "";
 };
 
