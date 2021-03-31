@@ -41,6 +41,8 @@ export const useRoutes = () => {
       ...routes,
       push: (route, params, query) =>
         history.push(getPath(route, params, query)),
+      replace: (route, params, query) =>
+        history.replace(getPath(route, params, query)),
       link: getPath,
       location,
       query: getQuery(location.search),
