@@ -36,6 +36,8 @@ export const useRoutes = () => {
   const location = useLocation();
   const params = useParams();
 
+  const query = useMemo(() => getQuery(location.search), [location.search]);
+
   const value = useMemo(
     () => ({
       ...routes,
@@ -45,10 +47,10 @@ export const useRoutes = () => {
         history.replace(getPath(route, params, query)),
       link: getPath,
       location,
-      query: getQuery(location.search),
+      query,
       params,
     }),
-    [history, location, routes, params]
+    [history, location, query, routes, params]
   );
 
   return value;
