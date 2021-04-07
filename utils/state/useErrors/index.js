@@ -36,7 +36,7 @@ export const useErrors = (...targets) => {
       );
 
       if (error) {
-        return error.value;
+        return error;
       }
     };
 
