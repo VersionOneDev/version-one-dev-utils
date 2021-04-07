@@ -23,12 +23,12 @@ export const useErrors = (...targets) => {
   );
 
   return useMemo(() => {
-    const error = passed.length ? passed[0].value : null;
+    const error = passed.length ? passed[0] : null;
 
     const filterErrors = (...filters) => {
       // If there are no filters then try to return the first error.
       if (!filters.length) {
-        return passed.length ? passed[0].value : null;
+        return passed.length ? passed[0] : null;
       }
 
       const error = passed.find((error) =>
