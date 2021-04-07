@@ -3,6 +3,8 @@ import { createAction } from "@reduxjs/toolkit";
 import { statuses, getType, getKey } from "../utils/createAction";
 import { compareActionTargets } from "../utils/compareActionTargets";
 
+import { Store } from "../Store";
+
 const clear = createAction("ErrorStore/clear");
 
 export const ErrorStore = {
@@ -25,5 +27,7 @@ export const ErrorStore = {
     return state;
   },
   // Actions
-  clear,
+  actions: {
+    clear: () => Store.dispatch(clear()),
+  },
 };
