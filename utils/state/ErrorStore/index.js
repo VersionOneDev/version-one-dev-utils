@@ -28,6 +28,6 @@ export const ErrorStore = {
   },
   // Actions
   actions: {
-    clear: () => Store.dispatch(clear()),
+    clear: (payload) => Store.dispatch(clear(payload)),
   },
 };
