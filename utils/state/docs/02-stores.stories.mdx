@@ -1,0 +1,67 @@
+<Meta title="utils/state/Stores" />
+
+# Stores
+
+Stores are used to manage blocks of state in an application. They can be created by calling the `createStore` function and passing a config object containing a `name`, `initialState`, and `actions` object.
+
+```javascript
+import { createStore } from "version-one-dev-utils";
+
+export const CounterStore = createStore({
+  name: "CounterStore",
+  initialState: {
+    count: 0,
+  },
+  actions: {},
+});
+```
+
+An optional `propTypes` object can be added to describe the contents of a store's state, providing runtime type checking in the browser console.
+See [Typechecking With PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) for more details.
+
+```javascript
+import { createStore } from "version-one-dev-utils";
+import PropTypes from "prop-types";
+
+export const CounterStore = createStore({
+  name: "CounterStore",
+  initialState: {
+    count: 0,
+  },
+  actions: {},
+  propTypes: PropTypes.objectOf(PropTypes.shape({ count: PropTypes.number })),
+});
+```
+
+## Accessing State with the useSelector Hook
+
+React components can use the `useSelector` hook to access store state.
+The hook fires a callback whenever a store is modified.
+An object containing the current state of **all stores** will be passed to the callback with each store's individual state keyed by store name.
+This callback should return a value used when rendering the component, if this value _does not_ match the previous value the component will be re-rendered.
+
+```jsx
+import React from "react";
+import { useSelector } from "version-one-dev-utils";
+
+export function Counter() {
+  const count = useSelector((state) => state.CounterStore.count);
+
+  return <p>The current count is: {{ count }}</p>;
+}
+```
+
+By default a shallow equality check will be used to compare current and previous values of the selector.
+This can be overridden by passing an equality function to the hook as the second argument:
+
+```jsx
+import React from "react";
+import { isEqual } from "lodash";
+import { useSelector } from "version-one-dev-utils";
+
+export function Counter() {
+  const count = useSelector((state) => state.CounterStore.count, isEqual);
+
+  return <p>The current count is: {{ count }}</p>;
+}
+```

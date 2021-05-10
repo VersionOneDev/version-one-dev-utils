@@ -1,0 +1,131 @@
+<Meta title="utils/state/Error Handling" />
+
+# Error Handling
+
+Whilst actions can respond to errors in order to modify store state, the ErrorStore can be used as quick and easy way to display errors and keep the end user informed.
+
+## Accessing Errors with the useErrors Hook
+
+The `useErrors` hook allows access to and filtering of errors in the ErrorStore.
+When called it will return the first matching `error` object and a `filterErrors` function.
+
+```jsx
+import { useErrors } from "version-one-dev-utils";
+
+const { error, filterErrors } = useErrors();
+```
+
+## Filtering errors
+
+By default the `useErrors` hook will respond to any errors across **all** stores but filtering can be used to find errors that are relevant to a particular React component.
+
+There are two options when filtering errors: filtering with the `useError` hook itself, or using the returned `filterErrors` function.
+
+Filtering with the `useErrors` hook will cause a component to re-render whilst `filterErrors` can be used during a render to apply a second level of filtering if needed. When called `filterErrors` will return the first matching error object.
+
+Both `useErrors` and `filterErrors` accept a list of stores, actions, or keys and any combination can be used.
+
+##### Filtering by store:
+
+To filter for **all** errors thrown by a store the store should be passed to the filter functions:
+
+```jsx
+const { error, filterErrors } = useErrors(CounterStore);
+```
+
+##### Filtering by actions:
+
+To filter for errors thrown by a single action the action should be passed to the filter functions:
+
+```jsx
+const { error, filterErrors } = useErrors(CounterStore.actions.add);
+```
+
+##### Filtering by keys:
+
+In some cases it may be useful to filter errors with a custom **key**.
+
+To add a key it should be passed as the second argument when calling an action:
+
+```jsx
+CounterStore.actions.add(1, "myKey");
+```
+
+Errors can then be filtered by passing the key as an argument or added to specific `stores` or `actions` using the byKey function:
+
+```jsx
+/** Filter any error matching "myKey". */
+const { error, filterErrors } = useErrors("myKey");
+
+/** Filter any error matching "myKey" in CounterStore. */
+const { error, filterErrors } = useErrors(CounterStore.byKey("myKey"));
+
+/** Filter error matching "myKey" in CounterStore.actions.add. */
+const { error, filterErrors } = useErrors(
+  CounterStore.actions.add.byKey("myKey")
+);
+```
+
+##### Combining filters:
+
+```jsx
+import { useErrors, useSelector } from "version-one-dev-utils";
+import { CounterStore } from "./CounterStore";
+import { TodoStore } from "./TodoStore";
+
+const { count, todos } = useSelector((state) => ({
+  count: state.CounterStore.count,
+  todos: state.TodoStore.todos,
+}));
+
+const { error, filterErrors } = useErrors(CounterStore, TodoStore);
+
+return (
+  <>
+    {/** Tell the user if any error has occurred in the CounterStore or TodoStore. */}
+    {error && "An error has occurred."}
+    {/** Show an error message if the counter cannot be increased. */}
+    Count is: {count}
+    <button onClick={CounterStore.actions.add(1)}>Add 1</button>
+    {filterErrors(CounterStore.actions.add) && "Error adding to counter."}
+    <br />
+    {/** Show a list of todo items with an error for each if it cannot be deleted. */}
+    <ul>
+      {todos.map((todo) => (
+        <li>
+          {todo.value}
+          <button onClick={TodoStore.actions.delete(todo, todo.id)}>
+            Delete
+          </button>
+          {filterErrors(Todo.actions.delete.byKey(todo.id)) &&
+            "Error deleting todo item."}
+        </li>
+      ))}
+    </ul>
+  </>
+);
+```
+
+## Clearing errors
+
+// TODO: Check clear action of ErrorStore as it does not currently match the filtering above.
+// Decide whether it should since ideally a single payload object will be used rather than a list of arguments.
+
+Errors can be removed from the ErrorStore using the `clear` action with same filtering method above:
+
+```jsx
+/** Clear all errors. */
+ErrorStore.actions.clear();
+
+/** Clear all errors from the CounterStore. */
+ErrorStore.actions.clear(CounterStore);
+
+/** Clear all errors from the add action in the CounterStore. */
+ErrorStore.actions.clear(CounterStore.actions.add);
+
+/** Clear all errors with a key. */
+ErrorStore.actions.clear("myKey");
+
+/** Clear errors with a combined filter. */
+ErrorStore.actions.clear(CounterStore.actions.add, "myKey", AnotherStore);
+```

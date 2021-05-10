@@ -1,0 +1,167 @@
+<Meta title="utils/state/Actions" />
+
+# Actions
+
+Actions are functions used to modify store state.
+They may return a value or **payload** and trigger a number of status updates allowing store state to be modified at various points during their lifecycle.
+
+There are 3 types of action: synchronous, asynchronous, and callback actions.
+
+### Synchronous actions
+
+Synchronous actions should either return a value or throw an error.
+
+```javascript
+const add = (props) => props.value;
+```
+
+### Asynchronous actions
+
+Asynchronous actions can be used when fetching data from a server and should return a promise or use async/await to return a value or throw an error.
+
+##### Promise
+
+```javascript
+const add = (props) => Promise.resolve(props.value);
+```
+
+##### Asyc/Await
+
+```javascript
+const add = async (props) => await goAndFetch(props.value);
+```
+
+### Callback actions
+
+Callback actions can be used to update store state multiple times from a single call of an action, for example when connecting to and receiving updates from a web socket.
+They should return a function that accepts resolve and reject callbacks used to pass values or errors to the store as many times as needed.
+
+```javascript
+const add = (props) => (resolve, reject) => {
+  /* Increase the counter value by 'props.value' once every second */
+  setInterval(() => resolve(props.value), 1000);
+};
+```
+
+## The `props` object
+
+An optional `props` object can be passed when calling an action to help determine the payload with
+[PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) providing runtime type checking if required.
+
+```javascript
+import PropTypes from "prop-types";
+
+const add = (props) => props.value;
+
+add.propTypes = {
+  /** The value to increase the current count in the store state. **/
+  value: PropTypes.number.isRequired,
+};
+```
+
+```javascript
+import CounterStore from "CounterStore";
+
+// Call the add action and increase the count by 1
+CounterStore.actions.add({ value: 1 });
+```
+
+## Modifying store state with reducer functions
+
+During it's lifecyle an action may call a number of status updates, and each of these provides an opportunity to modify store state with the use of reducer functions.
+The current `state` and an `action` object are passed to the reducer and can be used to determine the new state which should be returned.
+The store will be modified and any hooks used by React components will be notified.
+
+The action object contains:
+
+| Property | Value                                                                                                                                                                                     |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type     | String containing the name of the store and action e.g. "CounterStore.add".                                                                                                               |
+| meta     | Object containing the `props` and `key` passed to the action when called. See [Filtering errors with keys](/docs/utils-state-error-handling--page#filtering-by-keys) for more about keys. |
+| payload  | Payload returned if action succeeds.                                                                                                                                                      |
+| error    | Error thrown if action is unsuccessful.                                                                                                                                                   |
+
+> **Note:** Store states are **immutable** so a new rather than modified state value should be returned by the reducer.
+
+There are 3 types of reducer function (success, error, and pending) and they should be added directly to the action where required.
+
+#### Success reducer
+
+When an action successfully returns a payload the success reducer is called.
+
+```javascript
+const add = (props) => props.value;
+
+add.success = (state, action) => ({
+  ...state,
+  count: state.count + action.payload,
+});
+```
+
+#### Error reducer
+
+When an action throws an error the error reducer is called.
+
+It is not necessary to store errors in state for the purposes of displaying to the end user as this is already handled by the ErrorStore.
+It may however be desirable to modify or clear previous state if an error occurs.
+
+```javascript
+add.error = (state, action) => ({
+  ...state,
+  // Reset the count when an error occurs
+  count: 0,
+});
+```
+
+#### Pending reducer
+
+The pending reducer is called by asynchronous and callback actions whilst waiting for a payload to be resolved.
+
+Again it is not necessary to store this pending state as it is handled by the PendingStore, but it may be desirable to modify or clear previous state whilst the action is pending.
+
+```javascript
+add.pending = (state, action) => ({
+  ...state,
+});
+```
+
+## Adding actions to a store and calling from within an app.
+
+Actions can be added to a store by including them in the actions object of the `createStore` config.
+
+```javascript
+import { createStore } from "version-one-dev-utils";
+
+const add = (props) => props.value;
+
+add.success = (state, action) => ({
+  ...state,
+  count: state.count + action.payload,
+});
+
+export const CounterStore = createStore({
+  name: "CounterStore",
+  initialState: {
+    count: 0,
+  },
+  actions: {
+    add,
+  },
+});
+```
+
+They can be called within an app by importing the store:
+
+```jsx
+import React from "react";
+import { CounterStore } from "CounterStore";
+
+export function Counter() {
+  return (
+    <>
+      <button onClick={CounterStore.actions.add({ value: 1 })}>Add 1</button>
+      <button onClick={CounterStore.actions.add({ value: 2 })}>Add 2</button>
+    </>
+  );
+}
+```
