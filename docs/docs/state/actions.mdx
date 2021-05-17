@@ -1,4 +1,6 @@
-<Meta title="utils/state/Actions" />
+---
+sidebar_position: 3
+---
 
 # Actions
 
@@ -25,7 +27,7 @@ Asynchronous actions can be used when fetching data from a server and should ret
 const add = (props) => Promise.resolve(props.value);
 ```
 
-##### Asyc/Await
+##### Async/Await
 
 ```javascript
 const add = async (props) => await goAndFetch(props.value);
@@ -74,15 +76,16 @@ The store will be modified and any hooks used by React components will be notifi
 
 The action object contains:
 
-| Property | Value                                                                                                                                                                                     |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type     | String containing the name of the store and action e.g. "CounterStore.add".                                                                                                               |
-| meta     | Object containing the `props` and `key` passed to the action when called. See [Filtering errors with keys](/docs/utils-state-error-handling--page#filtering-by-keys) for more about keys. |
-| payload  | Payload returned if action succeeds.                                                                                                                                                      |
-| error    | Error thrown if action is unsuccessful.                                                                                                                                                   |
+| Property | Value                                                                                                                                                     |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type     | String containing the name of the store and action e.g. "CounterStore.add".                                                                               |
+| meta     | Object containing the `props` and `key` passed to the action when called. See [Filtering errors with keys](errors#filtering-by-keys) for more about keys. |
+| payload  | Payload returned if action succeeds.                                                                                                                      |
+| error    | Error thrown if action is unsuccessful.                                                                                                                   |
 
-> **Note:** Store states are **immutable** so a new rather than modified state value should be returned by the reducer.
-
+:::note
+Store states are **immutable** so a new rather than modified state value should be returned by the reducer.
+:::
 There are 3 types of reducer function (success, error, and pending) and they should be added directly to the action where required.
 
 #### Success reducer

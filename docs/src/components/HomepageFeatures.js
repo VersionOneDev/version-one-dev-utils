@@ -1,19 +1,26 @@
 import React from "react";
 import clsx from "clsx";
+
+import Link from "@docusaurus/Link";
+
 import styles from "./HomepageFeatures.module.css";
 
 const FeatureList = [
   {
-    title: "Lorem ipsum dolor sit amet",
+    title: "State Management",
     Svg: require("../../static/img/logo.svg").default,
     description: (
       <>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat.
+        <div className={styles.buttons}>
+          <Link
+            className="button button--secondary button--lg"
+            to="/docs/state/intro"
+          >
+            Get Started
+          </Link>
+        </div>
       </>
-    ),
+    )
   },
   {
     title: "Lorem ipsum dolor sit amet",
@@ -25,7 +32,7 @@ const FeatureList = [
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
         commodo consequat.
       </>
-    ),
+    )
   },
   {
     title: "Lorem ipsum dolor sit amet",
@@ -37,8 +44,8 @@ const FeatureList = [
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
         commodo consequat.
       </>
-    ),
-  },
+    )
+  }
 ];
 
 function Feature({ Svg, title, description }) {
@@ -60,9 +67,7 @@ export default function HomepageFeatures() {
     <section className={styles.features}>
       <div className="container">
         <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
-          ))}
+          {FeatureList.map((props, idx) => <Feature key={idx} {...props} />)}
         </div>
       </div>
     </section>
