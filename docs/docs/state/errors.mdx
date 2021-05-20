@@ -9,38 +9,36 @@ Whilst actions can respond to errors in order to modify store state, the ErrorSt
 ## Accessing Errors with the useErrors Hook
 
 The `useErrors` hook allows access to and filtering of errors in the ErrorStore.
-When called it will return the first matching `error` object and a `filterErrors` function.
+It will return a function that can be called with optional filters to find an error.
+This function can be used multiple times within a component for complete control over how and where errors are displayed.
 
 ```jsx
 import { useErrors } from "version-one-dev-utils";
 
-const { error, filterErrors } = useErrors();
+const getError = useErrors();
 ```
 
 ## Filtering errors
 
-By default the `useErrors` hook will respond to any errors across **all** stores but filtering can be used to find errors that are relevant to a particular React component.
-
-There are two options when filtering errors: filtering with the `useError` hook itself, or using the returned `filterErrors` function.
-
-Filtering with the `useErrors` hook will cause a component to re-render whilst `filterErrors` can be used during a render to apply a second level of filtering if needed. When called `filterErrors` will return the first matching error object.
-
-Both `useErrors` and `filterErrors` accept a list of stores, actions, or keys and any combination can be used.
+A list of stores, actions, or keys can be passed to the filter function in any combination.
+If no filters are used the first error in the ErrorStore will be returned.
 
 ##### Filtering by store:
 
-To filter for **all** errors thrown by a store the store should be passed to the filter functions:
+To filter for **all** errors thrown by a store the store should be passed to the filter function:
 
 ```jsx
-const { error, filterErrors } = useErrors(CounterStore);
+const getError = useErrors();
+const error = getError(CounterStore);
 ```
 
 ##### Filtering by actions:
 
-To filter for errors thrown by a single action the action should be passed to the filter functions:
+To filter for errors thrown by a single action the action should be passed to the filter function:
 
 ```jsx
-const { error, filterErrors } = useErrors(CounterStore.actions.add);
+const getError = useErrors();
+const error = getError(CounterStore.actions.add);
 ```
 
 ##### Filtering by keys:
@@ -56,16 +54,16 @@ CounterStore.actions.add(1, "myKey");
 Errors can then be filtered by passing the key as an argument or added to specific `stores` or `actions` using the byKey function:
 
 ```jsx
+const getError = useErrors();
+
 /** Filter any error matching "myKey". */
-const { error, filterErrors } = useErrors("myKey");
+const error = getError("myKey");
 
 /** Filter any error matching "myKey" in CounterStore. */
-const { error, filterErrors } = useErrors(CounterStore.byKey("myKey"));
+const error = getError(CounterStore.byKey("myKey"));
 
 /** Filter error matching "myKey" in CounterStore.actions.add. */
-const { error, filterErrors } = useErrors(
-  CounterStore.actions.add.byKey("myKey")
-);
+const error = getError(CounterStore.actions.add.byKey("myKey"));
 ```
 
 ##### Combining filters:
@@ -80,7 +78,9 @@ const { count, todos } = useSelector((state) => ({
   todos: state.TodoStore.todos,
 }));
 
-const { error, filterErrors } = useErrors(CounterStore, TodoStore);
+const getError = useErrors();
+
+const error = getError(CounterStore, TodoStore);
 
 return (
   <>
@@ -89,7 +89,7 @@ return (
     {/** Show an error message if the counter cannot be increased. */}
     Count is: {count}
     <button onClick={CounterStore.actions.add(1)}>Add 1</button>
-    {filterErrors(CounterStore.actions.add) && "Error adding to counter."}
+    {getError(CounterStore.actions.add) && "Error adding to counter."}
     <br />
     {/** Show a list of todo items with an error for each if it cannot be deleted. */}
     <ul>
@@ -99,7 +99,7 @@ return (
           <button onClick={TodoStore.actions.delete(todo, todo.id)}>
             Delete
           </button>
-          {filterErrors(Todo.actions.delete.byKey(todo.id)) &&
+          {getError(Todo.actions.delete.byKey(todo.id)) &&
             "Error deleting todo item."}
         </li>
       ))}
@@ -110,8 +110,7 @@ return (
 
 ## Clearing errors
 
-// TODO: Check clear action of ErrorStore as it does not currently match the filtering above.
-// Decide whether it should since ideally a single payload object will be used rather than a list of arguments.
+// TODO: Add clearError function to useErrors hook
 
 Errors can be removed from the ErrorStore using the `clear` action with same filtering method above:
 

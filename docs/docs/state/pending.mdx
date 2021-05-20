@@ -9,29 +9,30 @@ Similar to errors, pending actions are monitored by the PendingStore providing a
 ## Accessing Pending Actions with the usePending Hook
 
 The `usePending` hook allows access to and filtering of pending actions in the PendingStore.
-When called it will return a `pending` boolean and a `filterPending` function.
+It will return a function that can be called with optional filters to find pending actions.
 
 ```jsx
 import { usePending } from "version-one-dev-utils";
 
-const { pending, filterPending } = usePending();
+const getPending = usePending();
+const pending = getPending();
 ```
 
 ## Filtering pending actions
 
-Filtering pending actions is identical to filtering errors with stores, actions, or keys passed to the `usePending` or `filterPending` functions.
-Just like the `useError` hook, the `usePending` hook will cause a component to re-render whilst `filterPending` can be used during a render to apply a second level of filtering if needed.
+Filtering pending actions is identical to filtering errors with stores, actions, or keys passed to the filter function.
 
 ```jsx
 import { usePending } from "version-one-dev-utils";
 import { CounterStore } from "./CounterStore";
 
-const { pending, filterPending } = usePending(CounterStore);
+const getPending = usePending();
+const pending = getPending(CounterStore);
 
 return (
   <>
     {pending && "An action in the CounterStore is pending"}
-    {filterPending(CounterStore.actions.add) &&
+    {getPending(CounterStore.actions.add) &&
       "The add action in the CounterStore is pending"}
   </>
 );

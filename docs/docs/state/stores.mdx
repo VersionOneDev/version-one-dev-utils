@@ -67,3 +67,14 @@ export function Counter() {
   return <p>The current count is: {{ count }}</p>;
 }
 ```
+
+## Accessing State with `getState`
+
+Store state can also be accessed using the `getState` method.
+This should be used where state is required outside of a React component, for example when one store relies on the state of another.
+
+```jsx
+import { CounterStore } from "./CounterStore";
+
+const CounterStoreState = CounterStore.getState();
+```

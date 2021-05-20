@@ -4,10 +4,11 @@ import { RouteProvider } from "version-one-dev-utils";
 
 import { ItemStore } from "./stores/ItemStore";
 
-import { Items } from "./containers/Items";
+import { ItemList } from "./containers/ItemList";
+import { Notification } from "./containers/Notification";
 
 const routes = {
-  HOME: "/:id",
+  HOME: "/",
 };
 
 export function App() {
@@ -20,15 +21,28 @@ export function App() {
       <BrowserRouter>
         <Switch>
           <Route path={routes.HOME} exact>
-            <h1>React App</h1>
-            <Items />
-            <button onClick={() => ItemStore.actions.get({ id: 10 }, 10)}>
-              Click me
-            </button>
-            <button onClick={() => ItemStore.actions.reset()}>Reset</button>
+            <h1 className="mb-10 text-4xl text-center">To Do List</h1>
+            <div>
+              <div>
+                <div>
+                  <ItemList />
+                </div>
+              </div>
+            </div>
+            <div>
+              <div>
+                <div>
+                  <ItemList />
+                </div>
+              </div>
+            </div>
+
+            <Notification />
           </Route>
           <Route path="*">
-            <h1>404</h1>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <h1 className="text-8xl">404</h1>
+            </div>
           </Route>
         </Switch>
       </BrowserRouter>
