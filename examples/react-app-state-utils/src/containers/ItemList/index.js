@@ -8,7 +8,7 @@ import { ItemStore } from "../../stores/ItemStore";
 export function ItemList(props) {
   const items = useSelector((state) => state.ItemStore);
 
-  const getPending = usePending();
+  const { getPending } = usePending();
 
   return (
     <ul>

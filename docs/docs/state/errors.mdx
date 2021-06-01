@@ -4,31 +4,32 @@ sidebar_position: 4
 
 # Error Handling
 
-Whilst actions can respond to errors in order to modify store state, the ErrorStore can be used as quick and easy way to display errors and keep the end user informed.
+Whilst actions can respond to errors in order to modify store state, the `useErrors` hook can be used as quick and easy way to display or clear errors and keep the end user informed.
 
 ## Accessing Errors with the useErrors Hook
 
-The `useErrors` hook allows access to and filtering of errors in the ErrorStore.
-It will return a function that can be called with optional filters to find an error.
+The `useErrors` hook allows access to and filtering of error objects stored automatically by the `ErrorStore`.
+It will return a `getError` function that can be called with optional filters to find an error.
 This function can be used multiple times within a component for complete control over how and where errors are displayed.
+A second `clearError` function can be called using the same filtering method to remove errors from the store.
 
 ```jsx
 import { useErrors } from "version-one-dev-utils";
 
-const getError = useErrors();
+const { getError, clearError } = useErrors();
 ```
 
 ## Filtering errors
 
-A list of stores, actions, or keys can be passed to the filter function in any combination.
-If no filters are used the first error in the ErrorStore will be returned.
+A list of stores, actions, or keys can be passed to the `getError` function in any combination, and the first matching error will be returned.
+If no filters are used then all errors will be considered a match.
 
 ##### Filtering by store:
 
 To filter for **all** errors thrown by a store the store should be passed to the filter function:
 
 ```jsx
-const getError = useErrors();
+const { getError } = useErrors();
 const error = getError(CounterStore);
 ```
 
@@ -37,7 +38,7 @@ const error = getError(CounterStore);
 To filter for errors thrown by a single action the action should be passed to the filter function:
 
 ```jsx
-const getError = useErrors();
+const { getError } = useErrors();
 const error = getError(CounterStore.actions.add);
 ```
 
@@ -54,7 +55,7 @@ CounterStore.actions.add(1, "myKey");
 Errors can then be filtered by passing the key as an argument or added to specific `stores` or `actions` using the byKey function:
 
 ```jsx
-const getError = useErrors();
+const { getError } = useErrors();
 
 /** Filter any error matching "myKey". */
 const error = getError("myKey");
@@ -78,7 +79,7 @@ const { count, todos } = useSelector((state) => ({
   todos: state.TodoStore.todos,
 }));
 
-const getError = useErrors();
+const { getError } = useErrors();
 
 const error = getError(CounterStore, TodoStore);
 
@@ -110,23 +111,26 @@ return (
 
 ## Clearing errors
 
-// TODO: Add clearError function to useErrors hook
-
-Errors can be removed from the ErrorStore using the `clear` action with same filtering method above:
+Errors can be removed using the `clearError` action with same filtering method above:
 
 ```jsx
 /** Clear all errors. */
-ErrorStore.actions.clear();
+consts { clearError } = useErrors();
+clearError();
 
 /** Clear all errors from the CounterStore. */
-ErrorStore.actions.clear(CounterStore);
+consts { clearError } = useErrors();
+clearError(CounterStore);
 
 /** Clear all errors from the add action in the CounterStore. */
-ErrorStore.actions.clear(CounterStore.actions.add);
+consts { clearError } = useErrors();
+clearError(CounterStore.actions.add);
 
 /** Clear all errors with a key. */
-ErrorStore.actions.clear("myKey");
+consts { clearError } = useErrors();
+clearError("myKey");
 
 /** Clear errors with a combined filter. */
-ErrorStore.actions.clear(CounterStore.actions.add, "myKey", AnotherStore);
+consts { clearError } = useErrors();
+clearError(CounterStore.actions.add, "myKey", AnotherStore);
 ```

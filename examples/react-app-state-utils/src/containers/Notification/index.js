@@ -1,10 +1,10 @@
 import React from "react";
 import classnames from "classnames";
-import { usePending, useErrors, ErrorStore } from "version-one-dev-utils";
+import { usePending, useErrors } from "version-one-dev-utils";
 
 export function Notification() {
-  const getPending = usePending();
-  const getError = useErrors();
+  const { getPending } = usePending();
+  const { getError, clearError } = useErrors();
 
   const error = getError();
   const pending = getPending();
@@ -35,7 +35,7 @@ export function Notification() {
       {text === "Something went wrong" && (
         <button
           className="text-xs ml-4 underline hover:no-underline text-blue-500 hover:text-blue-600"
-          onClick={() => ErrorStore.actions.clear()}
+          onClick={() => clearError()}
         >
           Close
         </button>

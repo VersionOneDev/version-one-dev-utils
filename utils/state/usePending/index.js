@@ -24,7 +24,7 @@ export const usePending = (...targets) => {
     shallowEqual
   );
 
-  return useMemo(() => {
+  const getPending = useMemo(() => {
     return (...filters) => {
       // If no filters are applied set a wildcard to search for everything
       if (!filters.length) filters = ["*"];
@@ -40,4 +40,11 @@ export const usePending = (...targets) => {
       }
     };
   }, [passed]);
+
+  // Return getPending function
+  return useMemo(() => {
+    return {
+      getPending,
+    };
+  }, [getPending]);
 };

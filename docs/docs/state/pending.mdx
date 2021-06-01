@@ -4,17 +4,17 @@ sidebar_position: 5
 
 # Pending Actions
 
-Similar to errors, pending actions are monitored by the PendingStore providing an easy way to display loading states to the end user.
+Similar to errors, pending actions can be accessed with the `usePending` hook providing an easy way to display loading states to the end user.
 
 ## Accessing Pending Actions with the usePending Hook
 
-The `usePending` hook allows access to and filtering of pending actions in the PendingStore.
-It will return a function that can be called with optional filters to find pending actions.
+The `usePending` hook allows access to and filtering of pending actions monitored by the `PendingStore`.
+It will return a `getPending` function that can be called with optional filters to find pending actions.
 
 ```jsx
 import { usePending } from "version-one-dev-utils";
 
-const getPending = usePending();
+const { getPending } = usePending();
 const pending = getPending();
 ```
 
@@ -26,7 +26,7 @@ Filtering pending actions is identical to filtering errors with stores, actions,
 import { usePending } from "version-one-dev-utils";
 import { CounterStore } from "./CounterStore";
 
-const getPending = usePending();
+const { getPending } = usePending();
 const pending = getPending(CounterStore);
 
 return (

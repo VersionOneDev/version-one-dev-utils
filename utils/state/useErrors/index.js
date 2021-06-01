@@ -1,6 +1,7 @@
 import { useMemo, useRef } from "react";
 import { useSelector } from "../useSelector";
 import { compareActionTargets } from "../utils/compareActionTargets";
+import { ErrorStore } from "../ErrorStore";
 
 const storeName = "ErrorStore";
 
@@ -23,7 +24,7 @@ export const useErrors = (...targets) => {
     (a, b) => JSON.stringify(a) === JSON.stringify(b)
   );
 
-  return useMemo(() => {
+  const getError = useMemo(() => {
     return (...filters) => {
       // If no filters are applied set a wildcard to search for everything
       if (!filters.length) filters = ["*"];
@@ -35,4 +36,12 @@ export const useErrors = (...targets) => {
       );
     };
   }, [passed]);
+
+  // Return getError and clearError functions
+  return useMemo(() => {
+    return {
+      getError,
+      clearError: ErrorStore.actions.clear,
+    };
+  }, [getError]);
 };
