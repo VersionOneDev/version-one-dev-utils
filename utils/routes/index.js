@@ -1,5 +1,10 @@
 import { createContext, useContext, useMemo } from "react";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import {
+  useHistory,
+  useLocation,
+  useRouteMatch,
+  matchPath,
+} from "react-router-dom";
 
 const context = createContext({});
 
@@ -32,26 +37,27 @@ const getPath = (route, params = {}, query = {}) => {
 
 export const useRoutes = () => {
   const routes = useContext(context);
-  const history = useHistory();
-  const location = useLocation();
-  const params = useParams();
+  const _history = useHistory();
+  const _location = useLocation();
+  const _route = useRouteMatch();
 
-  const query = useMemo(() => getQuery(location.search), [location.search]);
+  const query = useMemo(() => getQuery(_location.search), [_location.search]);
 
-  const value = useMemo(
+  return useMemo(
     () => ({
-      ...routes,
-      push: (route, params, query) =>
-        history.push(getPath(route, params, query)),
-      replace: (route, params, query) =>
-        history.replace(getPath(route, params, query)),
-      link: getPath,
-      location,
+      routes,
+      route: _route.path,
+      path: _location.pathname,
+      hash: _location.hash,
+      params: _route.params,
       query,
-      params,
+      push: (route, params, query) =>
+        _history.push(getPath(route, params, query)),
+      replace: (route, params, query) =>
+        _history.replace(getPath(route, params, query)),
+      link: getPath,
+      match: (path) => matchPath(_location.pathname, { path }),
     }),
-    [history, location, query, routes, params]
+    [routes, _history, _location, _route, query]
   );
-
-  return value;
 };

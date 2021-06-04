@@ -1,0 +1,84 @@
+---
+sidebar_position: 3
+---
+
+# The useRoutes Hook
+
+The `useRoutes` hook is the easiest way access and move between routes.
+
+When called it will return an object with the following properties:
+
+| Property | Value                                                                     |
+| -------- | ------------------------------------------------------------------------- |
+| routes   | The routes config object passed to the `RouteProvider`.                   |
+| route    | The value of the nearest parent route.                                    |
+| params   | The params of the nearest parent route.                                   |
+| path     | The path of the current router location.                                  |
+| hash     | The hash (#) value.                                                       |
+| query    | An object of key/value pairs generated from the query string.             |
+| link     | A function that returns a path to link to another route.                  |
+| push     | A function that can be used to move to another route.                     |
+| replace  | A function that can be used to replace the current route.                 |
+| match    | A function that can be used to check if a route matches the current path. |
+
+## Navigating between routes
+
+The `useRoutes` hook offers three ways to navigate to another route with the `link` `push`, and `replace`, functions.
+Each function accepts a `route`, and optional `params` and `query` objects.
+
+### Link
+
+The link function will return a path that can be used when creating links in an app:
+
+```jsx
+const { link, routes } = useRoutes();
+
+return <Link to={link(routes.PAGE_TWO)}>Go to page Two</Link>;
+```
+
+:::note
+Where possible **links should be the primary way of navigating around an app.**
+They are the standard way of navigating pages in a web browser and provide the user with greater feedback than a button with an onClick handler.
+:::
+
+### Push
+
+When linking to a route is not possible the push function can be used instead.
+This will move to the new route and add it to the routing history so it will remain accessible via the forward and back buttons when viewed in a web browser.
+
+```jsx
+const { push, routes } = useRoutes();
+
+return <button onClick={() => push(routes.PAGE_TWO)}>Go to page Two</button>;
+```
+
+### Replace
+
+Sometimes it may be preferable to replace a route rather than move to it.
+The replace function will switch to the new route and replace the current route in the routing history so it is no longer accessible via the forward and back buttons when viewed in a web browser.
+
+```jsx
+const { replace, routes } = useRoutes();
+
+return <button onClick={() => replace(routes.PAGE_TWO)}>Go to page Two</button>;
+```
+
+## Accessing the current state of the router
+
+The `route`, `params`, `path`, `hash`, and `query` properties make up the current state of the router.
+
+Whilst `path`, `hash`, and `query` are consistent across all instances of the `useRoutes` hook, `route` and `params` are relative nearest parent route.
+
+## Checking if a route is active
+
+The `match` function can be used to manually check if a route is currently active:
+
+```jsx
+const { match, routes } = useRoutes();
+
+if (match(routes.HOME)) {
+  console.log("The home route is active!");
+} else {
+  console.log("The home route is NOT active!");
+}
+```

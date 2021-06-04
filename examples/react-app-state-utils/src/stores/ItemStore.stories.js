@@ -18,6 +18,7 @@ export const Default = (args) => {
         <h3>Actions:</h3>
         <ul>
           {Object.keys(ItemStore.actions).map((name) => {
+            console.log(ItemStore.actions[name].propTypes);
             return (
               <li key={name} style={{ marginBottom: 10 }}>
                 {`${name}(${

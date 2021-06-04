@@ -1,0 +1,44 @@
+---
+sidebar_position: 2
+---
+
+# Configuring routes with the RouterProvider
+
+The `RouteProvider` should be used once in the base component of your app.
+Configuring the routes this way provides the app's container components an easy way to access and move between routes later on via the `useRoutes` hook.
+
+```jsx
+import React from "react";
+// Import React Router components to do the routing
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+// Import the RouteProvider to config the useRoutes hook
+import { RouteProvider } from "version-one-dev-utils";
+
+const routes = {
+  HOME: "/",
+  PAGE_ONE: "/one",
+  PAGE_TWO: "/two",
+  NOT_FOUND: "*",
+};
+
+export function App() {
+  return (
+    <RouteProvider value={routes}>
+      <Router>
+        <Route path={routes.HOME} exact>
+          <Home />
+        </Route>
+        <Route path={routes.PAGE_ONE} exact>
+          <PageOne />
+        </Route>
+        <Route path={routes.PAGE_TWO} exact>
+          <PageTwo />
+        </Route>
+        <Route path={routes.NOT_FOUND}>
+          <p>404 Not Found</p>
+        </Route>
+      </Router>
+    </RouteProvider>
+  );
+}
+```

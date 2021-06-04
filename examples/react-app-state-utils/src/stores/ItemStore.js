@@ -22,7 +22,7 @@ get.success = (state, action) => {
 
   return {
     ...state,
-    ...items,
+    items,
   };
 };
 
@@ -30,6 +30,20 @@ get.error = (state, action) => {
   console.log("=== error", action);
   return state;
 };
+
+const getItem = (props) => {
+  return fetch("https://jsonplaceholder.typicode.com/posts/" + props.id).then(
+    (response) => {
+      return response.json();
+    }
+  );
+};
+
+getItem.propTypes = {
+  id: PropTypes.number.isRequired,
+};
+
+getItem.success = (state, action) => ({ ...state, item: action.payload });
 
 const complete = (props) =>
   fetch("https://jsonplaceholder.typicode.com/posts/" + props.id, {
@@ -49,7 +63,13 @@ complete.propTypes = {
 
 complete.success = (state, action) => ({
   ...state,
-  [action.payload.id]: { ...state[action.payload.id], ...action.payload },
+  items: {
+    ...state.items,
+    [action.payload.id]: {
+      ...state.items[action.payload.id],
+      ...action.payload,
+    },
+  },
 });
 
 const incomplete = (props) =>
@@ -70,19 +90,36 @@ incomplete.propTypes = {
 
 incomplete.success = (state, action) => ({
   ...state,
-  [action.payload.id]: { ...state[action.payload.id], ...action.payload },
+  items: {
+    ...state.items,
+    [action.payload.id]: {
+      ...state.items[action.payload.id],
+      ...action.payload,
+    },
+  },
 });
 
 export const ItemStore = createStore({
   name: "ItemStore",
-  initialState: {},
-  actions: { get, complete, incomplete },
-  propTypes: PropTypes.objectOf(
-    PropTypes.shape({
+  initialState: {
+    items: {},
+    item: null,
+  },
+  actions: { get, getItem, complete, incomplete },
+  propTypes: PropTypes.shape({
+    items: PropTypes.objectOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        userId: PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
+        completed: PropTypes.bool.isRequired,
+      })
+    ),
+    item: PropTypes.shape({
       id: PropTypes.number.isRequired,
       userId: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
-      completed: PropTypes.bool.isRequired,
-    })
-  ),
+      body: PropTypes.string.isRequired,
+    }),
+  }),
 });
