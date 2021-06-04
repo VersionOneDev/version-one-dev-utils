@@ -8,8 +8,6 @@ import { ItemStore } from "../../stores/ItemStore";
 export function Item(props) {
   const { link, routes, params } = useRoutes();
 
-  console.log(useRoutes());
-
   const item = useSelector((state) => state.ItemStore.item);
 
   const { getPending } = usePending();

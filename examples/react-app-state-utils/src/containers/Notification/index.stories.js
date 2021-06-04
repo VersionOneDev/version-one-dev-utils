@@ -1,12 +1,12 @@
 import React from "react";
-import { MockStore, MockRouter } from "version-one-dev-utils/storybook";
+import { MockStore } from "version-one-dev-utils/storybook";
 
-import { Items } from ".";
+import { Notification } from ".";
 import { ItemStore } from "../../stores/ItemStore";
 
 const Stories = {
-  title: "Containers/Items",
-  component: Items,
+  title: "Containers/Notification",
+  component: Notification,
 };
 
 export default Stories;
@@ -15,27 +15,14 @@ export const Default = (args) => {
   const { state, props } = args;
   return (
     <MockStore state={state}>
-      <MockRouter path="/id1" route="/:id">
-        <Items {...props} />
-      </MockRouter>
+      <Notification {...props} />
     </MockStore>
   );
 };
 
 Default.args = {
   state: {
-    ItemStore: {
-      1: { type: "hello" },
-    },
+    PendingStore: [ItemStore.actions.get.byKey(1)],
   },
   props: {},
-};
-
-export const Pending = Default.bind({});
-Pending.args = {
-  ...Default.args,
-  state: {
-    PendingStore: [ItemStore.actions.get.byKey(1)],
-    ItemStore: {},
-  },
 };

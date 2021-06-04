@@ -12,11 +12,11 @@ const Stories = {
 export default Stories;
 
 export const Default = (args) => {
-  const { state, props } = args;
+  const { state, props, router } = args;
 
   return (
     <MockStore state={state}>
-      <MockRouter path="/item/one?foo=bar#hash" route="/item/:id">
+      <MockRouter {...router}>
         <Item {...props} />
       </MockRouter>
     </MockStore>
@@ -30,6 +30,10 @@ Default.args = {
     },
   },
   props: {},
+  router: {
+    url: "/item/one",
+    route: "/item/:id",
+  },
 };
 
 export const Pending = Default.bind({});

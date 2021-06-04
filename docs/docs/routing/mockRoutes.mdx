@@ -31,7 +31,7 @@ addDecorator((storyFn) => {
 
 Routes can be set on a per story basis by wrapping a component in `<MockRoute/>`.
 
-`MockRoute` accepts two props: a path (including all params, query, and hash values), and a route to test against.
+`MockRoute` accepts two props: a url (the path with params, query, and hash values), and a route to test against.
 These mock values will be used to populate the router state returned by the `useRoutes` hook.
 
 `MyComponent.stories.js`
@@ -42,7 +42,7 @@ import { MockRouter } from "version-one-dev-utils/storybook";
 export const Default = (args) => {
   const { props } = args;
   return (
-    <MockRouter route="/item/:id" path="/item/one">
+    <MockRouter route="/item/:id" url="/item/one">
       <MyComponent {...props} />
     </MockRouter>
   );
