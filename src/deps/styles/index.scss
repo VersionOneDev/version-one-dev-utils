@@ -1,0 +1,67 @@
+$buttonColor: #4a90e2;
+$inputColor: #ccc;
+$linkColor: #4a90e2;
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  font-family: Arial;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+input,
+button {
+  border-radius: 4px;
+  padding: 10px;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+button {
+  border: 1px solid transparent;
+  background: $buttonColor;
+  color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background: lighten($buttonColor, 5%);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+input {
+  border: 1px solid $inputColor;
+
+  &:focus {
+    outline: none;
+    border-color: darken($inputColor, 20%);
+  }
+}
+
+a {
+  color: $linkColor;
+
+  &:hover {
+    color: lighten($linkColor, 5%);
+  }
+}
