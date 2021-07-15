@@ -1,0 +1,71 @@
+---
+sidebar_position: 4
+---
+
+# Mocking Routes with Storybook
+
+A MockRoute component is available for use with Storybook to help development of components that rely on routing.
+
+## Setup
+
+To begin routes should be configured in Storybook by adding the `RouteProvider` and `MockRoute` component to a decorator in `.storybook/preview.js`
+
+```jsx
+import { addDecorator } from "@storybook/react";
+
+import { RouteProvider } from "version-one-dev-utils";
+import { MockRouter } from "version-one-dev-utils/storybook";
+
+import { routes } from "../src/routes";
+
+addDecorator((storyFn) => {
+  return (
+    <RouteProvider value={routes}>
+      <MockRouter>{storyFn()}</MockRouter>
+    </RouteProvider>
+  );
+});
+```
+
+## Setting the route
+
+Routes can be set on a per story basis by wrapping a component in `<MockRoute/>`.
+
+`MockRoute` accepts two props: a url (the path with params, query, and hash values), and a route to test against.
+These mock values will be used to populate the router state returned by the `useRoutes` hook.
+
+`MyComponent.stories.js`
+
+```jsx
+import { MockRouter } from "version-one-dev-utils/storybook";
+
+export const Default = (args) => {
+  const { props } = args;
+  return (
+    <MockRouter route="/item/:id" url="/item/one">
+      <MyComponent {...props} />
+    </MockRouter>
+  );
+};
+
+Default.args = {
+  props: {},
+};
+```
+
+`MyComponent.js`
+
+```jsx
+import React from "react";
+import { useRoutes } from "version-one-dev-utils";
+
+export function MyComponent() {
+  const { params } = useRoutes();
+
+  return (
+    {/* params.id will be 'one' */}
+    <p>My id is: {{ params.id }}</p>
+
+  );
+}
+```

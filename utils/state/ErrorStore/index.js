@@ -13,7 +13,7 @@ export const ErrorStore = {
     const path = getType(action) + getKey(action);
     if (action.type === "ErrorStore/clear") {
       return state.filter(
-        (error) => !compareActionTargets(action.payload, error.type)
+        (error) => !compareActionTargets(action.payload || "*", error.type)
       );
     } else if (
       action.type.includes(statuses.ERROR) &&

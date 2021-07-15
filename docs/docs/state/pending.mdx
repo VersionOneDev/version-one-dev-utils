@@ -1,0 +1,43 @@
+---
+sidebar_position: 5
+---
+
+# Pending Actions
+
+Similar to errors, pending actions can be accessed with the `usePending` hook providing an easy way to display loading states to the end user.
+
+## Accessing Pending Actions with the usePending Hook
+
+The `usePending` hook allows access to and filtering of pending actions monitored by the `PendingStore`.
+It will return a `getPending` function that can be called with optional filters to find pending actions.
+
+```jsx
+import { usePending } from "version-one-dev-utils";
+
+const { getPending } = usePending();
+const pending = getPending();
+```
+
+## Filtering pending actions
+
+Filtering pending actions is identical to filtering errors with stores, actions, or keys passed to the filter function.
+
+```jsx
+import { usePending } from "version-one-dev-utils";
+import { CounterStore } from "./CounterStore";
+
+const { getPending } = usePending();
+const pending = getPending(CounterStore);
+
+return (
+  <>
+    {pending && "An action in the CounterStore is pending"}
+    {getPending(CounterStore.actions.add) &&
+      "The add action in the CounterStore is pending"}
+  </>
+);
+```
+
+## Clearing pending actions
+
+Pending state is cleared automatically when an action is successful or throws an error so there is no need to manually clear actions from the `PendingStore`
