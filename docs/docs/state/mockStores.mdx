@@ -1,0 +1,42 @@
+---
+sidebar_position: 6
+---
+
+
+# Mocking Stores with Storybook
+
+A MockStore component is available for use with Storybook to help development of components that rely on store state.
+
+The state prop can be used to provide mocked state to the useSelector, useErrors, and usePending hooks.
+
+Actions will be logged in the actions tab along with their props and keys.
+
+```jsx
+import React from "react";
+import { MockStore } from "version-one-dev-utils/storybook";
+
+const Stories = {
+  title: "Containers/Counter",
+  component: Counter,
+};
+
+export default Stories;
+
+export const Default = (args) => {
+  const { state, props } = args;
+  return (
+    <MockStore state={state}>
+      <Counter {...props} />
+    </MockStore>
+  );
+};
+
+Default.args = {
+  state: {
+    CounterStore: {
+      count: 1,
+    },
+  },
+  props: {},
+};
+```

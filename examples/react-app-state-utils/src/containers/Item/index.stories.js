@@ -1,22 +1,23 @@
 import React from "react";
 import { MockStore, MockRouter } from "version-one-dev-utils/storybook";
 
-import { Items } from ".";
+import { Item } from ".";
 import { ItemStore } from "../../stores/ItemStore";
 
 const Stories = {
-  title: "Containers/Items",
-  component: Items,
+  title: "Containers/Item",
+  component: Item,
 };
 
 export default Stories;
 
 export const Default = (args) => {
-  const { state, props } = args;
+  const { state, props, router } = args;
+
   return (
     <MockStore state={state}>
-      <MockRouter path="/id1" route="/:id">
-        <Items {...props} />
+      <MockRouter {...router}>
+        <Item {...props} />
       </MockRouter>
     </MockStore>
   );
@@ -25,10 +26,14 @@ export const Default = (args) => {
 Default.args = {
   state: {
     ItemStore: {
-      1: { type: "hello" },
+      1: { id: 1, type: "hello" },
     },
   },
   props: {},
+  router: {
+    url: "/item/one",
+    route: "/item/:id",
+  },
 };
 
 export const Pending = Default.bind({});

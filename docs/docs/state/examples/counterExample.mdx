@@ -1,0 +1,66 @@
+---
+sidebar_position: 1
+---
+
+# Counter Example
+
+## CounterStore.js
+
+```javascript
+import { createStore } from "version-one-dev-utils";
+import PropTypes from "prop-types";
+
+const add = (props) => props.value;
+
+add.propTypes = {
+  /** The value to increase the current count in the store state. **/
+  value: PropTypes.number.isRequired,
+};
+
+add.success = (state, action) => ({
+  ...state,
+  count: state.count + action.payload,
+});
+
+export const CounterStore = createStore({
+  name: "CounterStore",
+  initialState: {
+    count: 0,
+  },
+  actions: {
+    add,
+  },
+  propTypes: PropTypes.objectOf(PropTypes.shape({ count: PropTypes.number })),
+});
+```
+
+## Counter.js
+
+```jsx
+import React from "react";
+import { useSelector } from "version-one-dev-utils";
+import { CounterStore } from "CounterStore";
+
+export function Counter() {
+  const count = useSelector((state) => state.CounterStore.count);
+
+  return (
+    <>
+      <p>The current count is: {{ count }}</p>
+      <button onClick={CounterStore.actions.add({ value: 1 })}>Add 1</button>
+      <button onClick={CounterStore.actions.add({ value: 2 })}>Add 2</button>
+    </>
+  );
+}
+```
+
+## index.js
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+
+import { Counter } from "./Counter";
+
+ReactDOM.render(<Counter />, document.getElementById("root"));
+```

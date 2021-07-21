@@ -1,6 +1,16 @@
+const delimiter = "/";
+
+const splitValue = (value) => {
+  value = value.toString();
+  // If the value does not contain the delimiter it should be a key so add wildcards
+  return !value.includes(delimiter)
+    ? ["*", "*", value]
+    : value.split(delimiter);
+};
+
 export const compareActionTargets = (a, b) => {
-  const splitA = a.toString().split("/");
-  const splitB = b.toString().split("/");
+  const splitA = splitValue(a);
+  const splitB = splitValue(b);
   const length = Math.min(splitA.length, splitB.length);
 
   for (let i = 0; i < length; i++) {

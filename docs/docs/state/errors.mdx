@@ -1,0 +1,136 @@
+---
+sidebar_position: 4
+---
+
+# Error Handling
+
+Whilst actions can respond to errors in order to modify store state, the `useErrors` hook can be used as quick and easy way to display or clear errors and keep the end user informed.
+
+## Accessing Errors with the useErrors Hook
+
+The `useErrors` hook allows access to and filtering of error objects stored automatically by the `ErrorStore`.
+It will return a `getError` function that can be called with optional filters to find an error.
+This function can be used multiple times within a component for complete control over how and where errors are displayed.
+A second `clearError` function can be called using the same filtering method to remove errors from the store.
+
+```jsx
+import { useErrors } from "version-one-dev-utils";
+
+const { getError, clearError } = useErrors();
+```
+
+## Filtering errors
+
+A list of stores, actions, or keys can be passed to the `getError` function in any combination, and the first matching error will be returned.
+If no filters are used then all errors will be considered a match.
+
+##### Filtering by store:
+
+To filter for **all** errors thrown by a store the store should be passed to the filter function:
+
+```jsx
+const { getError } = useErrors();
+const error = getError(CounterStore);
+```
+
+##### Filtering by actions:
+
+To filter for errors thrown by a single action the action should be passed to the filter function:
+
+```jsx
+const { getError } = useErrors();
+const error = getError(CounterStore.actions.add);
+```
+
+##### Filtering by keys:
+
+In some cases it may be useful to filter errors with a custom **key**.
+
+To add a key it should be passed as the second argument when calling an action:
+
+```jsx
+CounterStore.actions.add(1, "myKey");
+```
+
+Errors can then be filtered by passing the key as an argument or added to specific `stores` or `actions` using the byKey function:
+
+```jsx
+const { getError } = useErrors();
+
+/** Filter any error matching "myKey". */
+const error = getError("myKey");
+
+/** Filter any error matching "myKey" in CounterStore. */
+const error = getError(CounterStore.byKey("myKey"));
+
+/** Filter error matching "myKey" in CounterStore.actions.add. */
+const error = getError(CounterStore.actions.add.byKey("myKey"));
+```
+
+##### Combining filters:
+
+```jsx
+import { useErrors, useSelector } from "version-one-dev-utils";
+import { CounterStore } from "./CounterStore";
+import { TodoStore } from "./TodoStore";
+
+const { count, todos } = useSelector((state) => ({
+  count: state.CounterStore.count,
+  todos: state.TodoStore.todos,
+}));
+
+const { getError } = useErrors();
+
+const error = getError(CounterStore, TodoStore);
+
+return (
+  <>
+    {/** Tell the user if any error has occurred in the CounterStore or TodoStore. */}
+    {error && "An error has occurred."}
+    {/** Show an error message if the counter cannot be increased. */}
+    Count is: {count}
+    <button onClick={CounterStore.actions.add(1)}>Add 1</button>
+    {getError(CounterStore.actions.add) && "Error adding to counter."}
+    <br />
+    {/** Show a list of todo items with an error for each if it cannot be deleted. */}
+    <ul>
+      {todos.map((todo) => (
+        <li>
+          {todo.value}
+          <button onClick={TodoStore.actions.delete(todo, todo.id)}>
+            Delete
+          </button>
+          {getError(Todo.actions.delete.byKey(todo.id)) &&
+            "Error deleting todo item."}
+        </li>
+      ))}
+    </ul>
+  </>
+);
+```
+
+## Clearing errors
+
+Errors can be removed using the `clearError` action with same filtering method above:
+
+```jsx
+/** Clear all errors. */
+consts { clearError } = useErrors();
+clearError();
+
+/** Clear all errors from the CounterStore. */
+consts { clearError } = useErrors();
+clearError(CounterStore);
+
+/** Clear all errors from the add action in the CounterStore. */
+consts { clearError } = useErrors();
+clearError(CounterStore.actions.add);
+
+/** Clear all errors with a key. */
+consts { clearError } = useErrors();
+clearError("myKey");
+
+/** Clear errors with a combined filter. */
+consts { clearError } = useErrors();
+clearError(CounterStore.actions.add, "myKey", AnotherStore);
+```

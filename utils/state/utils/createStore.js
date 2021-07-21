@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { createAction } from "./createAction";
+import { createAction, statuses } from "./createAction";
 import PropTypes from "prop-types";
 
 import { Store } from "../Store";
@@ -42,7 +42,17 @@ export const createStore = ({
     parsedActions[type] = dispatchedAction;
 
     // Set reducer methods
-    if (def.success) reducerMethods[`${name}/${type}`] = def.success;
+    if (def.success) {
+      reducerMethods[`${name}/${type}`] = def.success;
+    }
+
+    if (def.pending) {
+      reducerMethods[`${name}/${type}${statuses.PENDING}`] = def.pending;
+    }
+
+    if (def.error) {
+      reducerMethods[`${name}/${type}${statuses.ERROR}`] = def.error;
+    }
   });
 
   const mergedReducerMethods = createReducer(initialState, reducerMethods);
