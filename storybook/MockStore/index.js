@@ -4,10 +4,13 @@ import PropTypes from "prop-types";
 
 import { Store, StoreProvider } from "../../utils/state/Store";
 
+global.STORYBOOK_ACTION = (result) =>
+  action("Action: " + JSON.stringify(result))();
+
 export function MockStore(props) {
   Store.dispatch = (a) => {
     // Log the action
-    a().then((result) => action("Action: " + JSON.stringify(result))());
+    a().then(global.STORYBOOK_ACTION);
 
     // Return an empty resolved promise to keep the chain going
     return Promise.resolve();
