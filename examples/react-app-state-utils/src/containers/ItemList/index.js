@@ -25,6 +25,12 @@ export function ItemList(props) {
         {Object.values(items).map((item, index) => {
           const pending = getPending(ItemStore.byKey(item.id));
 
+          console.log(
+            "pending",
+            ItemStore.byKey(item.id),
+            getPending(ItemStore.byKey(item.id))
+          );
+
           return (
             <li
               key={index}

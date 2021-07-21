@@ -3,6 +3,8 @@ import { addDecorator } from "@storybook/react";
 import { RouteProvider } from "version-one-dev-utils";
 import { MockRouter } from "version-one-dev-utils/storybook";
 
+import "../src/index.css";
+
 import { routes } from "../src/routes";
 
 export const parameters = {

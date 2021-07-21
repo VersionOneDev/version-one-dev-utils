@@ -22,7 +22,7 @@ export const Default = (args) => {
 
 Default.args = {
   state: {
-    PendingStore: [ItemStore.actions.get.byKey(1)],
+    PendingStore: [ItemStore.actions.complete.byKey(1)],
   },
   props: {},
 };

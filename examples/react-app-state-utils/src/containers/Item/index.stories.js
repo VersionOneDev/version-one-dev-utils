@@ -3,6 +3,7 @@ import { MockStore, MockRouter } from "version-one-dev-utils/storybook";
 
 import { Item } from ".";
 import { ItemStore } from "../../stores/ItemStore";
+import ItemStoreMock from "../../stores/ItemStore.mock";
 
 const Stories = {
   title: "Containers/Item",
@@ -11,7 +12,7 @@ const Stories = {
 
 export default Stories;
 
-export const Default = (args) => {
+const Template = (args) => {
   const { state, props, router } = args;
 
   return (
@@ -23,15 +24,15 @@ export const Default = (args) => {
   );
 };
 
+export const Default = Template.bind({});
+
 Default.args = {
   state: {
-    ItemStore: {
-      1: { id: 1, type: "hello" },
-    },
+    ItemStore: ItemStoreMock,
   },
   props: {},
   router: {
-    url: "/item/one",
+    url: "/item/1",
     route: "/item/:id",
   },
 };
