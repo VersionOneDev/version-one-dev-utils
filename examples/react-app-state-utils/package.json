@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.1.2",
+    "@testing-library/react": "^12.0.0",
     "classnames": "^2.3.1",
     "react": "^17.0.1",
     "react-app-polyfill": "^2.0.0",
@@ -30,14 +31,14 @@
     "react-scripts": "4.0.0",
     "storybook": "^6.1.21",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
-    "version-one-dev-utils": "file:../.."
+    "version-one-dev-utils": "github:VersionOneDev/version-one-dev-utils#testing"
   },
   "scripts": {
     "update": "ncu -u",
     "lint": "eslint src/",
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!version-one-dev-utils)/\" --env=jsdom",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },
