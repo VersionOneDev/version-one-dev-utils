@@ -7,7 +7,10 @@ import classnames from "classnames";
 import { ItemStore } from "../../stores/ItemStore";
 
 export function ItemList(props) {
-  const items = useSelector((state) => state.ItemStore.items);
+  const items = useSelector((state) => {
+    console.log(state);
+    return state.ItemStore.items;
+  });
 
   const { getPending } = usePending();
 
@@ -19,20 +22,17 @@ export function ItemList(props) {
 
   return (
     <>
-      <h1 className="mb-10 text-4xl text-center">To Do List</h1>
+      <h1 data-testid="title" className="mb-10 text-4xl text-center">
+        To Do List
+      </h1>
 
       <ul>
         {Object.values(items).map((item, index) => {
           const pending = getPending(ItemStore.byKey(item.id));
 
-          console.log(
-            "pending",
-            ItemStore.byKey(item.id),
-            getPending(ItemStore.byKey(item.id))
-          );
-
           return (
             <li
+              data-testid={"toggleButton" + JSON.stringify(item.id)}
               key={index}
               className={classnames(
                 "p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer",

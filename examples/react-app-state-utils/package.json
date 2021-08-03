@@ -5,14 +5,14 @@
   "dependencies": {
     "@craco/craco": "^6.1.2",
     "@testing-library/react": "^12.0.0",
+    "@testing-library/user-event": "^13.2.1",
     "classnames": "^2.3.1",
-    "react": "^17.0.1",
-    "react-app-polyfill": "^2.0.0",
-    "react-dom": "^17.0.1"
+    "react-app-polyfill": "^2.0.0"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^6.1.21",
     "@storybook/addon-essentials": "^6.1.21",
+    "@storybook/addon-jest": "^6.3.6",
     "@storybook/addon-links": "^6.1.21",
     "@storybook/node-logger": "^6.1.21",
     "@storybook/preset-create-react-app": "^3.1.6",
@@ -28,17 +28,16 @@
     "npm-check-updates": "^9.2.2",
     "postcss": "^7.0.35",
     "prettier": "^2.1.2",
-    "react-scripts": "4.0.0",
     "storybook": "^6.1.21",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
-    "version-one-dev-utils": "github:VersionOneDev/version-one-dev-utils#testing"
+    "version-one-dev-utils": "file:../.."
   },
   "scripts": {
     "update": "ncu -u",
     "lint": "eslint src/",
     "start": "craco start",
     "build": "craco build",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!version-one-dev-utils)/\" --env=jsdom",
+    "test:generate-output": "jest --json --outputFile=.jest-test-results.json",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },

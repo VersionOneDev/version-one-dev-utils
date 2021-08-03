@@ -13,7 +13,7 @@ const Stories = {
 
 export default Stories;
 
-const Template = (args) => {
+export const Template = (args) => {
   const { state, props, router } = args;
   return (
     <MockStore state={state}>
