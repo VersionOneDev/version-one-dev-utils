@@ -4,9 +4,10 @@ import { createMemoryHistory } from "history";
 import PropTypes from "prop-types";
 import { action } from "@storybook/addon-actions";
 
+global.STORYBOOK_ROUTE = (route) => action("Route")(route);
+
 export const MockRouter = (props) => {
   const { route, url, state, children } = props;
-  const actionHandler = React.useMemo(() => action("Route"), []);
 
   const history = useRef();
   // Make sure we only call createMemoryHistory when we have to!
@@ -20,11 +21,11 @@ export const MockRouter = (props) => {
       const location = history.current.location;
       const args = [location.pathname];
       if (location.state) args.push(location.state);
-      actionHandler(...args);
+      global.STORYBOOK_ROUTE(...args);
     });
 
     return () => unlisten();
-  }, [actionHandler]);
+  }, []);
 
   return React.createElement(
     Router,
