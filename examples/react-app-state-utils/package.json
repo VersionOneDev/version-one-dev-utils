@@ -17,6 +17,7 @@
     "@storybook/node-logger": "^6.1.21",
     "@storybook/preset-create-react-app": "^3.1.6",
     "@storybook/react": "^6.1.21",
+    "@storybook/testing-react": "^0.0.21",
     "autoprefixer": "^9.8.6",
     "deepmerge": "^4.2.2",
     "dotenv": "^8.2.0",
@@ -28,7 +29,7 @@
     "npm-check-updates": "^9.2.2",
     "postcss": "^7.0.35",
     "prettier": "^2.1.2",
-    "storybook": "^6.1.21",
+    "storybook": "^6.3.6",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
     "version-one-dev-utils": "file:../.."
   },
@@ -37,7 +38,7 @@
     "lint": "eslint src/",
     "start": "craco start",
     "build": "craco build",
-    "test:generate-output": "jest --json --outputFile=.jest-test-results.json",
+    "test": "react-scripts test --setupFiles ./setupFile.js",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },

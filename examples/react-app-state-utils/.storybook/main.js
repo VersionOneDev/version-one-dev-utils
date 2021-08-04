@@ -6,6 +6,7 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/preset-create-react-app",
+    "@storybook/addon-jest",
   ],
   webpackFinal: async (config) => {
     config.module.rules.push({

@@ -2,16 +2,19 @@
 import React from "react";
 // Testing
 import { render, screen, waitFor } from "@testing-library/react";
+import { composeStories } from "@storybook/testing-react";
 // import userEvent from "@testing-library/user-event";
 // Stories
-import { Template } from "./index.stories";
+import * as stories from "./index.stories";
 
-const jestFn = jest.fn();
+// const jestFn = jest.fn();
 
-global.STORYBOOK_ROUTE = (result) => {
-  console.log("Action Global: " + JSON.stringify(result))();
-  jestFn(result);
-};
+const { Template } = composeStories(stories);
+
+// global.STORYBOOK_ROUTE = (result) => {
+//   console.log("Action Global: " + JSON.stringify(result))();
+//   jestFn(result);
+// };
 
 global.STORYBOOK_ACTION = jest.fn();
 

@@ -7,10 +7,7 @@ import classnames from "classnames";
 import { ItemStore } from "../../stores/ItemStore";
 
 export function ItemList(props) {
-  const items = useSelector((state) => {
-    console.log(state);
-    return state.ItemStore.items;
-  });
+  const items = useSelector((state) => state.ItemStore.items);
 
   const { getPending } = usePending();
 
