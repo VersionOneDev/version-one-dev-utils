@@ -56,7 +56,7 @@ export const createAction = (store, type, handler) => {
     }
 
     // Validate payload - will throw a warning in the console if invalid.
-    if (handler.propTypes) {
+    if (handler.propTypes && Object.keys(handler.propTypes).length) {
       PropTypes.checkPropTypes(
         handler.propTypes,
         props,
