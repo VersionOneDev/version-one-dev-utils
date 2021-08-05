@@ -38,7 +38,7 @@
     "lint": "eslint src/",
     "start": "craco start",
     "build": "craco build",
-    "test": "react-scripts test --setupFiles ./setupFile.js",
+    "test": "../../node_modules/react-scripts/bin/react-scripts.js test --setupFiles ./setupFile.js",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },

@@ -1,7 +1,13 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-import { useSelector, usePending, useRoutes } from "version-one-dev-utils";
+import {
+  useSelector,
+  usePending,
+  useRoutes,
+  TestId,
+} from "version-one-dev-utils";
 import classnames from "classnames";
 
 import { ItemStore } from "../../stores/ItemStore";
@@ -17,20 +23,21 @@ export function ItemList(props) {
     ItemStore.actions.get();
   }, []);
 
+  const testId = TestId(props);
+
   return (
     <>
-      <h1 data-testid="title" className="mb-10 text-4xl text-center">
+      <h1 {...testId("title")} className="mb-10 text-4xl text-center">
         To Do List
       </h1>
 
       <ul>
-        {Object.values(items).map((item, index) => {
+        {Object.values(items).map((item) => {
           const pending = getPending(ItemStore.byKey(item.id));
 
           return (
             <li
-              data-testid={"toggleButton" + JSON.stringify(item.id)}
-              key={index}
+              key={item.id}
               className={classnames(
                 "p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer",
                 item.completed && "bg-gray-600 hover:bg-gray-500"
@@ -42,11 +49,15 @@ export function ItemList(props) {
               }
             >
               <div className="flex-1 mr-4 text-gray-700">
-                <span className={classnames(item.completed && "line-through")}>
+                <span
+                  {...testId("itemTitle", item.id)}
+                  className={classnames(item.completed && "line-through")}
+                >
                   {item.title}
                 </span>
                 <div>
                   <Link
+                    {...testId("itemView", item.id)}
                     className="underline hover:no-underline text-xs mt-1"
                     to={() => link(routes.ITEM, { id: item.id })}
                   >
@@ -69,3 +80,7 @@ export function ItemList(props) {
     </>
   );
 }
+
+ItemList.propTypes = {
+  "data-testId": PropTypes.string,
+};
