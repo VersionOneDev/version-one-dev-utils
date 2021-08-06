@@ -29,7 +29,7 @@ Template.args = {
     ItemStore: ItemStoreMock,
   },
   props: {
-    "data-testid": "ref",
+    "data-testid": "ItemList",
   },
   router: { url: "/", route: "/" },
 };

@@ -12,10 +12,13 @@ const { Template } = composeStories(stories);
 global.STORYBOOK_ACTION = jest.fn();
 global.STORYBOOK_ROUTE = jest.fn();
 
+// We need to pass render into any if() block when calling actions or routes
+// We need async/await and the waitFor() function when testing actions called on render (ie in a useEffect())
+
 describe("ItemList (Template Story)", () => {
+  render(<Template />);
   it("Displays title", () => {
-    render(<Template />);
-    expect(screen.getByTestId("ref/title"));
+    expect(screen.getByTestId("ItemList/title"));
   });
 
   it("Fetches items from ItemStore", async () => {
@@ -29,7 +32,7 @@ describe("ItemList (Template Story)", () => {
 
   it("Changes route to item when view is clicked", () => {
     render(<Template />);
-    userEvent.click(screen.getByTestId("ref/itemView/1"));
+    userEvent.click(screen.getByTestId("ItemList/itemView/1"));
     expect(global.STORYBOOK_ROUTE).toHaveBeenCalledWith("/item/1");
   });
 });
