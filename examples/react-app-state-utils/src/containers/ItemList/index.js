@@ -30,7 +30,7 @@ export function ItemList(props) {
   return (
     <>
       <Heading value="To Do List" {...testId("title")} />
-
+      <p {...testId("paragraph")}>Hello</p>
       <ul>
         {Object.values(items).map((item) => {
           const pending = getPending(ItemStore.byKey(item.id));
@@ -40,7 +40,7 @@ export function ItemList(props) {
               key={item.id}
               className={classnames(
                 "p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer",
-                item.completed && "bg-gray-600 hover:bg-gray-500"
+                item.completed && "bg-gray-400 hover:bg-gray-500"
               )}
               onClick={() =>
                 !item.completed

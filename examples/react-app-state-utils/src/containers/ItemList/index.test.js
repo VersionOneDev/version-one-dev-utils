@@ -4,19 +4,23 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { composeStories } from "@storybook/testing-react";
 import userEvent from "@testing-library/user-event";
-
 // Stories
 import * as stories from "./index.stories";
 
 const { Template } = composeStories(stories);
 
 global.STORYBOOK_ACTION = jest.fn();
-global.STORYBOOK_ROUTE = jest.fn();
 
 /** Template story */
 describe("ItemList (Template Story)", () => {
   it("Matches snapshot", () => {
     expect(render(<Template />)).toMatchSnapshot();
+  });
+
+  it("Changes route to item when view is clicked", () => {
+    render(<Template />);
+    userEvent.click(screen.getByTestId("ItemList/itemView/1"));
+    expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith("/item/1");
   });
 
   it("Displays Heading component", () => {
@@ -31,11 +35,5 @@ describe("ItemList (Template Story)", () => {
         type: "ItemStore/get",
       })
     );
-  });
-
-  it("Changes route to item when view is clicked", () => {
-    render(<Template />);
-    userEvent.click(screen.getByTestId("ItemList/itemView/1"));
-    expect(global.STORYBOOK_ROUTE).toHaveBeenCalledWith("/item/1");
   });
 });

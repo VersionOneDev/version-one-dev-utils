@@ -10,8 +10,6 @@ import userEvent from "@testing-library/user-event";
 const { Template } = composeStories(stories);
 
 global.STORYBOOK_ACTION = jest.fn();
-global.STORYBOOK_ROUTE = jest.fn();
-global.console.log = jest.fn();
 
 describe("ItemList (Template Story)", () => {
   it("Displays the component", () => {
@@ -19,9 +17,8 @@ describe("ItemList (Template Story)", () => {
     expect(screen.getByTestId(Template.args.props["data-testid"]));
   });
   it("Calls onClickHeading when clicked", () => {
-    const onClickHeadingSpy = jest.fn();
-    render(<Template onClickHeading={onClickHeadingSpy} />);
+    render(<Template />);
     userEvent.click(screen.getByTestId(Template.args.props["data-testid"]));
-    //expect(onClickHeadingSpy).toHaveBeenCalled(); fails
+    expect(global.STORYBOOK_ACTION).toHaveBeenCalled();
   });
 });
