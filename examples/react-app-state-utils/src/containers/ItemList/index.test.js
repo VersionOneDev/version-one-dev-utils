@@ -4,6 +4,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { composeStories } from "@storybook/testing-react";
 import userEvent from "@testing-library/user-event";
+
 // Stories
 import * as stories from "./index.stories";
 
@@ -12,12 +13,14 @@ const { Template } = composeStories(stories);
 global.STORYBOOK_ACTION = jest.fn();
 global.STORYBOOK_ROUTE = jest.fn();
 
-// We need to pass render into any if() block when calling actions or routes
-// We need async/await and the waitFor() function when testing actions called on render (ie in a useEffect())
-
+/** Template story */
 describe("ItemList (Template Story)", () => {
-  render(<Template />);
-  it("Displays title", () => {
+  it("Matches snapshot", () => {
+    expect(render(<Template />)).toMatchSnapshot();
+  });
+
+  it("Displays Heading component", () => {
+    render(<Template />);
     expect(screen.getByTestId("ItemList/title"));
   });
 

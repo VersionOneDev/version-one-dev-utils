@@ -12,6 +12,8 @@ import classnames from "classnames";
 
 import { ItemStore } from "../../stores/ItemStore";
 
+import { Heading } from "../../components/Heading";
+
 export function ItemList(props) {
   const items = useSelector((state) => state.ItemStore.items);
 
@@ -27,9 +29,7 @@ export function ItemList(props) {
 
   return (
     <>
-      <h1 {...testId("title")} className="mb-10 text-4xl text-center">
-        To Do List
-      </h1>
+      <Heading value="To Do List" {...testId("title")} />
 
       <ul>
         {Object.values(items).map((item) => {
