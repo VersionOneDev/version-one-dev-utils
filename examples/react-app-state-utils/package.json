@@ -38,7 +38,7 @@
     "lint": "eslint src/",
     "start": "craco start",
     "build": "craco build",
-    "test": "../../node_modules/react-scripts/bin/react-scripts.js test --setupFiles ./setupFile.js",
+    "test": "../../node_modules/react-scripts/bin/react-scripts.js test --setupFiles ./tests/setupFiles.js --setupFilesAfterEnv ./tests/setupTests.js",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },
@@ -79,5 +79,10 @@
     "last 1 ie version",
     "last 1 ios_saf version",
     "last 1 and_chr version"
-  ]
+  ],
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!version-one-dev-utils*)"
+    ]
+  }
 }

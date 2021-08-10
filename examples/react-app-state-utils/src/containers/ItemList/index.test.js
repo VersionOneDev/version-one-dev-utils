@@ -9,8 +9,6 @@ import * as stories from "./index.stories";
 
 const { Template } = composeStories(stories);
 
-global.STORYBOOK_ACTION = jest.fn();
-
 /** Template story */
 describe("ItemList (Template Story)", () => {
   it("Matches snapshot", () => {

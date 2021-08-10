@@ -9,8 +9,6 @@ import userEvent from "@testing-library/user-event";
 
 const { Template } = composeStories(stories);
 
-global.STORYBOOK_ACTION = jest.fn();
-
 describe("ItemList (Template Story)", () => {
   it("Displays the component", () => {
     render(<Template />);
