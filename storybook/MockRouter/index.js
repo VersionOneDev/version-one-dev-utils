@@ -2,9 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { Router, Route } from "react-router-dom";
 import { createMemoryHistory } from "history";
 import PropTypes from "prop-types";
-import { action } from "@storybook/addon-actions";
-
-global.STORYBOOK_ROUTE = (route) => action("Route")(route);
+import { action } from "../action";
 
 export const MockRouter = (props) => {
   const { route, url, state, children } = props;
@@ -21,7 +19,7 @@ export const MockRouter = (props) => {
       const location = history.current.location;
       const args = [location.pathname];
       if (location.state) args.push(location.state);
-      global.STORYBOOK_ROUTE(...args);
+      action("Route")(...args);
     });
 
     return () => unlisten();
