@@ -4,5 +4,5 @@ import { ItemList } from "./index";
 
 it("renders welcome message", () => {
   render(<ItemList />);
-  expect(screen.getByText("To Do List")).toBeInTheDocument();
+  expect(screen.getByTestId("ref/title")).toBeInTheDocument();
 });

@@ -4,34 +4,21 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.1.2",
+    "dotenv": "^8.2.0",
     "classnames": "^2.3.1",
-    "react": "^17.0.1",
-    "react-app-polyfill": "^2.0.0",
-    "react-dom": "^17.0.1"
+    "autoprefixer": "^9.8.6",
+    "postcss": "^7.0.35",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
+    "version-one-dev-utils": "file:../.."
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.1.21",
-    "@storybook/addon-essentials": "^6.1.21",
-    "@storybook/addon-links": "^6.1.21",
-    "@storybook/node-logger": "^6.1.21",
-    "@storybook/preset-create-react-app": "^3.1.6",
-    "@storybook/react": "^6.1.21",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^12.0.0",
-    "autoprefixer": "^9.8.6",
-    "dotenv": "^8.2.0",
     "eslint-config-prettier": "^6.14.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.5",
     "husky": "^4.3.0",
     "npm-check-updates": "^9.2.2",
-    "postcss": "^7.0.35",
-    "prettier": "^2.1.2",
-    "react-scripts": "4.0.0",
-    "storybook": "^6.1.21",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
-    "version-one-dev-utils": "file:../.."
+    "prettier": "^2.1.2"
   },
   "scripts": {
     "update": "ncu -u",
@@ -39,8 +26,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "storybook": "start-storybook"
   },
   "husky": {
     "hooks": {
