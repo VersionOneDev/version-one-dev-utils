@@ -72,7 +72,8 @@ export const useForm = (config) => {
         // Create the return props
         props.current[name] = {
           name,
-          defaultValue: values.current[name],
+          //defaultValue: values.current[name],
+          value: values.current[name],
           onBlur: (e) => {
             // Field and form have been touched
             fields.current[name].isTouched = true;
@@ -115,8 +116,9 @@ export const useForm = (config) => {
         };
       }
 
+      props.current[name].value = values.current[name];
+
       if (cb) {
-        props.current[name].value = values.current[name];
         return cb(props.current[name]);
       } else {
         return props.current[name];
@@ -187,12 +189,33 @@ export const useForm = (config) => {
     });
   };
 
+  const reset = useCallback(() => {
+    results.current = {};
+    fields.current = {};
+    props.current = {};
+    values.current = {};
+    errors.current = {};
+
+    form.current = {
+      isDirty: false,
+      isTouched: false,
+      isValid: true,
+      isValidating: false,
+      isSubmitting: false,
+      submitCount: 0,
+    };
+
+    forceRender();
+    console.log("reset complete");
+  }, []);
+
   return {
     formProps: {
       noValidate: true,
       onSubmit,
     },
     register,
+    reset,
     ...value,
   };
 };

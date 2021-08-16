@@ -19,7 +19,7 @@ CustomInput.propTypes = {
 };
 
 export function Form(props) {
-  const { formProps, form, register, fields, errors, values } = useForm({
+  const { formProps, form, register, reset, fields, errors, values } = useForm({
     mode: "onTouched",
     schema: {
       email: yup
@@ -38,6 +38,7 @@ export function Form(props) {
       new Promise((r) =>
         setTimeout(() => {
           console.log("onSubmit", values);
+          reset();
           r();
         }, 2000)
       ),
@@ -95,6 +96,9 @@ export function Form(props) {
         />
       </div>
       <button disabled={form.isSubmitting}>Login</button>
+      <button type="reset" onClick={reset}>
+        Reset
+      </button>
       <br />
       <br />
       <b>FORM:</b> {JSON.stringify(form)}
