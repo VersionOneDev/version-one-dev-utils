@@ -5,9 +5,10 @@
   "dependencies": {
     "@craco/craco": "^6.1.2",
     "classnames": "^2.3.1",
-    "react": "^17.0.1",
+    "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^6.1.21",
@@ -26,7 +27,6 @@
     "npm-check-updates": "^9.2.2",
     "postcss": "^7.0.35",
     "prettier": "^2.1.2",
-    "react-scripts": "4.0.0",
     "storybook": "^6.1.21",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
     "version-one-dev-utils": "file:../.."

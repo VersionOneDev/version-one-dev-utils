@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { RouteProvider } from "version-one-dev-utils";
 import { routes } from "./routes";
 
+import { AddTodo } from "./containers/AddTodo";
 import { ItemList } from "./containers/ItemList";
 import { Item } from "./containers/Item";
 import { Notification } from "./containers/Notification";
@@ -13,6 +14,7 @@ export function App() {
       <Router>
         <Switch>
           <Route path={routes.HOME} exact>
+            <AddTodo />
             <ItemList />
           </Route>
           <Route path={routes.ITEM}>
