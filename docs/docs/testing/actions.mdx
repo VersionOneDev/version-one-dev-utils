@@ -1,0 +1,100 @@
+---
+sidebar_position: 4
+---
+
+# Testing Actions
+
+We can test if, when and how actions from our stores are fired in our components.
+
+<br />
+
+## Default case
+
+This first test example mimics a button click with helper function `userEvent` from `@testing-library/react`.
+We then check that the correct action was fired with the correct value by passing `global.STORYBOOK_ACTION`
+to the `expect`.
+
+#### Component
+
+```jsx
+import { TestId } from "version-one-dev-utils";
+import {TodosStore} from "../stores/TodosStore;
+
+export function AddTodoButton(props) {
+  const testId = TestId(props);
+
+  const onClick = () => TodosStore.actions.add({ value: "Buy Milk" })
+
+  return (
+    <button {...testId()} onClick={onClick}>
+      Add
+    </button>
+  )
+
+}
+```
+
+#### Test file
+
+```jsx
+import userEvent from "@testing-library/user-event";
+
+describe("Story1", () => {
+  it("contains button which fires the add action from TodoStore", () => {
+    render(<Story1 />);
+    userEvent.click(screen.getByTestId("addTodoButton"));
+    expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith({ value: "Buy milk" });
+  });
+});
+```
+
+<br />
+
+## Actiosn fired on render
+
+In this example the component fires an action on render. However, tests will run before the `useEffect`
+fires so we need to use async-await and the `waitFor` helper function from `@testing-library/react` to
+test this action.
+
+#### Component
+
+```jsx
+import {useEffect} from "react";
+import {TodosStore} from "../stores/TodosStore;
+import {useSelector} from "version-one-dev-utils";
+
+export function TodosList(props) {
+
+  const todos = useSelector((state) => state.Todostore.todos);
+
+  useEffect(() => {
+    TodosStore.actions.get();
+  }, []);
+
+  return (
+    <div>
+      {todos && todos.map((todo) => <p key={todo.id}>{todo.value}</p>)}
+    </div>
+  )
+
+}
+```
+
+#### Test file
+
+```jsx
+import { render, screen, waitFor } from "@testing-library/react";
+
+describe("Story1", () => {
+  it("Fetches todos from TodosStore", async () => {
+    render(<Story1 />);
+    await waitFor(() =>
+      expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith({
+        type: "TodosStore/get",
+      })
+    );
+  });
+});
+```
+
+<br />
