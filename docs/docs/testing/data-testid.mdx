@@ -96,9 +96,7 @@ above but the `h1` element has been replaced by a `<Header/>` component and the 
 ```jsx
 function Header(props) {
   const testId = TestId(props);
-  return (
-    <h1 {...testId()}>{props.value}</h1>
-  );
+  return <h1 {...testId()}>{props.value}</h1>;
 }
 
 export function Todos(props) {
@@ -106,7 +104,7 @@ export function Todos(props) {
 
   return (
     <div {...testId()}>
-      <Header value="Todos" {...testId("header")}>
+      <Header value="Todos" {...testId("header")} />
       {todos.map((todo) => (
         <p key={todo.id}>{todo.value}</p>
       ))}
