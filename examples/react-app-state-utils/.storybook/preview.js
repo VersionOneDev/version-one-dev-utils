@@ -1,8 +1,6 @@
 import React from "react";
-import { addDecorator } from "@storybook/react";
 import "../src/index.css";
-
-import { RouteProvider } from "version-one-dev-utils";
+import { RouteProvider, TestId } from "version-one-dev-utils";
 import { MockRouter } from "version-one-dev-utils/storybook";
 
 import { routes } from "../src/routes.js";
@@ -12,7 +10,11 @@ export const parameters = {
 };
 
 export const decorators = [
-  (Story) => {
+  (Story, config) => {
+    config.args.props = {
+      "data-testid": "ref",
+      ...config.args.props,
+    };
     return (
       <RouteProvider value={routes}>
         <MockRouter>

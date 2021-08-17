@@ -1,0 +1,46 @@
+---
+sidebar_position: 3
+---
+
+# TestId
+
+A better way of targeting DOM nodes in our tests is with a unique id.
+The dev utils expose a `TestId` function which enables us to apply a `data-testid`
+attribute to components and html elements. We can then use this id to target elements in our tests.
+
+<br />
+
+## TestId(props)
+
+If a component recieves a prop of "data-testid" the TestId function will parse this value
+and apply it to an element. The below componet receives a `data-testid` prop with the value of `todos`.
+This is placed on the div enclosing the Todos component and tested.
+
+#### Component
+
+```jsx
+import { TestId } from "version-one-dev-utils";
+
+export function Todos(props) {
+  const testId = TestId(props);
+
+  return (
+    <div {...testId()}>
+      {todos.map((todo) => (
+        <p key={todo.id}>{todo}</p>
+      ))}
+    </div>
+  );
+}
+```
+
+#### Test file
+
+```jsx
+describe("Story1", () => {
+  it("renders and displays a button", () => {
+    render(<Story1 />);
+    screen(getByTestId("todos"));
+  });
+});
+```

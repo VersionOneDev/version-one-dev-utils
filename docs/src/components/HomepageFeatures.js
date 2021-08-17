@@ -38,6 +38,22 @@ const FeatureList = [
       </>
     ),
   },
+  {
+    title: "Testing",
+    Svg: require("../../static/img/logo.svg").default,
+    description: (
+      <>
+        <div className={styles.buttons}>
+          <Link
+            className="button button--secondary button--lg"
+            to="/docs/testing/intro"
+          >
+            Get Started
+          </Link>
+        </div>
+      </>
+    ),
+  },
 ];
 
 function Feature({ Svg, title, description }) {

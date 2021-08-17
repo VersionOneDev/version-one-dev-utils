@@ -7,85 +7,19 @@ Object {
     <div>
       <h1
         class="mb-10 text-4xl text-center"
-        data-testid="ref/title"
+        data-testid="ref"
       >
-        To Do List
+        Title
       </h1>
-      <p
-        data-testid="ref/paragraph"
-      >
-        Hello
-      </p>
-      <ul>
-        <li
-          class="p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer bg-gray-400 hover:bg-gray-500"
-        >
-          <div
-            class="flex-1 mr-4 text-gray-700"
-          >
-            <span
-              class="line-through"
-              data-testid="ref/itemTitle/1"
-            >
-              Title!!
-            </span>
-            <div>
-              <a
-                class="underline hover:no-underline text-xs mt-1"
-                data-testid="ref/itemView/1"
-                href="/item/1"
-              >
-                View
-              </a>
-            </div>
-          </div>
-          <span
-            class="inline-block w-6 h-6 border-2 border-gray-600 rounded-full border-green-700 bg-green-400"
-          />
-        </li>
-      </ul>
     </div>
   </body>,
   "container": <div>
     <h1
       class="mb-10 text-4xl text-center"
-      data-testid="ref/title"
+      data-testid="ref"
     >
-      To Do List
+      Title
     </h1>
-    <p
-      data-testid="ref/paragraph"
-    >
-      Hello
-    </p>
-    <ul>
-      <li
-        class="p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer bg-gray-400 hover:bg-gray-500"
-      >
-        <div
-          class="flex-1 mr-4 text-gray-700"
-        >
-          <span
-            class="line-through"
-            data-testid="ref/itemTitle/1"
-          >
-            Title!!
-          </span>
-          <div>
-            <a
-              class="underline hover:no-underline text-xs mt-1"
-              data-testid="ref/itemView/1"
-              href="/item/1"
-            >
-              View
-            </a>
-          </div>
-        </div>
-        <span
-          class="inline-block w-6 h-6 border-2 border-gray-600 rounded-full border-green-700 bg-green-400"
-        />
-      </li>
-    </ul>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

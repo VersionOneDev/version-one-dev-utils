@@ -6,16 +6,20 @@ function Heading(props) {
   const testId = TestId(props);
 
   return (
-    <div onClick={() => props.onClickHeading()} {...testId()}>
-      <h1 className="mb-10 text-4xl text-center">{props.value}</h1>
-    </div>
+    <h1
+      {...testId()}
+      className="mb-10 text-4xl text-center"
+      onClick={props.onClick}
+    >
+      {props.value}
+    </h1>
   );
 }
 
 Heading.propTypes = {
-  "data-testId": PropTypes.string,
+  "data-testid": PropTypes.string,
   value: PropTypes.string.isRequired,
-  onClickHeading: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 export { Heading };

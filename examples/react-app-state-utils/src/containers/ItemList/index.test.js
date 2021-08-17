@@ -17,13 +17,13 @@ describe("ItemList (Template Story)", () => {
 
   it("Changes route to item when view is clicked", () => {
     render(<Template />);
-    userEvent.click(screen.getByTestId("ItemList/itemView/1"));
+    userEvent.click(screen.getByTestId("ref/itemView/1"));
     expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith("/item/1");
   });
 
   it("Displays Heading component", () => {
     render(<Template />);
-    expect(screen.getByTestId("ItemList/title"));
+    expect(screen.getByTestId("ref/title"));
   });
 
   it("Fetches items from ItemStore", async () => {

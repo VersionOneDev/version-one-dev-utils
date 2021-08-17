@@ -23,7 +23,6 @@ export const Template = (args) => {
 Template.args = {
   props: {
     value: "Title",
-    "data-testid": "Heading",
-    onClickHeading: action("onClickHeading"),
+    onClick: action("onClick"),
   },
 };

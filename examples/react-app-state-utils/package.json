@@ -18,6 +18,7 @@
     "@storybook/preset-create-react-app": "^3.1.6",
     "@storybook/react": "^6.1.21",
     "@storybook/testing-react": "^0.0.21",
+    "@testing-library/jest-dom": "^5.14.1",
     "autoprefixer": "^9.8.6",
     "deepmerge": "^4.2.2",
     "dotenv": "^8.2.0",

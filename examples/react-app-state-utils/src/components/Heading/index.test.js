@@ -10,13 +10,16 @@ import userEvent from "@testing-library/user-event";
 const { Template } = composeStories(stories);
 
 describe("ItemList (Template Story)", () => {
-  it("Displays the component", () => {
+  it("Matches snapshot", () => {
+    expect(render(<Template />)).toMatchSnapshot();
+  });
+  it("Displays the correct text value", () => {
     render(<Template />);
-    expect(screen.getByTestId(Template.args.props["data-testid"]));
+    expect(screen.getByTestId("ref")).toHaveTextContent("Title");
   });
   it("Calls onClickHeading when clicked", () => {
     render(<Template />);
-    userEvent.click(screen.getByTestId(Template.args.props["data-testid"]));
+    userEvent.click(screen.getByTestId("ref"));
     expect(global.STORYBOOK_ACTION).toHaveBeenCalled();
   });
 });

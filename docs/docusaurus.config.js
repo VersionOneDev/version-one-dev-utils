@@ -27,6 +27,12 @@ module.exports = {
           docId: "routing/intro",
         },
         {
+          position: "left",
+          label: "Testing",
+          type: "doc",
+          docId: "testing/intro",
+        },
+        {
           href: "https://github.com/VersionOneDev/version-one-dev-utils",
           label: "GitHub",
           position: "right",

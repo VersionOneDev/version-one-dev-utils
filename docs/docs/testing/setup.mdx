@@ -1,0 +1,31 @@
+---
+sidebar_position: 2
+---
+
+# Setup
+
+A test file requires the below boilerplate to run tests on our stories.
+
+You need to install `@storybook/testing-react` which exposes `composeStories`.
+This ensures the `MockStore` and `MockRouter` decorators are applied to our tests.
+
+The below example tests that the story `Story1` renders and contains a button element.
+
+```javascript
+// React
+import React from "react";
+// Testing
+import { render, screen } from "@testing-library/react";
+import { composeStories } from "@storybook/testing-react";
+// Stories
+import * as stories from "./index.stories";
+
+const { Story1, Story2 } = composeStories(stories);
+
+describe("Story1", () => {
+  it("renders and displays a button", () => {
+    render(<Story1 />);
+    screen(getByRole("button"));
+  });
+});
+```
