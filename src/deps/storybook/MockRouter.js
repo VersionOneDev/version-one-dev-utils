@@ -26,7 +26,7 @@ export const MockRouter = (props) => {
     return () => unlisten();
   }, [actionHandler]);
 
-  return <Router history={history.current}>{children}</Router>;
+  return React.createElement(Router, { history: history.current }, children);
 };
 
 MockRouter.defaultProps = {

@@ -26,7 +26,7 @@ export const MockStore = (props) => {
     middleware: [logAction, ReduxThunk],
   });
 
-  return <Provider store={store}>{children}</Provider>;
+  return React.createElement(Provider, { store }, children);
 };
 
 MockStore.propTypes = {
