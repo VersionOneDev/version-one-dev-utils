@@ -4,13 +4,13 @@ sidebar_position: 4
 
 # Testing Actions
 
-We can test if, when and how actions from our stores are fired in our components.
+We can test if, when and how actions from our stores are fired in our components Storybook stories.
 
 <br />
 
 ## Default case
 
-This first test example mimics a button click with helper function `userEvent` from `@testing-library/react`.
+This component recieves a data-testid prop of `addTodoButton`. The components test file mimics a button click with helper function `userEvent` from `@testing-library/react`.
 We then check that the correct action was fired with the correct value by passing `global.STORYBOOK_ACTION`
 to the `expect`.
 

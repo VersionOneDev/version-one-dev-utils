@@ -4,4 +4,46 @@ sidebar_position: 5
 
 # Testing Routes
 
-We can access
+We can test the functions exposed by the `useRoutes()` hook in our component stories. In this example `routes.TODO === "todo"`.
+As with testing actions, we use `global.STORYBOOK_ACTION` to test if, how and when functions returned from `useRoutes`
+are called.
+
+#### Component
+
+```jsx
+import { Link } from "react-router-dom";
+import { TestId } from "version-one-dev-utils";
+
+export function Todos(props) {
+  const testId = TestId(props);
+
+  const { link, routes } = useRoutes();
+
+  return (
+    <div {...testId()}>
+      <h1>Todos</h1>
+
+      {todos.map((todo) => (
+        <Link
+          {...testId("list", todo.id)}
+          to={() => link(routes.TODO, { id: todo.id })}
+        >
+          {todo.value}
+        </Link>
+      ))}
+    </div>
+  );
+}
+```
+
+#### Test file
+
+```jsx
+describe("Story1", () => {
+  it("Changes route to /todo/:todoId when a todo item is clicked", () => {
+    render(<Story1 />);
+    userEvent.click(screen.getByTestId("todos/list/1"));
+    expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith("/todo/1");
+  });
+});
+```

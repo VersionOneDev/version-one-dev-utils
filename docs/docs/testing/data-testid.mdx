@@ -14,7 +14,6 @@ attribute to components and html elements.
 
 If a component recieves a prop of `data-testid` the `TestId` function will parse this value
 and apply it to an element. The below componet receives a `data-testid` prop with the value of `"todos"`.
-This is placed on the div enclosing the Todos component and tested.
 
 #### Component
 
@@ -40,7 +39,7 @@ export function Todos(props) {
 
 ```jsx
 describe("Story1", () => {
-  it("renders div", () => {
+  it("renders div which wraps header and list", () => {
     render(<Story1 />);
     screen(getByTestId("todos"));
   });
@@ -52,7 +51,7 @@ describe("Story1", () => {
 ## Sub values
 
 We can target child elements by passing a string as an arguemnt to a function returned from `TestId()`.
-Note how we target this value in our tests; the h1 has a `data-testid` of `"todos/header"`.
+Note how we target this value in our tests; the h1 will be given a `data-testid` attribute of `"todos/header"`.
 
 #### Component
 
@@ -89,8 +88,8 @@ describe("Story1", () => {
 
 ## Child components
 
-`testId` can be passed as a prop to child components. This example is the same as the one
-above but the `h1` element has been replaced by a `<Header/>` component.
+A function returned from `TestId` can be passed as a prop to child components. This example is the same as the one
+above but the `h1` element has been replaced by a `<Header/>` component and the test works the same.
 
 #### Component
 
@@ -131,8 +130,8 @@ describe("Story1", () => {
 
 ## Multiple sub values
 
-We can pass multiple values to a function returned from `TestId()`.
-In this example a todo with the id `1` would have a data-testid value of `"todos/list/1"`.
+We can pass multiple values to a function returned from `TestId`.
+In this example a todo with the id `1` would have a `data-testid` value of `"todos/list/1"`.
 
 #### Component
 
