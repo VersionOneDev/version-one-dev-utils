@@ -1,5 +1,3 @@
-import PropTypes from "prop-types";
-
 export const TestId = (props = {}) => {
   const component = props[TestId.attribute];
   return (element, key) => {
