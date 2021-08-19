@@ -16,6 +16,5 @@ export const TestId = (props = {}) => {
 TestId.attribute = "data-testid";
 TestId.delimiter = "/";
 
-TestId.defaultProps = { [TestId.attribute]: "" };
-
-TestId.propTypes = { [TestId.attribute]: PropTypes.string };
+TestId.getDefaultProps = () => ({ [TestId.attribute]: "" });
+TestId.getPropTypes = () => ({ [TestId.attribute]: PropTypes.string });
