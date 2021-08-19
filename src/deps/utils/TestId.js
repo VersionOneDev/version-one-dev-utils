@@ -1,5 +1,6 @@
-export const TestId = (props = {}) => {
-  const component = props[TestId.attribute];
+/** Accepts a string or props object. **/
+export const TestId = (props = "") => {
+  const component = typeof props === "string" ? props : props[TestId.attribute];
   return (element, key) => {
     const testId = [component, element, key]
       .filter((v) => v !== undefined)
