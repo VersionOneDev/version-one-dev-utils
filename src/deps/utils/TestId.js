@@ -1,10 +1,14 @@
 /** Accepts a string or props object. **/
 export const TestId = (props = "") => {
-  const component = typeof props === "string" ? props : props[TestId.attribute];
+  const component = props[TestId.attribute];
   return (element, key) => {
-    const testId = [component, element, key]
+    const testId = [
+      component,
+      element && component ? TestId.elementDelimiter + element : element,
+      key ? TestId.keyDelimiter + key : undefined,
+    ]
       .filter((v) => v !== undefined)
-      .join(TestId.delimiter);
+      .join("");
 
     return {
       [TestId.attribute]: testId,
@@ -13,4 +17,5 @@ export const TestId = (props = "") => {
 };
 
 TestId.attribute = "data-testid";
-TestId.delimiter = "/";
+TestId.elementDelimiter = "/";
+TestId.keyDelimiter = "-";
