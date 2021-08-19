@@ -1,15 +1,19 @@
-const delimiter = "/";
-const attribute = "data-testid"
+import PropTypes from "prop-types";
 
 export const TestId = (props = {}) => {
-  const component = props[attribute];
+  const component = props[TestId.attribute];
   return (element, key) => {
     const testId = [component, element, key]
       .filter((v) => v !== undefined)
-      .join(delimiter);
+      .join(TestId.delimiter);
 
     return {
-      [attribute]: testId,
+      [TestId.attribute]: testId,
     };
   };
 };
+
+TestId.attribute = "data-testid";
+TestId.delimiter = "/";
+
+TestId.propTypes = { [TestId.attribute]: PropTypes.string };
