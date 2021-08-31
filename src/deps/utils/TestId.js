@@ -10,9 +10,13 @@ export const TestId = (props = "") => {
       .filter((v) => v !== undefined)
       .join("");
 
-    return {
-      [TestId.attribute]: testId,
-    };
+    if (testId) {
+      return {
+        [TestId.attribute]: testId,
+      };
+    } else {
+      return {};
+    }
   };
 };
 
