@@ -1,42 +1,55 @@
 import React from "react";
 import { MockStore, MockRouter } from "version-one-dev-utils/storybook";
+import deepmerge from "deepmerge";
 
-import { Items } from ".";
+import { ItemList } from ".";
 import { ItemStore } from "../../stores/ItemStore";
+import ItemStoreMock from "../../stores/ItemStore.mock";
 
 const Stories = {
-  title: "Containers/Items",
-  component: Items,
+  title: "Containers/ItemList",
+  component: ItemList,
 };
 
 export default Stories;
 
-export const Default = (args) => {
+export const Template = (args) => {
   const { state, props, router } = args;
   return (
     <MockStore state={state}>
       <MockRouter {...router}>
-        <Items {...props} />
+        <ItemList {...props} />
       </MockRouter>
     </MockStore>
   );
 };
 
-Default.args = {
+Template.args = {
   state: {
-    ItemStore: {
-      1: { type: "hello" },
-    },
+    ItemStore: ItemStoreMock,
   },
-  props: {},
   router: { url: "/", route: "/" },
 };
 
-export const Pending = Default.bind({});
-Pending.args = {
-  ...Default.args,
+export const CompletedItem = Template.bind({});
+CompletedItem.args = deepmerge(Template.args, {});
+
+export const IncompletedItem = Template.bind({});
+IncompletedItem.args = deepmerge(Template.args, {
   state: {
-    PendingStore: [ItemStore.actions.get.byKey(1)],
-    ItemStore: {},
+    ItemStore: {
+      items: {
+        1: {
+          completed: false,
+        },
+      },
+    },
   },
-};
+});
+
+export const Pending = Template.bind({});
+Pending.args = deepmerge(Template.args, {
+  state: {
+    PendingStore: [ItemStore.actions.complete.byKey(1)],
+  },
+});

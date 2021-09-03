@@ -7,49 +7,50 @@ import styles from "./HomepageFeatures.module.css";
 
 const FeatureList = [
   {
+    title: "Get Started",
+    Svg: require("../../static/img/getStarted.svg").default,
+    path: "/docs/intro",
+  },
+  {
+    title: "Style (CSS)",
+    Svg: require("../../static/img/style.svg").default,
+    path: "/docs/intro",
+  },
+  {
     title: "State Management",
-    Svg: require("../../static/img/logo.svg").default,
-    description: (
-      <>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/state/intro"
-          >
-            Get Started
-          </Link>
-        </div>
-      </>
-    ),
+    Svg: require("../../static/img/state.svg").default,
+    path: "/docs/state/intro",
   },
   {
     title: "Routing",
-    Svg: require("../../static/img/logo.svg").default,
-    description: (
-      <>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/routing/intro"
-          >
-            Get Started
-          </Link>
-        </div>
-      </>
-    ),
+    Svg: require("../../static/img/routing.svg").default,
+    path: "/docs/routing/intro",
+  },
+  {
+    title: "Forms",
+    Svg: require("../../static/img/forms.svg").default,
+    path: "/docs/forms/intro",
+  },
+  {
+    title: "Testing",
+    Svg: require("../../static/img/tests.svg").default,
+    path: "/docs/testing/intro",
   },
 ];
 
-function Feature({ Svg, title, description }) {
+function Feature({ Svg, title, path }) {
   return (
-    <div className={clsx("col col--4")}>
-      <div className="text--center">
+    <div className={clsx("col col--4", styles.feature)}>
+      <Link
+        className={clsx(
+          "button button--secondary button--lg text--center",
+          styles.featureButton
+        )}
+        to={path}
+      >
         <Svg className={styles.featureSvg} alt={title} />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <h3>{title}</h3>
-        <p>{description}</p>
-      </div>
+        <div>{title}</div>
+      </Link>
     </div>
   );
 }

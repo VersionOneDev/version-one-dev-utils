@@ -1,6 +1,6 @@
 module.exports = {
   title: "Version One Dev Utils",
-  tagline: "Version One Dev Utils",
+  tagline: "APIs and best practices for use when developing Version One apps.",
   url: "https://example.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -8,7 +8,6 @@ module.exports = {
   favicon: "img/favicon.ico",
   themeConfig: {
     navbar: {
-      title: "Version One",
       logo: {
         alt: "Version One Logo",
         src: "img/logo.svg",
@@ -25,6 +24,12 @@ module.exports = {
           label: "Routing",
           type: "doc",
           docId: "routing/intro",
+        },
+        {
+          position: "left",
+          label: "Testing",
+          type: "doc",
+          docId: "testing/intro",
         },
         {
           href: "https://github.com/VersionOneDev/version-one-dev-utils",

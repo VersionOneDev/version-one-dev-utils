@@ -1,0 +1,164 @@
+---
+sidebar_position: 3
+---
+
+# TestId
+
+A better way of targeting DOM nodes in our tests is with a unique id.
+The dev utils expose a `TestId` function which enables us to apply a `data-testid`
+attribute to components and html elements.
+
+<br />
+
+## Default case
+
+If a component recieves a prop of `data-testid` the `TestId` function will parse this value
+and apply it to an element. The below componet receives a `data-testid` prop with the value of `"todos"`.
+
+#### Component
+
+```jsx
+import { TestId } from "version-one-dev-utils";
+
+export function Todos(props) {
+  const testId = TestId(props);
+
+  return (
+    <div {...testId()}>
+      <h1>Todos</h1>
+
+      {todos.map((todo) => (
+        <p key={todo.id}>{todo.value}</p>
+      ))}
+    </div>
+  );
+}
+```
+
+#### Test file
+
+```jsx
+describe("Story1", () => {
+  it("renders div which wraps header and list", () => {
+    render(<Story1 />);
+    screen(getByTestId("todos"));
+  });
+});
+```
+
+<br />
+
+## Sub values
+
+We can target child elements by passing a string as an arguemnt to a function returned from `TestId()`.
+Note how we target this value in our tests; the h1 will be given a `data-testid` attribute of `"todos/header"`.
+
+#### Component
+
+```jsx
+import { TestId } from "version-one-dev-utils";
+
+export function Todos(props) {
+  const testId = TestId(props);
+
+  return (
+    <div {...testId()}>
+      <h1 {...testId("header")}>Todos</h1>
+
+      {todos.map((todo) => (
+        <p key={todo.id}>{todo.value}</p>
+      ))}
+    </div>
+  );
+}
+```
+
+#### Test file
+
+```jsx
+describe("Story1", () => {
+  it("displays header with correct value", () => {
+    render(<Story1 />);
+    expect(screen.getByTestId("todos/header")).toHaveTextContent("Todos");
+  });
+});
+```
+
+<br />
+
+## Child components
+
+A function returned from `TestId` can be passed as a prop to child components. This example is the same as the one
+above but the `h1` element has been replaced by a `<Header/>` component and the test works the same.
+
+#### Component
+
+```jsx
+function Header(props) {
+  const testId = TestId(props);
+  return <h1 {...testId()}>{props.value}</h1>;
+}
+
+export function Todos(props) {
+  const testId = TestId(props);
+
+  return (
+    <div {...testId()}>
+      <Header value="Todos" {...testId("header")} />
+      {todos.map((todo) => (
+        <p key={todo.id}>{todo.value}</p>
+      ))}
+    </div>
+  );
+}
+```
+
+#### Test file
+
+```jsx
+describe("Story1", () => {
+  it("displays Header component with correct value", () => {
+    render(<Story1 />);
+    expect(screen.getByTestId("todos/header")).toHaveTextContent("Todos");
+  });
+});
+```
+
+<br />
+
+## Multiple sub values
+
+We can pass multiple values to a function returned from `TestId`.
+In this example a todo with the id `1` would have a `data-testid` value of `"todos/list/1"`.
+
+#### Component
+
+```jsx
+export function Todos(props) {
+  const testId = TestId(props);
+  return (
+    <div {...testId()}>
+      <Header value="Todos" {...testId("header")}>
+
+      {todos.map((todo) => (
+        // Unique data-testid value for each todo
+        <p key={todo.id} {...testId("list", todo.id)} >{todo.value}</p>
+      ))}
+
+    </div>
+  );
+}
+```
+
+#### Test file
+
+```jsx
+describe("Story1", () => {
+  it("displays Header component with correct value", () => {
+    render(<Story1 />);
+    expect(screen.getByTestId("todos/list/1")).toHaveTextContent("First todo");
+  });
+});
+```
+
+<br />

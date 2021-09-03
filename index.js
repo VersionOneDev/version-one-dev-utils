@@ -17,6 +17,8 @@ export { createStore } from "./utils/state/utils/createStore";
 
 // utils/forms
 export { useForm } from "./utils/forms/useForm";
-
 // utils/hooks
 export { useDebounce } from "./utils/hooks/useDebounce";
+
+// utils/testId
+export { TestId } from "./utils/testId";
