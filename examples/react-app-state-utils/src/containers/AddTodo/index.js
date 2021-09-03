@@ -4,28 +4,32 @@ import classnames from "classnames";
 
 import { useForm } from "version-one-dev-utils";
 
+import { ItemStore } from "../../stores/ItemStore";
+
 export function AddTodo(props) {
-  const { formProps, form, register, fields } = useForm({
+  const form = useForm({
     mode: "onChange",
     schema: {
-      todo: yup.string().required("Please add a todo"),
+      title: yup.string().required("Please add a todo"),
     },
     defaultValues: {
-      todo: null,
+      title: "",
     },
-    onSubmit: (values) => console.log("onSubmit", values),
+    onSubmit: (values) => ItemStore.actions.add(values).then(form.reset),
   });
 
   return (
-    <form {...formProps} className="flex">
-      <input
-        {...register("todo")}
-        placeholder="Add todo"
-        className={classnames(
-          "bg-gray-800 flex-1 mr-5 p-5 rounded outline-none border-4 border-gray-600 focus:border-blue-500",
-          !fields.todo.isValid && "border-red-500"
-        )}
-      />
+    <form {...form.props} className="flex">
+      {form.register("title", (field) => (
+        <input
+          {...field}
+          placeholder="Add todo"
+          className={classnames(
+            "bg-gray-800 flex-1 mr-5 p-5 rounded outline-none border-4 border-gray-600 focus:border-blue-500",
+            !form.fields.title.isValid && "border-red-500"
+          )}
+        />
+      ))}
 
       <button
         className={classnames(

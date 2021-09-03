@@ -99,13 +99,35 @@ incomplete.success = (state, action) => ({
   },
 });
 
+const add = (props) => props;
+
+add.propTypes = {
+  title: PropTypes.string.isRequired,
+};
+
+add.success = (state, action) => {
+  const id = Object.keys(state.items).length + 1;
+  return {
+    ...state,
+    items: {
+      [id]: {
+        id,
+        userId: 1,
+        completed: false,
+        ...action.payload,
+      },
+      ...state.items,
+    },
+  };
+};
+
 export const ItemStore = createStore({
   name: "ItemStore",
   initialState: {
     items: {},
     item: null,
   },
-  actions: { get, getItem, complete, incomplete },
+  actions: { get, getItem, complete, incomplete, add },
   propTypes: PropTypes.shape({
     items: PropTypes.objectOf(
       PropTypes.shape({
