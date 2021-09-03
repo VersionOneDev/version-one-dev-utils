@@ -35,19 +35,19 @@ export const useForm = (config) => {
     submitCount: 0,
   });
 
-  const [value, setValue] = useDebounce(
+  const [state, setState] = useDebounce(
     {
-      form: form.current,
+      ...form.current,
       errors: errors.current,
       values: values.current,
       fields: fields.current,
     },
-    100
+    10
   );
 
   const forceRender = () => {
-    setValue({
-      form: form.current,
+    setState({
+      ...form.current,
       errors: errors.current,
       values: values.current,
       fields: fields.current,
@@ -71,6 +71,7 @@ export const useForm = (config) => {
 
         // Create the return props
         props.current[name] = {
+          ref: { current: null },
           name,
           //defaultValue: values.current[name],
           value: values.current[name],
@@ -100,18 +101,22 @@ export const useForm = (config) => {
                   : target.value;
             }
 
-            // Update the value
-            values.current[name] = value;
-            // Field and form are dirty
-            fields.current[name].isDirty = true;
-            form.current.isDirty = true;
+            if (value !== values.current[name]) {
+              // Update the value
+              values.current[name] = value;
+              // Field and form are dirty
+              fields.current[name].isDirty = true;
+              form.current.isDirty = true;
 
-            // Validate field if mode matches or force render now
-            mode.trigger.includes("change") ||
-            (fields.current[name].isValidated &&
-              mode.retrigger.includes("change"))
-              ? validate([name], "change")
-              : forceRender();
+              // Validate field if mode matches or force render now
+              mode.trigger.includes("change") ||
+              (fields.current[name].isValidated &&
+                mode.retrigger.includes("change"))
+                ? validate([name], "change")
+                : forceRender();
+            } else {
+              console.log("ignore change", name);
+            }
           },
         };
       }
@@ -206,16 +211,21 @@ export const useForm = (config) => {
     };
 
     forceRender();
-    console.log("reset complete");
+  }, [forceRender]);
+
+  const setValue = useCallback((name, value) => {
+    values.current[name] = value;
+    validate([name], "change");
   }, []);
 
   return {
-    formProps: {
+    props: {
       noValidate: true,
       onSubmit,
     },
     register,
     reset,
-    ...value,
+    setValue,
+    ...state,
   };
 };
