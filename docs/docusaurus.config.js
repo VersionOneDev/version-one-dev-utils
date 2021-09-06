@@ -32,6 +32,12 @@ module.exports = {
           docId: "testing/intro",
         },
         {
+          position: "left",
+          label: "Forms",
+          type: "doc",
+          docId: "forms/useForm",
+        },
+        {
           href: "https://github.com/VersionOneDev/version-one-dev-utils",
           label: "GitHub",
           position: "right",

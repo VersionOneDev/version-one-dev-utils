@@ -29,7 +29,7 @@ const FeatureList = [
   {
     title: "Forms",
     Svg: require("../../static/img/forms.svg").default,
-    path: "/docs/forms/intro",
+    path: "/docs/forms/useForm",
   },
   {
     title: "Testing",
