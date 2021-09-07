@@ -17,3 +17,6 @@ export { createStore } from "./utils/state/utils/createStore";
 
 // utils/hooks
 export { useDebounce } from "./utils/hooks/useDebouce";
+
+// utils/testId
+export { TestId } from "./utils/testId";
