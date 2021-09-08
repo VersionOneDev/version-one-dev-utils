@@ -44,14 +44,59 @@ export const useForm = (config) => {
     10
   );
 
-  const forceRender = () => {
+  const forceRender = useCallback(() => {
     setState({
       ...form.current,
       errors: errors.current,
       values: values.current,
       fields: fields.current,
     });
-  };
+  }, [setState]);
+
+  const validate = useCallback(
+    (names, type) => {
+      form.current.isValidating = true;
+      forceRender();
+
+      return Promise.all(
+        names.map((name) => {
+          return Promise.resolve(
+            _config.schema[name]
+              ? _config.schema[name].validate(values.current[name])
+              : null
+          )
+            .then(() => delete results.current[name])
+            .catch((err) => (results.current[name] = err.errors[0]))
+            .then(() => {
+              // Update field and errors if we're not registering a new field
+              if (type !== "register") {
+                const error = results.current[name];
+
+                // Update field
+                fields.current[name].isValidated = true;
+                fields.current[name].isValid = !error;
+
+                // Update errors
+                if (error) {
+                  errors.current[name] = error;
+                } else {
+                  delete errors.current[name];
+                }
+              }
+
+              // Update form
+              form.current.isValid = !Object.keys(results.current).length;
+
+              forceRender();
+            });
+        })
+      ).then(() => {
+        form.current.isValidating = false;
+        forceRender();
+      });
+    },
+    [forceRender, _config.schema]
+  );
 
   const register = useCallback(
     (name, cb) => {
@@ -127,50 +172,8 @@ export const useForm = (config) => {
         return props.current[name];
       }
     },
-    [_config.defaultValues]
+    [_config.defaultValues, validate, forceRender, mode]
   );
-
-  const validate = (names, type) => {
-    form.current.isValidating = true;
-    forceRender();
-
-    return Promise.all(
-      names.map((name) => {
-        return Promise.resolve(
-          _config.schema[name]
-            ? _config.schema[name].validate(values.current[name])
-            : null
-        )
-          .then(() => delete results.current[name])
-          .catch((err) => (results.current[name] = err.errors[0]))
-          .then(() => {
-            // Update field and errors if we're not registering a new field
-            if (type !== "register") {
-              const error = results.current[name];
-
-              // Update field
-              fields.current[name].isValidated = true;
-              fields.current[name].isValid = !error;
-
-              // Update errors
-              if (error) {
-                errors.current[name] = error;
-              } else {
-                delete errors.current[name];
-              }
-            }
-
-            // Update form
-            form.current.isValid = !Object.keys(results.current).length;
-
-            forceRender();
-          });
-      })
-    ).then(() => {
-      form.current.isValidating = false;
-      forceRender();
-    });
-  };
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -209,10 +212,13 @@ export const useForm = (config) => {
     forceRender();
   }, [forceRender]);
 
-  const setValue = useCallback((name, value) => {
-    values.current[name] = value;
-    validate([name], "change");
-  }, []);
+  const setValue = useCallback(
+    (name, value) => {
+      values.current[name] = value;
+      validate([name], "change");
+    },
+    [validate]
+  );
 
   return {
     props: {
