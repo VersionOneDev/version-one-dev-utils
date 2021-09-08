@@ -4,46 +4,405 @@ sidebar_position: 1
 
 # The useForms Hook
 
-The `useForms` hook can be used to manage and validate form state.
+The `useForm` hook can be used to manage form state and validate user input.
 
-## Configuration
+## Creating a form
 
-A configuration object should be passed when calling the useForm hook.
-
-| Property      | Value                                                                             |
-| ------------- | --------------------------------------------------------------------------------- |
-| mode          | The validation mode: `onBlur`, `onChange`, `onSubmit`, and `onTouched` (default). |
-| schema        | Schema used to validate the form fields.                                          |
-| defaultValues | Default values to pass to form fields.                                            |
-| onSubmit      | A function called when the form is submitted.                                     |
-
-## Connecting to the `<form>` component.
-
-The `useForm` hook returns a `props` object that can be applied to a `form` element.
+To begin creating a form the [`useForm`](#useform) hook **must** be provided with an `onSubmit` callback.
+A `form` object is returned containing `props` that should be applied to a form element allowing the element and hook to communicate.
 
 ```jsx
 import { useForm } from "version-one-dev-utils/forms";
 
 export function Form() {
-  const form = useForm({ ...config });
-  return <form {...form.props} />;
-}
-```
-
-## Registering Fields
-
-```jsx
-import { useForm } from "version-one-dev-utils/forms";
-
-export function Form() {
-  const form = useForm({ ...config });
+  const form = useForm({
+    onSubmit: (values) => console.log("Form submitted with values:", values),
+  });
 
   return (
     <form {...form.props}>
-      {form.register("name", (field) => (
-        <input {...field} />
-      ))}
+      <button>Submit</button>
     </form>
   );
 }
 ```
+
+## Adding fields
+
+Fields can be added by calling the [`form.register`](#formregister) function and passing both a name and callback function.
+The name should be unique, and the callback function should accept a `fieldProps` object that can be applied to a user input element.
+This element should be returned so it can be added to the form.
+
+```jsx
+import { useForm } from "version-one-dev-utils/forms";
+
+export function Form() {
+  const form = useForm({
+    onSubmit: (values) => console.log("Form submitted with values:", values),
+  });
+
+  return (
+    <form {...form.props}>
+      {form.register("name", (fieldProps) => (
+        <input {...fieldProps} />
+      ))}
+      <button>Submit</button>
+    </form>
+  );
+}
+```
+
+### Custom fields
+
+Whilst `fieldProps` can be applied directly to native input types (input, select, or textarea) and many custom or 3rd party inputs it may sometimes be necessary to map it's values instead.
+
+The `fieldProps` object contains the following properties to use when mapping to a custom field:
+
+| Property | Description                                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------------------------- |
+| name     | The registered name of the field.                                                                             |
+| value    | The current value of the field.                                                                               |
+| onBlur   | Callback to tell the form the field no longer has focus.                                                      |
+| onChange | Callback to tell the form the value of the field has changed. The new value should be passed to the callback. |
+
+```jsx
+import { useForm } from "version-one-dev-utils/forms";
+
+export function Form() {
+  const form = useForm({
+    onSubmit: (values) => console.log("Form submitted with values:", values),
+  });
+
+  return (
+    <form {...form.props}>
+      {form.register("counter", (fieldProps) => (
+        // Button as a custom input
+        <button
+          type="button"
+          onClick={() => {
+            fieldProps.onChange(field.value + 1);
+            fieldProps.onBlur();
+          }}
+        >
+          Count: {fieldProps.value}
+        </button>
+      ))}
+      <button>Submit</button>
+    </form>
+  );
+}
+```
+
+### Default values
+
+A `defaultValues` object can be passed to the [`useForm`](#useform) hook using the registered field names as keys.
+These values will be applied when a field is registered and again if the form is reset.
+
+```jsx
+import { useForm } from "version-one-dev-utils/forms";
+
+const form = useForm({
+  onSubmit: (values) => console.log("Form submitted with values:", values),
+  defaultValues: {
+    email: "email@example.com",
+    password: "password123",
+  },
+});
+```
+
+### Updating values
+
+Sometimes it may be necessary to update values programmatically and this can be done by calling the [`form.setValue`](#formsetvalue) function passing the field name and the new value.
+
+```jsx
+form.setValue("name", "New name");
+```
+
+## Validation
+
+Validation is optional but can easily be applied by passing a `schema` object to the [`useForm`](#useform) hook.
+
+### Creating a schema
+
+The `schema` should describe the desired output of each field and define any error messages to display when invalid values are entered.
+Schemas should be created using [Yup](https://github.com/jquense/yup) and a full list of data types and validation methods can be found at https://github.com/jquense/yup.
+
+```jsx
+import { useForm } from "version-one-dev-utils/forms";
+
+const form = useForm({
+  onSubmit: (values) => console.log("Form submitted with values:", values),
+  defaultValues: {
+    email: "email@example.com",
+    password: "password123",
+  },
+  schema: {
+    email: yup
+      .string()
+      .required("Please enter your email address.")
+      .email("Email address is invalid."),
+    password: yup
+      .string()
+      .required("Please enter your password")
+      .min(2, "Passwords must contain at least 2 characters."),
+  },
+});
+```
+
+### Validation mode
+
+A validation `mode` can be passed to the [`useForm`](#useform) hook to modify when validation occurs.
+The following modes are available:
+
+| Mode      | Validation occurs                                                                                      |         |
+| --------- | ------------------------------------------------------------------------------------------------------ | ------- |
+| onBlur    | On a single field when the `blur` event is fired.                                                      |         |
+| onChange  | On a single field whenever it's value changes.                                                         |         |
+| onTouched | On a single field when the first `blur` event is fired **and** whenever it's value changes thereafter. | default |
+| onSubmit  | On all fields when the form is submitted.                                                              |         |
+
+```jsx
+import { useForm } from "version-one-dev-utils/forms";
+
+const form = useForm({
+  mode: "onTouched",
+  schema: {
+    email: yup
+      .string()
+      .required("Please enter your email address.")
+      .email("Email address is invalid."),
+    password: yup
+      .string()
+      .required("Please enter your password")
+      .min(2, "Passwords must contain at least 2 characters."),
+  },
+});
+```
+
+:::note
+Regardless of the mode validation will **always** occur when the form is submitted.
+If the form is invalid the `onSubmit` callback ** will not be called**.
+If a schema has not been set the form will always be valid.
+:::
+
+### Handling errors
+
+If a field is invalid an error message (as defined in the schema) can be found in the [`form.errors`](#formerrors) object.
+This message can be displayed to the end user.
+
+```jsx
+import { useForm } from "version-one-dev-utils/forms";
+
+export function Form() {
+  const form = useForm({
+    onSubmit: (values) => console.log("Form submitted with values:", values),
+    schema: {
+      name: yup.string().required("Please enter your name."),
+    },
+  });
+
+  return (
+    <form {...form.props}>
+      {form.register("name", (fieldProps) => (
+        <input {...fieldProps} />
+      ))}
+      <span>{form.errors.name}</span>
+
+      <button>Submit</button>
+    </form>
+  );
+}
+```
+
+## Form state
+
+The `form` object includes the following properties that can be used to provide further feedback to the end user:
+
+- [`isDirty`](#formisdirty)
+- [`isTouched`](#formistouched)
+- [`isValid`](#formisvalid)
+- [`isValidating`](#formisvalidating)
+- [`isSubmitting`](#formissubmitting)
+- [`errors`](#formerrors) (object of error messages for each invalid field)
+- [`fields`](#formfields) (objects containing isDirty, isTouched, and isValid state for each field)
+- [`values`](#formvalues) (object containing current value of each field)
+
+```jsx
+import { useForm } from "version-one-dev-utils/forms";
+
+export function Form() {
+  const form = useForm({
+    onSubmit: (values) => console.log("Form submitted with values:", values),
+    schema: {
+      name: yup.string().required("Please enter your name."),
+    },
+  });
+
+  return (
+    <form {...form.props}>
+      {form.register("name", (fieldProps) => (
+        <input
+          {...fieldProps}
+          style={{ borderColor: form.fields.name.isValid ? "grey" : "red" }}
+        />
+      ))}
+      <span>{form.errors.name}</span>
+
+      <button disabled={!form.isValid || form.isSubmitting}>
+        {!form.isSubmitting ? "Submit" : "Submitting"}
+      </button>
+    </form>
+  );
+}
+```
+
+## Resetting the form
+
+The [`form.reset`](#formreset) function can be called to reset or clear the form.
+Default values will be applied to the fields, errors will be cleared and form state will revert back to it's initial values.
+
+## API
+
+### useForm()
+
+**`function`**
+
+Accepts a `config` object with the following properties:
+
+| Property      | Type       | Required           | Description                                                                       |
+| ------------- | ---------- | ------------------ | --------------------------------------------------------------------------------- |
+| schema        | `object`   |                    | Schema used to validate the form fields.                                          |
+| defaultValues | `object`   |                    | Default values to pass to form fields.                                            |
+| mode          | `string`   |                    | The validation mode: "onBlur", "onChange", "onSubmit", and "onTouched" (default). |
+| onSubmit      | `function` | :white_check_mark: | A function called with a `values` object when the form is submitted.              |
+
+**Example:**
+
+```jsx
+const form = useForm({
+  schema,
+  defaultValues,
+  mode,
+  onSubmit,
+});
+```
+
+**Returns:** `form` object
+
+### form.errors
+
+**`object`**
+
+An object containing the error messages for any fields with invalid values keyed by field name.
+
+### form.fields
+
+**`object`**
+
+An object containing the state of each individual field keyed by field name.
+Each state object contains the following properties:
+
+| Property  | Type    | Description                        |
+| --------- | ------- | ---------------------------------- |
+| isDirty   | boolean | Has the field modifed by the user? |
+| isTouched | boolean | Has the user interacted the field? |
+| isValid   | boolean | Is the field valid?                |
+
+### form.isDirty
+
+**`boolean`**
+
+True when the user has modified any of the fields.
+
+### form.isSubmitting
+
+**`boolean`**
+
+True whilst the form is being submitted.
+If the `onSubmit` callback returns a promise, `isSubmitting` will remain true until the promise is resolved or rejected.
+
+### form.isTouched
+
+**`boolean`**
+
+True when the user has interacted with any of the fields.
+
+### form.isValid
+
+**`boolean`**
+
+True when all of the fields have valid values.
+
+### form.isValidating
+
+**`boolean`**
+
+True whilst validation is taking place on one or more fields.
+
+### form.props
+
+**`object`**
+
+A props object that should be added to the rendered `form` element allowing it to communicate with the `useForm` hook.
+
+**Example:**
+
+```jsx
+<form {...form.props}>{/* Fields here. */}</form>
+```
+
+### form.register()
+
+**`function`**
+
+Accepts the following arguments:
+
+| Property | Type       | Required           | Description                                                                                                                |
+| -------- | ---------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| name     | `string`   | :white_check_mark: | A unique name used to track the value of the field.                                                                        |
+| render   | `function` | :white_check_mark: | A callback function that accepts a `fieldProps` object. A user input element should be returned with `fieldProps` applied. |
+
+The `fieldProps` object contains the following properties:
+
+| Property | Type     | Description                                                                                                   |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------- |
+| name     | string   | The registered name of the field.                                                                             |
+| value    | any      | The current value of the field.                                                                               |
+| onBlur   | function | Callback to tell the form the field no longer has focus.                                                      |
+| onChange | function | Callback to tell the form the value of the field has changed. The new value should be passed to the callback. |
+
+**Example:**
+
+```jsx
+form.register("name", (fieldProps) => <input {...fieldProps} />);
+```
+
+**Returns:** `element`
+
+### form.reset()
+
+**`function`**
+
+Resets the form and fields back to their initial states.
+
+**Returns:** `undefined`
+
+### form.setValue()
+
+**`function`**
+
+Sets the value of a field.
+Accepts the following arguments:
+
+| Property | Type     | Required           | Description                      |
+| -------- | -------- | ------------------ | -------------------------------- |
+| name     | `string` | :white_check_mark: | The name of the field to update. |
+| value    | `any`    | :white_check_mark: | The new value.                   |
+
+**Returns:** `undefined`
+
+### form.values
+
+**`object`**
+
+An object containing the current value of each field keyed by field name.

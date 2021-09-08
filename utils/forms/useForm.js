@@ -5,7 +5,7 @@ import { useDebounce } from "../hooks/useDebounce";
 const MODES = {
   onBlur: { trigger: ["blur", "submit"], retrigger: [] },
   onChange: { trigger: ["change", "submit"], retrigger: [] },
-  onSubmit: { trigger: ["change"], retrigger: ["change"] },
+  onSubmit: { trigger: ["submit"], retrigger: ["change"] },
   onTouched: { trigger: ["blur", "submit"], retrigger: ["change"] },
 };
 
@@ -32,7 +32,6 @@ export const useForm = (config) => {
     isValid: true,
     isValidating: false,
     isSubmitting: false,
-    submitCount: 0,
   });
 
   const [state, setState] = useDebounce(
@@ -71,7 +70,6 @@ export const useForm = (config) => {
 
         // Create the return props
         props.current[name] = {
-          ref: { current: null },
           name,
           //defaultValue: values.current[name],
           value: values.current[name],
@@ -186,7 +184,6 @@ export const useForm = (config) => {
         forceRender();
 
         Promise.resolve(_config.onSubmit(values.current)).then(() => {
-          form.current.submitCount++;
           form.current.isSubmitting = false;
           forceRender();
         });
@@ -207,7 +204,6 @@ export const useForm = (config) => {
       isValid: true,
       isValidating: false,
       isSubmitting: false,
-      submitCount: 0,
     };
 
     forceRender();
