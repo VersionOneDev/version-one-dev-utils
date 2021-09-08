@@ -12,7 +12,7 @@ To begin creating a form the [`useForm`](#useform) hook **must** be provided wit
 A `form` object is returned containing `props` that should be applied to a form element allowing the element and hook to communicate.
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 export function Form() {
   const form = useForm({
@@ -34,7 +34,7 @@ The name should be unique, and the callback function should accept a `fieldProps
 This element should be returned so it can be added to the form.
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 export function Form() {
   const form = useForm({
@@ -66,7 +66,7 @@ The `fieldProps` object contains the following properties to use when mapping to
 | onChange | Callback to tell the form the value of the field has changed. The new value should be passed to the callback. |
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 export function Form() {
   const form = useForm({
@@ -99,7 +99,7 @@ A `defaultValues` object can be passed to the [`useForm`](#useform) hook using t
 These values will be applied when a field is registered and again if the form is reset.
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 const form = useForm({
   onSubmit: (values) => console.log("Form submitted with values:", values),
@@ -128,7 +128,7 @@ The `schema` should describe the desired output of each field and define any err
 Schemas should be created using [Yup](https://github.com/jquense/yup) and a full list of data types and validation methods can be found at https://github.com/jquense/yup.
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 const form = useForm({
   onSubmit: (values) => console.log("Form submitted with values:", values),
@@ -162,7 +162,7 @@ The following modes are available:
 | onSubmit  | On all fields when the form is submitted.                                                              |         |
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 const form = useForm({
   mode: "onTouched",
@@ -191,7 +191,7 @@ If a field is invalid an error message (as defined in the schema) can be found i
 This message can be displayed to the end user.
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 export function Form() {
   const form = useForm({
@@ -228,7 +228,7 @@ The `form` object includes the following properties that can be used to provide 
 - [`values`](#formvalues) (object containing current value of each field)
 
 ```jsx
-import { useForm } from "version-one-dev-utils/forms";
+import { useForm } from "version-one-dev-utils";
 
 export function Form() {
   const form = useForm({
