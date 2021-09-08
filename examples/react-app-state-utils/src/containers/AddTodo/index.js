@@ -20,9 +20,9 @@ export function AddTodo(props) {
 
   return (
     <form {...form.props} className="flex">
-      {form.register("title", (field) => (
+      {form.register("title", (fieldProps) => (
         <input
-          {...field}
+          {...fieldProps}
           placeholder="Add todo"
           className={classnames(
             "bg-gray-800 flex-1 mr-5 p-5 rounded outline-none border-4 border-gray-600 focus:border-blue-500",
