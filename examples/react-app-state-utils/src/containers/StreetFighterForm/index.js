@@ -162,8 +162,12 @@ export default function StreetFighterForm() {
         />
       ))}
       {form.isSubmitting && <p>Submitting...</p>}
-      <button type="button" className="p-2 bg-blue-400 font-bold rounded">
-        No submit
+      <button
+        onClick={() => form.reset()}
+        type="button"
+        className="p-2 bg-red-400 font-bold rounded"
+      >
+        Reset form
       </button>
 
       <button className="p-2 bg-blue-400 font-bold rounded">Submit</button>

@@ -51,6 +51,8 @@ export default function UserForm() {
       ))}
       <span>{form.errors.mathsQuestion}</span>
 
+      <button onClick={() => form.reset()}>Reset form</button>
+
       <button disabled={form.isSubmitting || !form.isValid}>Submit</button>
     </form>
   );
