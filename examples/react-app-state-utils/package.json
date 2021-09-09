@@ -8,6 +8,8 @@
     "@testing-library/user-event": "^13.2.1",
     "classnames": "^2.3.1",
     "react-app-polyfill": "^2.0.0",
+    "react-date-picker": "^8.3.2",
+    "react-datepicker": "^4.2.1",
     "react-select": "^4.3.1",
     "yup": "^0.32.9"
   },
@@ -32,7 +34,7 @@
     "npm-check-updates": "^9.2.2",
     "postcss": "^7.0.35",
     "prettier": "^2.1.2",
-    "storybook": "^6.3.6",
+    "storybook": "^6.3.8",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
     "version-one-dev-utils": "file:../.."
   },
