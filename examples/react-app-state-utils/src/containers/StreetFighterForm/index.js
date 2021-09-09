@@ -53,9 +53,10 @@ export default function StreetFighterForm() {
     },
   });
   const form = useForm({
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
-      releaseDate: today + 1,
+      releaseDate: today,
+      color: "#DD3A3A",
     },
     schema: {
       name: yup
@@ -81,7 +82,10 @@ export default function StreetFighterForm() {
       speciality: yup
         .string()
         .required()
-        .oneOf(abilities, "Please enter a valid specialism"),
+        .test("custom", "Not one of the 5 abilities!", (value) =>
+          abilities.includes(value.toLowerCase())
+        ),
+      color: yup.string().required("They must have a primary color!"),
     },
 
     onSubmit: (values) => mockFetch(() => console.log(values)),
@@ -122,7 +126,7 @@ export default function StreetFighterForm() {
           render={() => (
             <DatePicker
               className="my-1 rounded p-1"
-              onChange={() => null}
+              onChange={() => console.log("hit")}
               {...fieldProps}
             />
           )}
@@ -149,7 +153,19 @@ export default function StreetFighterForm() {
           {...fieldProps}
         />
       ))}
+      {form.register("color", (fieldProps) => (
+        <FormGroup
+          label={"Primary color (browser color picker)"}
+          type="color"
+          errors={form.errors.color}
+          {...fieldProps}
+        />
+      ))}
       {form.isSubmitting && <p>Submitting...</p>}
+      <button type="button" className="p-2 bg-blue-400 font-bold rounded">
+        No submit
+      </button>
+
       <button className="p-2 bg-blue-400 font-bold rounded">Submit</button>
     </form>
   );
