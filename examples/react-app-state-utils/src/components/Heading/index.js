@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TestId } from "version-one-dev-utils";
+import { TestId } from "version-one-dev-utils/tests";
 
 function Heading(props) {
   const testId = TestId(props);

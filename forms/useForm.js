@@ -1,6 +1,6 @@
 import { useMemo, useRef, useCallback } from "react";
 
-import { useDebounce } from "../hooks/useDebounce";
+import { useDebounce } from "../useDebounce";
 
 const MODES = {
   onBlur: { trigger: ["blur", "submit"], retrigger: [] },

@@ -2,12 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-import {
-  useSelector,
-  usePending,
-  useRoutes,
-  TestId,
-} from "version-one-dev-utils";
+import { useSelector, usePending } from "version-one-dev-utils/state";
+import { useRoutes } from "version-one-dev-utils/routes";
+import { TestId } from "version-one-dev-utils/tests";
+
 import classnames from "classnames";
 
 import { ItemStore } from "../../stores/ItemStore";
@@ -30,7 +28,6 @@ export function ItemList(props) {
   return (
     <>
       <Heading value="To Do List" {...testId("title")} />
-      <p {...testId("paragraph")}>Hello</p>
       <ul>
         {Object.values(items).map((item) => {
           const pending = getPending(ItemStore.byKey(item.id));

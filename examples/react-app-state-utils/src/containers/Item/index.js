@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import { useSelector, usePending, useRoutes } from "version-one-dev-utils";
+import { useSelector, usePending } from "version-one-dev-utils/state";
+import { useRoutes } from "version-one-dev-utils/routes";
 
 import { ItemStore } from "../../stores/ItemStore";
 

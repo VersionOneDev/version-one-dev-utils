@@ -1,6 +1,7 @@
 import React from "react";
 import "../src/index.css";
-import { RouteProvider, TestId } from "version-one-dev-utils";
+import { RouteProvider } from "version-one-dev-utils/routes";
+import { TestId } from "version-one-dev-utils/tests";
 import { MockRouter } from "version-one-dev-utils/storybook";
 
 import { routes } from "../src/routes.js";

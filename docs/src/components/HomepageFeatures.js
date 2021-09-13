@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import PropTypes from "prop-types";
 
 import Link from "@docusaurus/Link";
 
@@ -54,6 +55,12 @@ function Feature({ Svg, title, path }) {
     </div>
   );
 }
+
+Feature.propTypes = {
+  Svg: PropTypes.any.isRequired,
+  title: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+};
 
 export default function HomepageFeatures() {
   return (

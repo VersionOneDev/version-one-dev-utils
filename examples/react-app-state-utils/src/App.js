@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { RouteProvider } from "version-one-dev-utils";
+import { RouteProvider } from "version-one-dev-utils/routes";
 import { routes } from "./routes";
 
 import { AddTodo } from "./containers/AddTodo";
@@ -14,7 +14,9 @@ export function App() {
       <Router>
         <Switch>
           <Route path={routes.HOME} exact>
-            <AddTodo />
+            <div className="mb-10">
+              <AddTodo />
+            </div>
             <ItemList />
           </Route>
           <Route path={routes.ITEM}>

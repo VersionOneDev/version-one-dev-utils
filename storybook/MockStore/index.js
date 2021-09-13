@@ -2,7 +2,7 @@ import React from "react";
 import { action } from "../action";
 import PropTypes from "prop-types";
 
-import { Store, StoreProvider } from "../../utils/state/Store";
+import { Store, StoreProvider } from "../../state/Store";
 
 export function MockStore(props) {
   Store.dispatch = (a) => {

@@ -2,7 +2,7 @@ import React from "react";
 import * as yup from "yup";
 import classnames from "classnames";
 
-import { useForm } from "version-one-dev-utils";
+import { useForm } from "version-one-dev-utils/forms";
 
 import { ItemStore } from "../../stores/ItemStore";
 

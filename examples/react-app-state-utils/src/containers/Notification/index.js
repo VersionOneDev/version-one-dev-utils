@@ -1,6 +1,6 @@
 import React from "react";
 import classnames from "classnames";
-import { usePending, useErrors } from "version-one-dev-utils";
+import { usePending, useErrors } from "version-one-dev-utils/state";
 
 export function Notification() {
   const { getPending } = usePending();

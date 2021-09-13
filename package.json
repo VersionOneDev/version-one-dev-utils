@@ -34,7 +34,7 @@
   },
   "scripts": {
     "update": "ncu -u",
-    "lint": "eslint utils/"
+    "lint": "eslint ./"
   },
   "husky": {
     "hooks": {

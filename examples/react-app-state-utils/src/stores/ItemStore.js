@@ -1,4 +1,4 @@
-import { createStore } from "version-one-dev-utils";
+import { createStore } from "version-one-dev-utils/state";
 
 import PropTypes from "prop-types";
 
