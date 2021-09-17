@@ -4,37 +4,23 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.1.2",
-    "@testing-library/react": "^12.0.0",
-    "@testing-library/user-event": "^13.2.1",
     "classnames": "^2.3.1",
     "react-app-polyfill": "^2.0.0",
     "react-select": "^4.3.1",
-    "yup": "^0.32.9"
+    "autoprefixer": "^9.8.6",
+    "postcss": "^7.0.35",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
+    "version-one-dev-utils": "file:../..",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.1.21",
-    "@storybook/addon-essentials": "^6.1.21",
-    "@storybook/addon-jest": "^6.3.6",
-    "@storybook/addon-links": "^6.1.21",
-    "@storybook/node-logger": "^6.1.21",
-    "@storybook/preset-create-react-app": "^3.1.6",
-    "@storybook/react": "^6.1.21",
-    "@storybook/testing-react": "^0.0.21",
-    "@testing-library/jest-dom": "^5.14.1",
-    "autoprefixer": "^9.8.6",
-    "deepmerge": "^4.2.2",
-    "dotenv": "^8.2.0",
     "eslint-config-prettier": "^6.14.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.5",
     "husky": "^4.3.0",
     "npm-check-updates": "^9.2.2",
-    "postcss": "^7.0.35",
-    "prettier": "^2.1.2",
-    "storybook": "^6.3.6",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
-    "version-one-dev-utils": "file:../.."
+    "prettier": "^2.1.2"
   },
   "scripts": {
     "update": "ncu -u",
