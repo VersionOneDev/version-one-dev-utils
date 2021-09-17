@@ -13,7 +13,7 @@ const FeatureList = [
     path: "/docs/intro",
   },
   {
-    title: "Style (CSS)",
+    title: "Styles (CSS)",
     Svg: require("../../static/img/style.svg").default,
     path: "/docs/intro",
   },
