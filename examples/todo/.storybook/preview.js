@@ -1,5 +1,5 @@
 import React from "react";
-//import "../src/tailwind/output.css";
+import "../src/tailwind/output.css";
 import { RouteProvider } from "version-one-dev-utils/routes";
 import { TestId } from "version-one-dev-utils/tests";
 import { MockRouter } from "version-one-dev-utils/storybook";

@@ -10,12 +10,13 @@
   "scripts": {
     "update": "ncu -u",
     "lint": "eslint src/",
-    "start": "npm-run-all --parallel start:**",
+    "start": "run-p start:**",
     "start:react-scripts": "react-scripts start",
-    "start:tailwind": "build:tailwind -- --watch",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build": "npm-run-all --sequential build:**",
-    "build:tailwind": "tailwindcss build -i src/tailwind/index.css -o src/tailwind/output.css",
+    "start:tailwind": "TAILWIND_MODE=watch postcss src/tailwind/index.css -o src/tailwind/output.css --watch",
+    "storybook": "run-p storybook:server start:tailwind",
+    "storybook:server": "start-storybook -p 6006 -s public",
+    "build": "run-s build:**",
+    "build:tailwind": "postcss src/tailwind/index.css -o src/tailwind/output.css --minify",
     "build:react-scripts": "react-scripts build",
     "test": "react-scripts test --setupFiles ./tests/setupFiles.js --setupFilesAfterEnv ./tests/setupTests.js"
   },
@@ -64,7 +65,9 @@
   },
   "postcss": {
     "plugins": {
-      "tailwindcss": {},
+      "tailwindcss": {
+        "config": "./src/tailwind/tailwind.config.js"
+      },
       "autoprefixer": {}
     }
   }
