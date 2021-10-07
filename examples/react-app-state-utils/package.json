@@ -3,32 +3,21 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@craco/craco": "^6.3.0",
-    "autoprefixer": "^9.8.6",
-    "classnames": "^2.3.1",
-    "dotenv": "^8.2.0",
-    "postcss": "^7.0.35",
     "react-select": "^5.0.0",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
     "version-one-dev-utils": "file:../.."
   },
-  "devDependencies": {
-    "eslint-config-prettier": "^6.14.0",
-    "eslint-loader": "^4.0.2",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.21.5",
-    "husky": "^4.3.0",
-    "npm-check-updates": "^9.2.2",
-    "prettier": "^2.1.2"
-  },
+  "devDependencies": {},
   "scripts": {
     "update": "ncu -u",
     "lint": "eslint src/",
-    "start": "craco start",
-    "build": "craco build",
-    "test": "../../node_modules/react-scripts/bin/react-scripts.js test --setupFiles ./tests/setupFiles.js --setupFilesAfterEnv ./tests/setupTests.js",
+    "start": "npm-run-all --parallel start:**",
+    "start:react-scripts": "react-scripts start",
+    "start:tailwind": "build:tailwind -- --watch",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build": "npm-run-all --sequential build:**",
+    "build:tailwind": "tailwindcss build -i src/tailwind/index.css -o src/tailwind/output.css",
+    "build:react-scripts": "react-scripts build",
+    "test": "react-scripts test --setupFiles ./tests/setupFiles.js --setupFilesAfterEnv ./tests/setupTests.js"
   },
   "husky": {
     "hooks": {
@@ -72,5 +61,11 @@
     "transformIgnorePatterns": [
       "node_modules/(?!version-one-dev-utils*)"
     ]
+  },
+  "postcss": {
+    "plugins": {
+      "tailwindcss": {},
+      "autoprefixer": {}
+    }
   }
 }
