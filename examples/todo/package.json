@@ -9,21 +9,21 @@
   "devDependencies": {},
   "scripts": {
     "update": "ncu -u",
-    "lint": "eslint src/",
     "start": "run-p start:**",
-    "start:react-scripts": "react-scripts start",
     "start:tailwind": "TAILWIND_MODE=watch postcss src/tailwind/index.css -o src/tailwind/output.css --watch",
-    "storybook": "run-p storybook:server start:tailwind",
-    "storybook:server": "start-storybook -p 6006 -s public",
+    "start:storybook": "start-storybook -p 6006 -s public",
+    "start:test": "react-scripts test --setupFiles ./.storybook/setupFiles.js --setupFilesAfterEnv ./.storybook/setupTests.js",
+    "start:react-scripts": "react-scripts start",
     "build": "run-s build:**",
+    "build:lint": "eslint src/",
     "build:tailwind": "postcss src/tailwind/index.css -o src/tailwind/output.css --minify",
-    "build:react-scripts": "react-scripts build",
-    "test": "react-scripts test --setupFiles ./tests/setupFiles.js --setupFilesAfterEnv ./tests/setupTests.js"
+    "build:test": "react-scripts test --watchAll=false --setupFiles ./.storybook/setupFiles.js --setupFilesAfterEnv ./.storybook/setupTests.js",
+    "build:react-scripts": "react-scripts build"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm run lint"
+      "pre-commit": "npm run build:lint",
+      "pre-push": "npm run build:lint"
     }
   },
   "eslintConfig": {
