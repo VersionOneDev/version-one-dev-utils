@@ -220,6 +220,14 @@ export const useForm = (config) => {
     [validate]
   );
 
+  const setValues = useCallback(
+    (v) => {
+      values.current = { ...values.current, ...v };
+      validate(Object.keys(v), "change");
+    },
+    [validate]
+  );
+
   return {
     props: {
       noValidate: true,
@@ -228,6 +236,7 @@ export const useForm = (config) => {
     register,
     reset,
     setValue,
+    setValues,
     ...state,
   };
 };
