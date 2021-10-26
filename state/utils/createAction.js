@@ -1,6 +1,8 @@
 import { createAction as createActionI } from "@reduxjs/toolkit";
 import PropTypes from "prop-types";
 
+import { actionCache } from "./actionCache";
+
 export const statuses = { PENDING: "/pending", ERROR: "/error" };
 
 export const getType = (action) => {
@@ -76,11 +78,30 @@ export const createAction = (store, type, handler) => {
           getState,
         };
 
-        const dispatchSuccess = (value) =>
+        const cacheKey = JSON.stringify({
+          store: store.toString(),
+          type,
+          props,
+          key,
+        });
+
+        const dispatchSuccess = (value) => {
+          if (value !== cached) {
+            actionCache.set(cacheKey, value, handler.cache);
+          }
+
           resolve(dispatch(action.success(props, key, value)));
+        };
 
         const dispatchError = (error) =>
           reject(dispatch(action.error(props, key, null, error)));
+
+        const cached = actionCache.get(cacheKey);
+
+        // If there is a cached value use it
+        if (cached) {
+          return dispatchSuccess(cached);
+        }
 
         // Get the payload from the action handler
         try {

@@ -39,6 +39,8 @@ const getItem = (props) => {
   );
 };
 
+getItem.cache = 10000;
+
 getItem.propTypes = {
   id: PropTypes.number.isRequired,
 };
