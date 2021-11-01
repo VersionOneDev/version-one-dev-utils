@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
@@ -10,24 +10,22 @@ import classnames from "classnames";
 
 import { ItemStore } from "../../stores/ItemStore";
 
-import { Heading } from "../../components/Heading";
-
 export function ItemList(props) {
-  const items = useSelector((state) => state.ItemStore.items);
+  const items = useSelector((state) => state.ItemStore);
 
   const { getPending } = usePending();
 
   const { link, routes } = useRoutes();
 
-  React.useEffect(() => {
-    ItemStore.actions.get();
+  useEffect(() => {
+    ItemStore.actions.watch();
+    //return () => ItemStore.actions.unwatch();
   }, []);
 
   const testId = TestId(props);
 
   return (
     <>
-      <Heading value="To Do List" {...testId("title")} />
       <ul>
         {Object.values(items).map((item) => {
           const pending = getPending(ItemStore.byKey(item.id));
@@ -36,8 +34,10 @@ export function ItemList(props) {
             <li
               key={item.id}
               className={classnames(
-                "p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer",
-                item.completed && "bg-gray-400 hover:bg-gray-500"
+                "p-6 mb-4 block rounded-md flex items-center cursor-pointer",
+                "bg-gradient-to-tr from-gray-400 to-gray-200",
+                !item.completed && "opacity-90 hover:opacity-100",
+                item.completed && "opacity-50 hover:opacity-80"
               )}
               onClick={() =>
                 !item.completed
@@ -57,6 +57,7 @@ export function ItemList(props) {
                     {...testId("itemView", item.id)}
                     className="underline hover:no-underline text-xs mt-1"
                     to={() => link(routes.ITEM, { id: item.id })}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     View
                   </Link>

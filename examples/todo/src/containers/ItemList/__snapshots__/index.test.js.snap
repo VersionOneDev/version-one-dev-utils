@@ -5,12 +5,6 @@ Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <h1
-        class="mb-10 text-4xl text-center"
-        data-testid="ref/title"
-      >
-        To Do List
-      </h1>
       <ul>
         <li
           class="p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer bg-gray-400 hover:bg-gray-500"
@@ -20,14 +14,14 @@ Object {
           >
             <span
               class="line-through"
-              data-testid="ref/itemTitle/1"
+              data-testid="ref/itemTitle-1"
             >
               Title!!
             </span>
             <div>
               <a
                 class="underline hover:no-underline text-xs mt-1"
-                data-testid="ref/itemView/1"
+                data-testid="ref/itemView-1"
                 href="/item/1"
               >
                 View
@@ -42,12 +36,6 @@ Object {
     </div>
   </body>,
   "container": <div>
-    <h1
-      class="mb-10 text-4xl text-center"
-      data-testid="ref/title"
-    >
-      To Do List
-    </h1>
     <ul>
       <li
         class="p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer bg-gray-400 hover:bg-gray-500"
@@ -57,14 +45,14 @@ Object {
         >
           <span
             class="line-through"
-            data-testid="ref/itemTitle/1"
+            data-testid="ref/itemTitle-1"
           >
             Title!!
           </span>
           <div>
             <a
               class="underline hover:no-underline text-xs mt-1"
-              data-testid="ref/itemView/1"
+              data-testid="ref/itemView-1"
               href="/item/1"
             >
               View

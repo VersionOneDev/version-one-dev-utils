@@ -1,25 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ItemList (Template Story) Matches snapshot 1`] = `
+exports[`UserAvatar Matches snapshot 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <h1
-        class="mb-10 text-4xl text-center"
+      <div
+        class="flex justify-center items-center w-[3em] h-[3em] font-bold bg-violet-700 rounded-full"
         data-testid="ref"
       >
-        Title
-      </h1>
+        B
+      </div>
     </div>
   </body>,
   "container": <div>
-    <h1
-      class="mb-10 text-4xl text-center"
+    <div
+      class="flex justify-center items-center w-[3em] h-[3em] font-bold bg-violet-700 rounded-full"
       data-testid="ref"
     >
-      Title
-    </h1>
+      B
+    </div>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

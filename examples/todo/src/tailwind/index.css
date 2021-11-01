@@ -4,7 +4,6 @@
 
 @layer base {
   body {
-    @apply p-10;
     @apply bg-gray-800;
     @apply text-gray-50;
   }

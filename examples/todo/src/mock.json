@@ -1,0 +1,54 @@
+{
+  "AuthStore": {
+    "ready": true,
+    "id": "6hbgFn",
+    "name": "Amanda"
+  },
+  "UserStore": {
+    "I1t9xy": {
+      "id": "I1t9xy",
+      "name": "Jack"
+    },
+    "UHZSCs": {
+      "id": "UHZSCs",
+      "name": "Philippa",
+      "avatar": "https://placeimg.com/200/200/people"
+    },
+    "fGpxts": {
+      "id": "fGpxts",
+      "name": "Don",
+      "avatar": "https://placeimg.com/200/200/people"
+    },
+    "6hbgFn": {
+      "id": "6hbgFn",
+      "name": "Amanda",
+      "avatar": "https://placeimg.com/200/200/people"
+    },
+    "8ru5p2": {
+      "id": "8ru5p2",
+      "name": "Ray",
+      "avatar": "https://placeimg.com/200/200/people"
+    },
+    "qnnmdu": {
+      "id": "qnnmdu",
+      "name": "Rachel"
+    }
+  },
+  "ItemStore": {
+    "OqaRcg": {
+      "id": "OqaRcg",
+      "title": "My first todo item",
+      "completed": true,
+      "completedBy": "fGpxts",
+      "createdBy": "I1t9xy"
+    },
+    "1dT0nC": {
+      "id": "1dT0nC",
+      "title": "My second todo item",
+      "completed": false,
+      "completedBy": "",
+      "createdBy": "fGpxts"
+    }
+  },
+  "ChatStore": [{ "from": "8ru5p2", "message": "Hello", "ts": 1635442844917 }]
+}

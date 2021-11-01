@@ -21,11 +21,6 @@ describe("ItemList (Template Story)", () => {
     expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith("/item/1");
   });
 
-  it("Displays Heading component", () => {
-    render(<Template />);
-    expect(screen.getByTestId("ref/title"));
-  });
-
   it("Fetches items from ItemStore", async () => {
     render(<Template />);
     await waitFor(() =>

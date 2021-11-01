@@ -1,5 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { createAction, statuses } from "./createAction";
+import { createCache } from "./createCache";
+
 import PropTypes from "prop-types";
 
 import { Store } from "../Store";
@@ -10,6 +12,7 @@ export const createStore = ({
   actions = {},
   propTypes,
 }) => {
+  const cache = createCache(name);
   /* Default actions */
 
   // TODO -Fix default actions
@@ -58,26 +61,25 @@ export const createStore = ({
   const mergedReducerMethods = createReducer(initialState, reducerMethods);
   let reducer;
 
-  // Apply propTypes check to state
-  if (propTypes) {
-    reducer = (state, action) => {
-      const result = mergedReducerMethods(state, action);
+  reducer = (state, action) => {
+    const result = mergedReducerMethods(state, action);
 
-      if (propTypes) {
-        PropTypes.checkPropTypes(
-          { result: propTypes },
-          { result },
-          "state",
-          action.type
-        );
-        PropTypes.resetWarningCache();
-      }
+    // Update the cache
+    cache.update(result);
 
-      return result;
-    };
-  } else {
-    reducer = mergedReducerMethods;
-  }
+    // Check propTypes on state
+    if (propTypes) {
+      PropTypes.checkPropTypes(
+        { result: propTypes },
+        { result },
+        "state",
+        action.type
+      );
+      PropTypes.resetWarningCache();
+    }
+
+    return result;
+  };
 
   Store.add(name, reducer);
 
@@ -86,6 +88,7 @@ export const createStore = ({
     initialState,
     propTypes,
     reducer,
+    cache,
     byKey: (key) => `${name}/*/${key}`,
     toString: () => name,
     actions: parsedActions,

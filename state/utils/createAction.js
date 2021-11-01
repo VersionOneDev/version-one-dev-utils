@@ -1,9 +1,11 @@
 import { createAction as createActionI } from "@reduxjs/toolkit";
 import PropTypes from "prop-types";
 
-import { actionCache } from "./actionCache";
-
-export const statuses = { PENDING: "/pending", ERROR: "/error" };
+export const statuses = {
+  PENDING: "/pending",
+  ERROR: "/error",
+  CACHED: "/cached",
+};
 
 export const getType = (action) => {
   let { type } = action;
@@ -46,91 +48,93 @@ const waitForValue = async (value) => await value;
  */
 
 export const createAction = (store, type, handler) => {
-  const action = (props, key) => (dispatch, getState) => {
-    // Check props is an object
-    if (props) {
-      const propsType = typeof props;
-      if (propsType !== "object") {
-        throw new Error(
-          `Invalid type ${propsType} passed to ${store}.actions.${type}, props must be an object`
-        );
+  const action =
+    (props = {}, key = "*") =>
+    (dispatch, getState) => {
+      // Check props is an object
+      if (props) {
+        const propsType = typeof props;
+        if (propsType !== "object") {
+          throw new Error(
+            `Invalid type ${propsType} passed to ${store}.actions.${type}, props must be an object`
+          );
+        }
       }
-    }
 
-    // Validate payload - will throw a warning in the console if invalid.
-    if (handler.propTypes) {
-      PropTypes.checkPropTypes(
-        handler.propTypes,
-        props,
-        "prop",
-        `${store}.actions.${type}`
-      );
-
-      PropTypes.resetWarningCache();
-    }
-
-    // ReduxThunk thunk will pass a dispatch function but Storybook won't
-    // Only do the work if using ReduxThunk
-    if (dispatch) {
-      return new Promise((resolve, reject) => {
-        const actionApi = {
-          dispatch,
-          getState,
-        };
-
-        const cacheKey = JSON.stringify({
-          store: store.toString(),
-          type,
+      // Validate payload - will throw a warning in the console if invalid.
+      if (handler.propTypes) {
+        PropTypes.checkPropTypes(
+          handler.propTypes,
           props,
-          key,
+          "prop",
+          `${store}.actions.${type}`
+        );
+
+        PropTypes.resetWarningCache();
+      }
+
+      // ReduxThunk thunk will pass a dispatch function but Storybook won't
+      // Only do the work if using ReduxThunk
+      if (dispatch) {
+        return new Promise((resolve, reject) => {
+          const actionApi = {
+            dispatch,
+            getState,
+          };
+
+          const dispatchSuccess = (value) =>
+            resolve(dispatch(action.success(props, key, value)));
+
+          const dispatchError = (error) =>
+            reject(dispatch(action.error(props, key, null, error)));
+
+          // Get the payload from the action handler
+          try {
+            const payload = handler(props, actionApi);
+
+            if (payload instanceof Function) {
+              // Dispatch pending action and run the callback
+              dispatch(action.pending(props, key));
+              payload(dispatchSuccess, dispatchError);
+            } else if (payload.then && payload.catch) {
+              // If we're using the cache then bail out
+              if (payload.__cached) {
+                return resolve(dispatch(action.cached(props, key)));
+              }
+
+              // Dispatch pending action if promise
+              dispatch(action.pending(props, key));
+              waitForValue(payload).then(dispatchSuccess).catch(dispatchError);
+            } else {
+              dispatchSuccess(payload);
+            }
+          } catch (error) {
+            dispatchError(error);
+          }
         });
-
-        const dispatchSuccess = (value) => {
-          if (value !== cached) {
-            actionCache.set(cacheKey, value, handler.cache);
-          }
-
-          resolve(dispatch(action.success(props, key, value)));
-        };
-
-        const dispatchError = (error) =>
-          reject(dispatch(action.error(props, key, null, error)));
-
-        const cached = actionCache.get(cacheKey);
-
-        // If there is a cached value use it
-        if (cached) {
-          return dispatchSuccess(cached);
-        }
-
-        // Get the payload from the action handler
-        try {
-          const payload = handler(props, actionApi);
-
-          if (payload instanceof Function) {
-            // Dispatch pending action and run the callback
-            dispatch(action.pending(props, key));
-            payload(dispatchSuccess, dispatchError);
-          } else if (payload.then && payload.catch) {
-            // Dispatch pending action if promise
-            dispatch(action.pending(props, key));
-            waitForValue(payload).then(dispatchSuccess).catch(dispatchError);
-          } else {
-            dispatchSuccess(payload);
-          }
-        } catch (error) {
-          dispatchError(error);
-        }
-      });
-    } else {
-      // Return the action for logging in Storybook
-      return Promise.resolve({ type: action.toString(), props, key });
-    }
-  };
+      } else {
+        // Return the action for logging in Storybook
+        return Promise.resolve({ type: action.toString(), props, key });
+      }
+    };
 
   action.toString = () => `${store}/${type}`;
   action.byKey = (key) => `${action.toString()}/${key}`;
+
+  const ignoreInPath = ["{}"];
+
+  action.path = (props, options) =>
+    [action.toString(), JSON.stringify(props), options.key]
+      .map((v) => (!v || ignoreInPath.includes(v) ? "*" : v))
+      .join("/");
+
   action.success = createActionI(action.toString(), prepareAction);
+
+  action.cached = createActionI(
+    `${action.toString()}${statuses.CACHED}`,
+    prepareAction
+  );
+
   action.error = createActionI(
     `${action.toString()}${statuses.ERROR}`,
     prepareAction

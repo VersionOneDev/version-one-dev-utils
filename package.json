@@ -22,6 +22,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.2.1",
+    "autoprefixer": "^10.3.7",
     "babel-loader": "8.1.0",
     "classnames": "^2.3.1",
     "deepmerge": "^4.2.2",
@@ -30,8 +31,10 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.5",
     "husky": "^4.3.0",
+    "lodash.get": "^4.4.2",
     "npm-check-updates": "^9.2.2",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.3.9",
     "postcss-cli": "^9.0.1",
     "prettier": "^2.1.2",
     "prop-types": "^15.7.2",
@@ -42,10 +45,8 @@
     "react-scripts": "^4.0.3",
     "redux-thunk": "^2.3.0",
     "storybook": "^6.3.8",
-    "yup": "^0.32.9",
-    "autoprefixer": "^10.3.7",
-    "postcss": "^8.3.9",
-    "tailwindcss": "^2.2.16"
+    "tailwindcss": "^2.2.16",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "react": "^17.0.2",

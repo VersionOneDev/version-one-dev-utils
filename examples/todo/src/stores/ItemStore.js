@@ -1,149 +1,82 @@
 import { createStore } from "version-one-dev-utils/state";
-
 import PropTypes from "prop-types";
 
-const get = () => {
-  return fetch("https://jsonplaceholder.typicode.com/todos/").then((response) =>
-    response.json()
-  );
-};
+import { AuthStore } from "./AuthStore";
 
-get.propTypes = {};
+let ws;
 
-get.success = (state, action) => {
-  const items = {};
-  let count = 0;
-  action.payload.forEach((item) => {
-    if (count < 10) {
-      items[item.id] = item;
-      count++;
-    }
+const watch = () =>
+  ItemStore.cache.watch("ws", (resolve) => {
+    ws = new WebSocket("/items");
+    ws.onmessage = (event) => resolve(event.data);
   });
 
-  return {
-    ...state,
-    items,
-  };
-};
+watch.success = (state, action) => action.payload;
 
-get.error = (state, action) => {
-  console.log("=== error", action);
-  return state;
-};
+const unwatch = () => ItemStore.cache.unwatch("ws", () => ws?.close());
 
-const getItem = (props) => {
-  return fetch("https://jsonplaceholder.typicode.com/posts/" + props.id).then(
-    (response) => {
-      return response.json();
-    }
-  );
-};
-
-getItem.cache = 10000;
-
-getItem.propTypes = {
-  id: PropTypes.number.isRequired,
-};
-
-getItem.success = (state, action) => ({ ...state, item: action.payload });
-
-const complete = (props) =>
-  fetch("https://jsonplaceholder.typicode.com/posts/" + props.id, {
-    method: "PUT",
-    body: JSON.stringify({
-      id: props.id,
-      completed: true,
-    }),
+const add = (props) =>
+  fetch(`/items`, {
+    method: "POST",
     headers: {
-      "Content-type": "application/json; charset=UTF-8",
+      Authorization: AuthStore.getState().id,
     },
-  }).then((response) => response.json());
-
-complete.propTypes = {
-  id: PropTypes.number.isRequired,
-};
-
-complete.success = (state, action) => ({
-  ...state,
-  items: {
-    ...state.items,
-    [action.payload.id]: {
-      ...state.items[action.payload.id],
-      ...action.payload,
-    },
-  },
-});
-
-const incomplete = (props) =>
-  fetch("https://jsonplaceholder.typicode.com/posts/" + props.id, {
-    method: "PUT",
-    body: JSON.stringify({
-      id: props.id,
-      completed: false,
-    }),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8",
-    },
-  }).then((response) => response.json());
-
-incomplete.propTypes = {
-  id: PropTypes.number.isRequired,
-};
-
-incomplete.success = (state, action) => ({
-  ...state,
-  items: {
-    ...state.items,
-    [action.payload.id]: {
-      ...state.items[action.payload.id],
-      ...action.payload,
-    },
-  },
-});
-
-const add = (props) => props;
+    body: JSON.stringify(props),
+  });
 
 add.propTypes = {
   title: PropTypes.string.isRequired,
 };
 
-add.success = (state, action) => {
-  const id = Object.keys(state.items).length + 1;
-  return {
-    ...state,
-    items: {
-      [id]: {
-        id,
-        userId: 1,
-        completed: false,
-        ...action.payload,
-      },
-      ...state.items,
+const edit = (props) =>
+  fetch(`/items/${props.id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: AuthStore.getState().id,
     },
-  };
+    body: JSON.stringify({ title: props.title }),
+  });
+
+edit.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+};
+
+const complete = (props) =>
+  fetch(`/items/${props.id}/complete`, {
+    method: "PUT",
+    headers: {
+      Authorization: AuthStore.getState().id,
+    },
+  });
+
+complete.propTypes = {
+  id: PropTypes.string.isRequired,
+};
+
+const incomplete = (props) =>
+  fetch(`/items/${props.id}/incomplete`, {
+    method: "PUT",
+    headers: {
+      Authorization: AuthStore.getState().id,
+    },
+  });
+
+incomplete.propTypes = {
+  id: PropTypes.string.isRequired,
 };
 
 export const ItemStore = createStore({
   name: "ItemStore",
-  initialState: {
-    items: {},
-    item: null,
-  },
-  actions: { get, getItem, complete, incomplete, add },
-  propTypes: PropTypes.shape({
-    items: PropTypes.objectOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        userId: PropTypes.number.isRequired,
-        title: PropTypes.string.isRequired,
-        completed: PropTypes.bool.isRequired,
-      })
-    ),
-    item: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      userId: PropTypes.number.isRequired,
+  initialState: {},
+  actions: { watch, unwatch, add, edit, complete, incomplete },
+  propTypes: PropTypes.objectOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      body: PropTypes.string.isRequired,
-    }),
-  }),
+      createdBy: PropTypes.string.isRequired,
+      completedBy: PropTypes.string.isRequired,
+      completed: PropTypes.bool,
+    })
+  ),
 });

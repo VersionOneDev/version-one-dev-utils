@@ -3,6 +3,8 @@ import "react-app-polyfill/stable";
 
 import "./tailwind/output.css";
 
+import "./utils/Server";
+
 import React from "react";
 import ReactDOM from "react-dom";
 

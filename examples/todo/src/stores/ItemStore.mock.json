@@ -1,6 +1,3 @@
 {
-  "items": {
-    "1": { "id": 1, "userId": "userId", "title": "Title!!", "completed": true }
-  },
-  "item": { "id": 1, "userId": "userId", "title": "Title!!", "body": "Body" }
+  "1": { "id": 1, "userId": "userId", "title": "Title!!", "completed": true }
 }

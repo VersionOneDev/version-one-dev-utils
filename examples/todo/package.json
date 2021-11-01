@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "moment": "^2.29.1",
     "react-select": "^5.0.0",
     "version-one-dev-utils": "file:../.."
   },
-  "devDependencies": {},
   "scripts": {
     "update": "ncu -u",
     "start": "run-p start:**",
