@@ -7,6 +7,28 @@ const server = new MockServer({
   db: data,
 });
 
+const mockAuthedUser = {
+  id: "d$eq7x",
+};
+
+server.post("/signup", (req, db) => {
+  mockAuthedUser.name = req.body.firstName + " " + req.body.surname;
+
+  server.update({
+    AuthStore: { ...mockAuthedUser, ready: true },
+    UserStore: {
+      [mockAuthedUser.id]: {
+        ...mockAuthedUser,
+        avatar: "https://placeimg.com/200/200/people",
+      },
+    },
+  });
+
+  return {
+    body: { ...mockAuthedUser, ready: true },
+  };
+});
+
 server.get("/login", (req, db) => ({ body: db.AuthStore }));
 
 server.post("/logout");
