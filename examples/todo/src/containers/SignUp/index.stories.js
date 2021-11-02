@@ -2,7 +2,7 @@ import React from "react";
 import { SignUp } from ".";
 
 const Stories = {
-  title: "Components/SignUp",
+  title: "Containers/SignUp",
   component: SignUp,
 };
 
