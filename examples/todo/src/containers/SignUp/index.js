@@ -1,15 +1,21 @@
 import React from "react";
 import { useForm } from "version-one-dev-utils/forms";
 import * as yup from "yup";
-// import PropTypes from "prop-types";
+import { AuthStore } from "../../stores/AuthStore";
+import { TestId } from "version-one-dev-utils/tests";
+import PropTypes from "prop-types";
 // import classnames from "classnames";
 // yup.addMethod(yup.string, "letter", function () {
 //   return;
 // });
 
-export function SignUp() {
+export function SignUp(props) {
+  // useEffect(() => {
+  //   AuthStore.actions.signup();
+  // }, []);
+  const testId = TestId(props);
   const form = useForm({
-    onSubmit: (values) => console.log("Form submitted with values:", values),
+    onSubmit: (values) => AuthStore.actions.signup(values),
     schema: {
       firstName: yup
         .string()
@@ -35,7 +41,7 @@ export function SignUp() {
   });
 
   return (
-    <form {...form.props}>
+    <form {...form.props} {...testId()}>
       <p>First Name</p>
       {form.register("firstName", (fieldProps) => (
         <input
@@ -84,10 +90,17 @@ export function SignUp() {
       ))}
       <span className="text-red-500">{form.errors.password}</span>
       <br />
-      <button className={form.isValid ? "text-green-500" : "text-red-500"}>
+      <button
+        className={form.isValid ? "text-green-500" : "text-red-500"}
+        {...testId("signUpButton")}
+      >
         {(!form.isDirty ? "Enter Details" : "Complete Form") ||
           (form.isValid ? "All systems go" : "Check errors")}
       </button>
     </form>
   );
 }
+
+SignUp.propTypes = {
+  "data-testid": PropTypes.string,
+};
