@@ -1,7 +1,7 @@
 import { MockServer } from "./MockServer";
 
 import data from "../mock.json";
-
+delete data.AuthStore;
 const server = new MockServer({
   baseURL: "",
   db: data,

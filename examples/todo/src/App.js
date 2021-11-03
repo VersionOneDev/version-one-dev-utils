@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { RouteProvider } from "version-one-dev-utils/routes";
 import { routes } from "./routes";
 
 import { useSelector } from "version-one-dev-utils/state";
 
-import { AuthStore } from "./stores/AuthStore";
+// import { AuthStore } from "./stores/AuthStore";
 
 import { Header } from "./containers/Header";
 
@@ -13,18 +13,19 @@ import { AddTodo } from "./containers/AddTodo";
 import { ItemList } from "./containers/ItemList";
 import { Item } from "./containers/Item";
 import { Chat } from "./containers/Chat";
+import { SignUp } from "./containers/SignUp";
 
 import { Notification } from "./containers/Notification";
 
 export function App() {
   const ready = useSelector((state) => state.AuthStore.ready);
 
-  useEffect(() => {
-    AuthStore.actions.login();
-  }, []);
+  // useEffect(() => {
+  //   AuthStore.actions.login();
+  // }, []);
 
   if (!ready) {
-    return <p>Loading...</p>;
+    return <SignUp />;
   }
 
   return (

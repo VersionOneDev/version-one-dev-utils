@@ -12,6 +12,16 @@ login.success = (state, action) => ({
 const logout = () => fetch("/login");
 logout.success = (state, action) => AuthStore.initialState;
 
+const signup = (props) =>
+  fetch("/signup", {
+    method: "POST",
+    body: JSON.stringify(props),
+  }).then((res) => res.json());
+signup.success = (state, action) => ({
+  ...state,
+  ...action.payload,
+});
+
 export const AuthStore = createStore({
   name: "AuthStore",
   initialState: {
@@ -19,7 +29,7 @@ export const AuthStore = createStore({
     id: null,
     name: null,
   },
-  actions: { login, logout },
+  actions: { login, logout, signup },
   propTypes: PropTypes.shape({
     ready: PropTypes.boolean,
     id: PropTypes.string,
