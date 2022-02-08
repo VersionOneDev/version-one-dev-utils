@@ -48,6 +48,13 @@ export function createCache(defaults = { lifespan: 60000 }) {
                 item.payload = handler(props, actionApi);
               }
 
+              const done = (v) => {
+                // Set isCached value on handler so createAction can avoid dispatching unnessesary pending events
+                item.handler.isCached = true;
+                // Resolve with value
+                resolve(v);
+              };
+
               if (item.payload instanceof Function) {
                 // Callback
                 // Wrap in a promise so subsequent calls to action are treated as async and do not cause the payload creator to fire multiple times.
@@ -60,7 +67,7 @@ export function createCache(defaults = { lifespan: 60000 }) {
                     (v) => {
                       // Update the item payload so the latest value is returned in subsequent calls to action
                       item.payload = Promise.resolve(v);
-                      resolve(v);
+                      done(v);
                       resolvePromise(v);
                     },
                     (e) => {
@@ -82,10 +89,10 @@ export function createCache(defaults = { lifespan: 60000 }) {
                 });
               } else if (item.payload.then && item.payload.catch) {
                 // Async
-                waitForValue(item.payload).then(resolve).catch(reject);
+                waitForValue(item.payload).then(done).catch(reject);
               } else {
                 // Sync
-                resolve(item.payload);
+                done(item.payload);
               }
             } catch (error) {
               reject(error);

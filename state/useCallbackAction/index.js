@@ -9,6 +9,6 @@ export const useCallbackAction = (cb, deps) => {
   useEffect(() => {
     let action;
     fn().then((value) => (action = value));
-    return () => action?.meta.unsubscribe();
+    return () => action && action.meta.unsubscribe();
   }, [fn]);
 };
