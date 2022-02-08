@@ -95,9 +95,14 @@ export const createAction = (store, type, handler) => {
 
           if (payload instanceof Function) {
             // Dispatch pending action and run the callback
-            dispatch(
-              action.pending(props, key, undefined, undefined, unsubscribe)
-            );
+            console.log("isCached", payload.isCached, store, type);
+            if (!payload.isCached) {
+              dispatch(
+                action.pending(props, key, undefined, undefined, unsubscribe)
+              );
+            } else {
+              console.log("ignore pending");
+            }
             // Callbacks can be called multiple times e.g. when using a WebSocket
             // Payload can return an optional 'unsubscribe' method to clean up
             // anything that could cause memory leaks e.g. event listeners, intervals etc.
