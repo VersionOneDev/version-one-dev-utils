@@ -17,7 +17,7 @@ export function createCache(defaults = { lifespan: 60000 }) {
         (item.lifespan !== -1 && ts - item.ts >= item.lifespan) ||
         !expiredOnly
       ) {
-        item.unsubscribe();
+        item.unsubscribe && item.unsubscribe();
         delete items[key];
       }
     });

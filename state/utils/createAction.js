@@ -94,14 +94,11 @@ export const createAction = (store, type, handler) => {
           const payload = handler(props, actionApi);
 
           if (payload instanceof Function) {
-            // Dispatch pending action and run the callback
-            console.log("isCached", payload.isCached, store, type);
+            // Dispatch pending action (ignoring cached values) and run the callback
             if (!payload.isCached) {
               dispatch(
                 action.pending(props, key, undefined, undefined, unsubscribe)
               );
-            } else {
-              console.log("ignore pending");
             }
             // Callbacks can be called multiple times e.g. when using a WebSocket
             // Payload can return an optional 'unsubscribe' method to clean up
