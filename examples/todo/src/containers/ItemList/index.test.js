@@ -17,7 +17,7 @@ describe("ItemList (Template Story)", () => {
 
   it("Changes route to item when view is clicked", () => {
     render(<Template />);
-    userEvent.click(screen.getByTestId("ref/itemView/1"));
+    userEvent.click(screen.getByTestId("ref/itemView-1"));
     expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith("/item/1");
   });
 
@@ -25,7 +25,7 @@ describe("ItemList (Template Story)", () => {
     render(<Template />);
     await waitFor(() =>
       expect(global.STORYBOOK_ACTION).toHaveBeenCalledWith({
-        type: "ItemStore/get",
+        type: "ItemStore/watch",
       })
     );
   });

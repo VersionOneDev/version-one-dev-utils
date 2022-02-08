@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import classnames from "classnames";
 
-import { useSelector } from "version-one-dev-utils/state";
+import { useSelector, useCallbackAction } from "version-one-dev-utils/state";
 import { useRoutes } from "version-one-dev-utils/routes";
 
 import { ItemStore } from "../../stores/ItemStore";
@@ -24,10 +24,7 @@ export function Item(props) {
     (state) => item?.completedBy && state.UserStore[item.completedBy]
   );
 
-  useEffect(() => {
-    ItemStore.actions.watch();
-    return () => ItemStore.actions.unwatch();
-  }, []);
+  useCallbackAction(ItemStore.actions.watch, []);
 
   useEffect(() => {
     if (item?.createdBy) UserStore.actions.get({ id: item.createdBy });

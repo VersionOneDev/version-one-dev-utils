@@ -1,11 +1,12 @@
-import { createStore } from "version-one-dev-utils/state";
+import { createStore, createCache } from "version-one-dev-utils/state";
 
 import PropTypes from "prop-types";
 
-const get = (props) =>
-  UserStore.cache.get(`${props.id}`, () =>
-    fetch(`/user/${props.id}`).then((response) => response.json())
-  );
+const cache = createCache();
+
+const get = cache.add("get", (props) =>
+  fetch(`/user/${props.id}`).then((response) => response.json())
+);
 
 get.success = (state, action) => ({
   ...state,

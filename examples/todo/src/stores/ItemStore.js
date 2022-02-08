@@ -1,19 +1,17 @@
-import { createStore } from "version-one-dev-utils/state";
+import { createStore, createCache } from "version-one-dev-utils/state";
 import PropTypes from "prop-types";
 
 import { AuthStore } from "./AuthStore";
 
-let ws;
+const cache = createCache();
 
-const watch = () =>
-  ItemStore.cache.watch("ws", (resolve) => {
-    ws = new WebSocket("/items");
-    ws.onmessage = (event) => resolve(event.data);
-  });
+const watch = cache.add("watch", () => (resolve) => {
+  const ws = new WebSocket("/items");
+  ws.onmessage = (event) => resolve(event.data);
+  return () => ws?.close();
+});
 
 watch.success = (state, action) => action.payload;
-
-const unwatch = () => ItemStore.cache.unwatch("ws", () => ws?.close());
 
 const add = (props) =>
   fetch(`/items`, {
@@ -69,7 +67,7 @@ incomplete.propTypes = {
 export const ItemStore = createStore({
   name: "ItemStore",
   initialState: {},
-  actions: { watch, unwatch, add, edit, complete, incomplete },
+  actions: { watch, add, edit, complete, incomplete },
   propTypes: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,

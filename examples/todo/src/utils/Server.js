@@ -1,4 +1,4 @@
-import { MockServer } from "./MockServer";
+import { MockServer } from "version-one-dev-utils/utils/MockServer";
 
 import data from "../mock.json";
 

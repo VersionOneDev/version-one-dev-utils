@@ -4,7 +4,7 @@ import classnames from "classnames";
 import moment from "moment";
 
 import { useForm } from "version-one-dev-utils/forms";
-import { useSelector } from "version-one-dev-utils/state";
+import { useSelector, useCallbackAction } from "version-one-dev-utils/state";
 
 import { ChatStore } from "../../stores/ChatStore";
 import { UserStore } from "../../stores/UserStore";
@@ -14,9 +14,7 @@ export function Chat(props) {
   const items = useSelector((state) => state.ChatStore);
   const users = useSelector((state) => state.UserStore);
 
-  useEffect(() => {
-    ChatStore.actions.watch();
-  }, []);
+  useCallbackAction(ChatStore.actions.watch, []);
 
   useEffect(() => {
     items.forEach((item) => UserStore.actions.get({ id: item.from }));

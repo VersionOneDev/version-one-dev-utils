@@ -7,7 +7,7 @@ Object {
     <div>
       <ul>
         <li
-          class="p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer bg-gray-400 hover:bg-gray-500"
+          class="p-6 mb-4 block rounded-md flex items-center cursor-pointer bg-gradient-to-tr from-gray-400 to-gray-200 opacity-50 hover:opacity-80"
         >
           <div
             class="flex-1 mr-4 text-gray-700"
@@ -38,7 +38,7 @@ Object {
   "container": <div>
     <ul>
       <li
-        class="p-6 mb-4 block rounded-md bg-gray-400 hover:bg-gray-300 flex items-center cursor-pointer bg-gray-400 hover:bg-gray-500"
+        class="p-6 mb-4 block rounded-md flex items-center cursor-pointer bg-gradient-to-tr from-gray-400 to-gray-200 opacity-50 hover:opacity-80"
       >
         <div
           class="flex-1 mr-4 text-gray-700"
