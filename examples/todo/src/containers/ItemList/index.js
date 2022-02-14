@@ -1,12 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-import {
-  useSelector,
-  usePending,
-  useCallbackAction,
-} from "version-one-dev-utils/state";
+import { useSelector, usePending } from "version-one-dev-utils/state";
 import { useRoutes } from "version-one-dev-utils/routes";
 import { TestId } from "version-one-dev-utils/tests";
 
@@ -21,7 +17,7 @@ export function ItemList(props) {
 
   const { link, routes } = useRoutes();
 
-  useCallbackAction(ItemStore.actions.watch, []);
+  useEffect(() => ItemStore.actions.watch(), []);
 
   const testId = TestId(props);
 

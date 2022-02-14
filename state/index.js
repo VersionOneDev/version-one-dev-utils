@@ -4,6 +4,5 @@ export { ErrorStore } from "./ErrorStore";
 export { usePending } from "./usePending";
 export { useErrors } from "./useErrors";
 export { useSelector } from "./useSelector";
-export { useCallbackAction } from "./useCallbackAction";
 export { createStore } from "./utils/createStore";
 export { createCache } from "./utils/createCache";

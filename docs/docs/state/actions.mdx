@@ -36,12 +36,29 @@ const add = async (props) => await goAndFetch(props.value);
 ### Callback actions
 
 Callback actions can be used to update store state multiple times from a single call of an action, for example when connecting to and receiving updates from a web socket.
-They should return a function that accepts resolve and reject callbacks used to pass values or errors to the store as many times as needed.
+They should return a callback function that accepts resolve and reject methods used to pass values or errors to the store as many times as needed.
 
 ```javascript
 const add = (props) => (resolve, reject) => {
   /* Increase the counter value by 'props.value' once every second */
   setInterval(() => resolve(props.value), 1000);
+};
+```
+
+The callback may return an optional unsubscribe function to cleanup any listeners, timers etc. that have been started.
+See [Unsubscribing from callback actions](unsubscribeCallbacks) for more information.
+
+```javascript
+const add = (props) => (resolve, reject) => {
+  /* Increase the counter value by 'props.value' once every second */
+  /* Keep a reference to the interval so it can be removed later */
+  const interval = setInterval(() => resolve(props.value), 1000);
+
+  /* Return an unsubscribe function */
+  return () => {
+    /* Clear the interval */
+    clearInterval(interval);
+  };
 };
 ```
 

@@ -8,39 +8,43 @@ const getKey = (id, props) => id + "__" + JSON.stringify(props);
 export function createCache(defaults = { lifespan: 60000 }) {
   const items = {};
 
-  const flush = (expiredOnly = true) => {
+  const flushItem = (key, force = false) => {
     const ts = Date.now();
+    const item = items[key];
 
-    Object.keys(items).forEach((key) => {
-      const item = items[key];
-      if (
-        (item.lifespan !== -1 && ts - item.ts >= item.lifespan) ||
-        !expiredOnly
-      ) {
-        item.unsubscribe && item.unsubscribe();
-        delete items[key];
-      }
-    });
+    if (
+      item &&
+      ((item.lifespan !== -1 && ts - item.ts >= item.lifespan) || force)
+    ) {
+      item.listenerCount = 0;
+      item.unsubscribe && item.unsubscribe();
+      delete items[key];
+    } else {
+      return item;
+    }
   };
 
+  const flushAll = (force) =>
+    Object.keys(items).forEach((key) => flushItem(key, force));
+
   // Set a loop to flush expired items
-  const interval = setInterval(flush, defaults.lifespan);
+  const interval = setInterval(flushAll, defaults.lifespan);
 
   const add = (id, handler, options = { lifespan: defaults.lifespan }) => {
     return (props, actionApi) => {
       const key = getKey(id, props);
 
-      let item = items[key];
+      // Flush item returns active items and clears any that have expired
+      let item = flushItem(key);
 
-      const ts = Date.now();
-
-      if (!item || (item.lifespan !== -1 && ts - item.ts >= item.lifespan)) {
+      if (!items[key]) {
         item = {
           ...options,
           key,
-          ts,
+          ts: Date.now(),
           payload: null,
           unsubscribe: null,
+          active: true,
           listenerCount: 0,
           handler: (resolve, reject) => {
             try {
@@ -59,7 +63,6 @@ export function createCache(defaults = { lifespan: 60000 }) {
                 // Callback
                 // Wrap in a promise so subsequent calls to action are treated as async and do not cause the payload creator to fire multiple times.
                 // The initial call to action can continue to fire resolve/reject callbacks to allow updates from web sockets, firebase etc.
-
                 item.payload = new Promise((resolvePromise, rejectPromise) => {
                   // Unsubscribe method can be used to clean up event listeners, stop intervals etc.
                   // that may be used when action is making multiple callbacks
@@ -76,14 +79,22 @@ export function createCache(defaults = { lifespan: 60000 }) {
                     }
                   );
 
-                  item.unsubscribe = () => {
-                    item.listenerCount--;
+                  let fired = false;
 
-                    if (!item.listenerCount && unsubscribe) {
-                      // Remove from the cache
-                      delete items[key];
-                      // Call unsubscribe to remove any listeners, intervals etc. created when the action was fired
-                      return unsubscribe();
+                  item.unsubscribe = () => {
+                    // We should only be able to hit unsubscribe once for each time an action is dispatched to keep the listener count valid
+                    if (!fired) {
+                      fired = true;
+                      item.listenerCount--;
+
+                      if (item.active && item.listenerCount < 1) {
+                        item.active = false;
+                        item.listenerCount = 0;
+                        // Remove from the cache
+                        delete items[key];
+                        // Call unsubscribe to remove any listeners, intervals etc. created when the action was fired
+                        return unsubscribe && unsubscribe();
+                      }
                     }
                   };
                 });
@@ -111,16 +122,9 @@ export function createCache(defaults = { lifespan: 60000 }) {
     };
   };
 
-  const remove = (id, props) => {
-    const key = getKey(id, props);
-    const item = items[key];
-    if (item) {
-      item.unsubscribe();
-      delete items[key];
-    }
-  };
+  const remove = (id, props) => flushItem(getKey(id, props), true);
 
-  const removeAll = () => flush(true);
+  const removeAll = () => flushAll(true);
 
   const destroy = () => {
     clearInterval(interval);
@@ -132,5 +136,6 @@ export function createCache(defaults = { lifespan: 60000 }) {
     remove,
     removeAll,
     destroy,
+    items,
   };
 }

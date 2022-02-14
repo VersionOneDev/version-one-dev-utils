@@ -1,7 +1,7 @@
 import { createAction as createActionI } from "@reduxjs/toolkit";
 import PropTypes from "prop-types";
-import { noop } from "../../utils/noop";
 import { waitForValue } from "../../utils/waitForValue";
+import { DisposablePromise } from "../../utils/DisposablePromise";
 
 export const statuses = { PENDING: "/pending", ERROR: "/error" };
 
@@ -17,9 +17,9 @@ export const getKey = (action) => {
   return action.meta && action.meta.key ? "/" + action.meta.key : "";
 };
 
-const prepareAction = (props, key, payload, error, unsubscribe) => {
+const prepareAction = (props, key, payload, error) => {
   return {
-    meta: { key, props, unsubscribe },
+    meta: { key, props },
     payload,
     error,
   };
@@ -69,25 +69,17 @@ export const createAction = (store, type, handler) => {
     // ReduxThunk thunk will pass a dispatch function but Storybook won't
     // Only do the work if using ReduxThunk
     if (dispatch) {
-      return new Promise((resolve, reject) => {
+      return new DisposablePromise((resolve, reject) => {
         const actionApi = {
           dispatch,
           getState,
         };
 
-        let unsubscribe;
-
         const dispatchSuccess = (value) =>
-          resolve(
-            dispatch(
-              action.success(props, key, value, undefined, unsubscribe || noop)
-            )
-          );
+          resolve(dispatch(action.success(props, key, value, undefined)));
 
         const dispatchError = (error) =>
-          reject(
-            dispatch(action.error(props, key, null, error, unsubscribe || noop))
-          );
+          reject(dispatch(action.error(props, key, null, error)));
 
         // Get the payload from the action handler
         try {
@@ -96,19 +88,15 @@ export const createAction = (store, type, handler) => {
           if (payload instanceof Function) {
             // Dispatch pending action (ignoring cached values) and run the callback
             if (!payload.isCached) {
-              dispatch(
-                action.pending(props, key, undefined, undefined, unsubscribe)
-              );
+              dispatch(action.pending(props, key));
             }
             // Callbacks can be called multiple times e.g. when using a WebSocket
             // Payload can return an optional 'unsubscribe' method to clean up
             // anything that could cause memory leaks e.g. event listeners, intervals etc.
-            unsubscribe = payload(dispatchSuccess, dispatchError);
+            return payload(dispatchSuccess, dispatchError);
           } else if (payload.then && payload.catch) {
             // Dispatch pending action if promise
-            dispatch(
-              action.pending(props, key, undefined, undefined, unsubscribe)
-            );
+            dispatch(action.pending(props, key, undefined, undefined));
             waitForValue(payload).then(dispatchSuccess).catch(dispatchError);
           } else {
             dispatchSuccess(payload);

@@ -8,7 +8,7 @@ const wait = async (delay) => await new Promise((r) => setTimeout(r, delay));
 const createActionObject = (type, props, payload) => ({
   type,
   payload,
-  meta: { key: undefined, props, unsubscribe: expect.any(Function) },
+  meta: { key: undefined, props },
   error: undefined,
 });
 
@@ -49,10 +49,12 @@ describe("async", () => {
 describe("callback", () => {
   const props = { value: "Callback Example" };
   const payload = { value: props.value, numCallbacks: 1 };
+  let unsubscribe;
   let result;
 
   it("Returns a promise that resolves with action object", async () => {
-    result = await TestStore.actions.callback(props);
+    unsubscribe = TestStore.actions.callback(props);
+    result = await unsubscribe;
 
     expect(result).toEqual(
       createActionObject("TestStore/callback", props, payload)
@@ -69,7 +71,7 @@ describe("callback", () => {
   });
 
   it("Fires unsubscribe callback and stops ", () => {
-    expect(result.meta.unsubscribe()).toEqual("unsubscribed");
+    expect(unsubscribe()).toEqual("unsubscribed");
   });
 
   it("Has stopped updating", async () => {
@@ -101,7 +103,7 @@ describe("cached sync", () => {
     expect(newRes).toEqual(result);
   });
 
-  it("Does not return the same action object when the cache is out of date", async () => {
+  it("Does not return the same action object when the cache is expired", async () => {
     await wait(100);
     const newRes = await TestStore.actions.cachedSync(props);
     expect(newRes).not.toEqual(result);
@@ -131,7 +133,7 @@ describe("cached async", () => {
     expect(newRes).toEqual(result);
   });
 
-  it("Does not return the same action object when the cache is out of date", async () => {
+  it("Does not return the same action object when the cache is expired", async () => {
     await wait(100);
     const newRes = await TestStore.actions.cachedAsync(props);
     expect(newRes).not.toEqual(result);
@@ -142,10 +144,12 @@ describe("cached callback", () => {
   const props = { value: "Cached Callback Example" };
   const payload = { value: props.value + "1", numCallbacks: 1 };
 
+  let unsubscribe;
   let result, secondResult;
 
   it("Returns a promise that resolves with action object", async () => {
     result = await TestStore.actions.cachedCallback(props);
+
     expect(result).toEqual(
       createActionObject("TestStore/cachedCallback", props, payload)
     );
@@ -175,9 +179,10 @@ describe("cached callback", () => {
     );
   });
 
-  it("Does not return the same action object when the cache is out of date", async () => {
+  it("Does not return the same action object when the cache is expired", async () => {
     await wait(100);
-    secondResult = await TestStore.actions.cachedCallback(props);
+    unsubscribe = TestStore.actions.cachedCallback(props);
+    secondResult = await unsubscribe;
     expect(secondResult).not.toEqual(result);
   });
 
@@ -197,7 +202,7 @@ describe("cached callback", () => {
   });
 
   it("Fires unsubscribe callback and stops ", () => {
-    expect(secondResult.meta.unsubscribe()).toEqual("unsubscribed");
+    expect(unsubscribe()).toEqual("unsubscribed");
   });
 
   it("Has stopped updating", async () => {
@@ -206,5 +211,32 @@ describe("cached callback", () => {
       value: props.value + "2",
       numCallbacks: 2,
     });
+  });
+});
+
+/**
+ * CACHE TESTS - Move these to somewhere rather than exposing the cache object in the TestStore?
+ */
+
+describe("Clearing the cache", () => {
+  it("Is empty by default", () => {
+    TestStore.cache.removeAll();
+    expect(TestStore.cache.items).toEqual({});
+  });
+
+  it("Is emptied when a single item is removed", () => {
+    const props = { value: "Cached Callback Example" };
+
+    TestStore.actions.cachedCallback(props);
+    TestStore.cache.remove("cachedCallback", props);
+    expect(TestStore.cache.items).toEqual({});
+  });
+
+  it("Is emptied when all items are removed", () => {
+    TestStore.actions.cachedSync({ value: "Cached Sync Example" });
+    TestStore.actions.cachedAsync({ value: "Cached Async Example" });
+    TestStore.actions.cachedCallback({ value: "Cached Callback Example" });
+    TestStore.cache.removeAll();
+    expect(TestStore.cache.items).toEqual({});
   });
 });

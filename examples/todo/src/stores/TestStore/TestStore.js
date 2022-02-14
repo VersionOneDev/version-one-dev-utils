@@ -8,25 +8,19 @@ import { createStore, createCache } from "version-one-dev-utils/state";
 
 import PropTypes from "prop-types";
 
-const cache = createCache();
+const cache = createCache({ lifespan: 100 });
 
 const callbackLoop = (props, cb) => {
   let i = 0;
   const n = 10;
-  let timeout;
+  let interval;
 
-  const tick = () => {
-    timeout = setTimeout(() => {
-      if (i++ < n) {
-        cb({ ...props, numCallbacks: i });
-        tick();
-      }
-    }, 5);
-  };
-  tick();
+  interval = setInterval(() => {
+    if (i++ < n) cb({ ...props, numCallbacks: i });
+  }, 5);
 
   return () => {
-    clearTimeout(timeout);
+    clearInterval(interval);
     return "unsubscribed"; // Return a string so we can easily check function is called in the tests.
   };
 };
@@ -105,3 +99,6 @@ export const TestStore = createStore({
     numCallbacks: PropTypes.number,
   }),
 });
+
+// Expose the cache to help testing
+TestStore.cache = cache;

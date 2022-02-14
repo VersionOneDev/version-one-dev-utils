@@ -1,0 +1,88 @@
+---
+sidebar_position: 7
+---
+
+# Caching
+
+Caching can be used to optimise duplicate calls to actions allowing components to request the state they require independently.
+When an action is cached any subsequent calls with matching props will return the cached payload rather than running the action again.
+
+## Creating a cache
+
+Each store can create it's own cache by calling the `createCache` function. An optional config
+object can be passed to set the `lifespan` (ms) of cached actions (defaults 3600000 milliseconds / 1 hour).
+
+```jsx
+import { createCache } from "version-one-dev-utils";
+
+const cache = createCache({ lifespan: 3600000 });
+```
+
+## Adding actions to the cache
+
+Actions can be cached by passing them to the `cache.add` function along with an `id`:
+
+```javascript
+const fetchExample = cache.add("fetchExample", (props) => {
+  return fetch(`https://example.com/${props.value}`);
+});
+```
+
+Any type of action may be cached including callback actions with unsubscribe methods:
+
+```javascript
+const callbackExample = cache.add(
+  "callbackExample",
+  (props) => (resolve, reject) => {
+    const ws = new WebSocket(`/${props.id}`);
+    ws.onmessage = (event) => resolve(event.data);
+    ws.onerror = () => reject("Websocket error");
+    /* Return an unsubscribe function */
+    return () => ws.close();
+  }
+);
+```
+
+An optional config object can be used to control the lifespan of the individual action:
+
+```javascript
+const fetchExample = cache.add(
+  "fetchExample",
+  (props) => {
+    return fetch(`https://example.com/${props.value}`);
+  },
+  /* Limit lifespan to 30 seconds for this action only */
+  { lifespan: 30000 }
+);
+```
+
+:::note Lifespan and expiry
+Actions that have exceeded their lifespan will be periodically cleared from the cache or updated the next time they are called.
+**A lifespan of `-1` can be used to prevent a cached action from expiring.**
+This is useful for callback actions that should continue to update state indefinitely for example when connecting to a WebSocket.
+:::
+
+## Removing an action from the cache
+
+An action can be manually removed from the cache by calling the `remove` function and passing the `id` along with a `props` object.
+If the action has been cached with matching props it will be removed:
+
+```javascript
+cache.remove("fetchExample", { value: "1" });
+```
+
+## Clearing the entire cache
+
+The entire cache can be cleared by calling the `removeAll` function, can be used when a store is being reset:
+
+```javascript
+cache.removeAll();
+```
+
+## Destroying the cache
+
+If the cache is no longer required the `destroy` method can be used to clear the cache and stop the expiry loop:
+
+```javascript
+cache.destroy();
+```

@@ -1,0 +1,59 @@
+---
+sidebar_position: 6
+---
+
+# Unsubscribing from callback actions
+
+Callback actions will often require, timers, event listeners, WebSockets etc. that have the
+potential to lead to memory leaks if not removed when finished with.
+To avoid this callback actions can return an `unsubscribe` function to be called by a component when necessary:
+
+```javascript
+import { createStore } from "version-one-dev-utils";
+
+const subscribe = (props) => (resolve, reject) => {
+  const ws = new WebSocket(`/${props.id}`);
+  ws.onmessage = (event) => resolve(event.data);
+  ws.onerror = () => reject("Websocket error");
+  /* Return an unsubscribe function */
+  return () => ws.close();
+};
+
+subscribe.success = (state, action) => ({
+  ...state,
+  ...action.payload,
+});
+
+export const WebsocketStore = createStore({
+  name: "WebsocketStore",
+  initialState: {
+    count: 0,
+  },
+  actions: {
+    subscribe,
+  },
+});
+```
+
+The `unsubscribe` method will be returned when the action is called and can easily be passed in the return function of the `useEffect` hook.
+The following two examples achieve the same result and unsubscribe from the callback action when the `id` dependency changes or the component is unmounted:
+
+```javascript
+import { WebsocketStore } from "./WebsocketStore";
+
+useEffect(() => {
+  /* Keep a reference to the unsubscribe function  */
+  const unsubscribe = WebsocketStore.actions.subscribe({ id });
+
+  return () => {
+    /* Unsubscribe from the action */
+    unsubscribe && unsubscribe();
+  };
+}, [id]);
+```
+
+```javascript
+import { WebsocketStore } from "./WebsocketStore";
+
+useEffect(() => WebsocketStore.actions.subscribe({ id }), [id]);
+```

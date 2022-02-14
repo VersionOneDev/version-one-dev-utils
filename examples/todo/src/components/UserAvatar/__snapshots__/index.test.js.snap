@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="flex justify-center items-center w-[3em] h-[3em] font-bold bg-violet-700 rounded-full"
+        class="relative inline-flex justify-center items-center w-[3em] h-[3em] font-bold bg-violet-700 rounded-full overflow-hidden"
         data-testid="ref"
       >
         B
@@ -15,7 +15,7 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="flex justify-center items-center w-[3em] h-[3em] font-bold bg-violet-700 rounded-full"
+      class="relative inline-flex justify-center items-center w-[3em] h-[3em] font-bold bg-violet-700 rounded-full overflow-hidden"
       data-testid="ref"
     >
       B
