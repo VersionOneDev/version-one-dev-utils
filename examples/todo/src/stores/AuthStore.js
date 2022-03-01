@@ -1,15 +1,17 @@
-import { createStore } from "version-one-dev-utils/state";
+import { createStore, createAsyncAction } from "version-one-dev-utils/state";
 
 import PropTypes from "prop-types";
 
-const login = () => fetch("/login").then((response) => response.json());
+const login = createAsyncAction(() =>
+  fetch("/login").then((response) => response.json())
+);
 login.success = (state, action) => ({
   ...state,
   ...action.payload,
   ready: true,
 });
 
-const logout = () => fetch("/login");
+const logout = createAsyncAction(() => fetch("/login"));
 logout.success = (state, action) => AuthStore.initialState;
 
 export const AuthStore = createStore({

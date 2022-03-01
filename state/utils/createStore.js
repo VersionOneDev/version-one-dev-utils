@@ -3,13 +3,18 @@ import { createAction, statuses } from "./createAction";
 import PropTypes from "prop-types";
 
 import { Store } from "../Store";
+import { createCache } from "./createCache";
 
 export const createStore = ({
   name = "",
   initialState = {},
   actions = {},
+  cache: cacheOptions = {},
   propTypes,
 }) => {
+  /* Caching */
+  const cache = createCache({ ...cacheOptions, name });
+
   /* Default actions */
 
   // TODO -Fix default actions
@@ -35,7 +40,12 @@ export const createStore = ({
 
   Object.keys(allActions).forEach((type) => {
     const def = allActions[type];
-    const action = createAction(name, type, def);
+    // Apply caching options
+    const cached = def.cache
+      ? cache.add(type, def, typeof def.cache === "object" && def.cache)
+      : null;
+
+    const action = createAction(name, type, cached || def);
     const dispatchedAction = (props, key) => Store.dispatch(action(props, key));
     // Copy action properties
     for (let key in action) dispatchedAction[key] = action[key];
@@ -86,6 +96,7 @@ export const createStore = ({
     initialState,
     propTypes,
     reducer,
+    cache,
     byKey: (key) => `${name}/*/${key}`,
     toString: () => name,
     actions: parsedActions,

@@ -1,68 +1,86 @@
-import { createStore, createCache } from "version-one-dev-utils/state";
+import {
+  createStore,
+  createAsyncAction,
+  createCallbackAction,
+} from "version-one-dev-utils/state";
 import PropTypes from "prop-types";
 
 import { AuthStore } from "./AuthStore";
 
-const cache = createCache();
-
-const watch = cache.add("watch", () => (resolve) => {
-  const ws = new WebSocket("/items");
-  ws.onmessage = (event) => resolve(event.data);
-  return () => ws?.close();
-});
+const watch = createCallbackAction(
+  () => (resolve) => {
+    const ws = new WebSocket("/items");
+    ws.onmessage = (event) => resolve(event.data);
+    return () => ws?.close();
+  },
+  { cache: true }
+);
 
 watch.success = (state, action) => action.payload;
 
-const add = (props) =>
-  fetch(`/items`, {
-    method: "POST",
-    headers: {
-      Authorization: AuthStore.getState().id,
+const add = createAsyncAction(
+  (props) =>
+    fetch(`/items`, {
+      method: "POST",
+      headers: {
+        Authorization: AuthStore.getState().id,
+      },
+      body: JSON.stringify(props),
+    }),
+  {
+    propTypes: {
+      title: PropTypes.string.isRequired,
     },
-    body: JSON.stringify(props),
-  });
+    cache: true,
+  }
+);
 
-add.propTypes = {
-  title: PropTypes.string.isRequired,
-};
-
-const edit = (props) =>
-  fetch(`/items/${props.id}`, {
-    method: "PUT",
-    headers: {
-      Authorization: AuthStore.getState().id,
+const edit = createAsyncAction(
+  (props) =>
+    fetch(`/items/${props.id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: AuthStore.getState().id,
+      },
+      body: JSON.stringify({ title: props.title }),
+    }),
+  {
+    propTypes: {
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
     },
-    body: JSON.stringify({ title: props.title }),
-  });
+  }
+);
 
-edit.propTypes = {
-  id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-};
-
-const complete = (props) =>
-  fetch(`/items/${props.id}/complete`, {
-    method: "PUT",
-    headers: {
-      Authorization: AuthStore.getState().id,
+const complete = createAsyncAction(
+  (props) =>
+    fetch(`/items/${props.id}/complete`, {
+      method: "PUT",
+      headers: {
+        Authorization: AuthStore.getState().id,
+      },
+    }),
+  {
+    propTypes: {
+      id: PropTypes.string.isRequired,
     },
-  });
+  }
+);
 
-complete.propTypes = {
-  id: PropTypes.string.isRequired,
-};
-
-const incomplete = (props) =>
-  fetch(`/items/${props.id}/incomplete`, {
-    method: "PUT",
-    headers: {
-      Authorization: AuthStore.getState().id,
+const incomplete = createAsyncAction(
+  (props) =>
+    fetch(`/items/${props.id}/incomplete`, {
+      method: "PUT",
+      headers: {
+        Authorization: AuthStore.getState().id,
+      },
+    }),
+  {
+    propTypes: {
+      id: PropTypes.string.isRequired,
     },
-  });
-
-incomplete.propTypes = {
-  id: PropTypes.string.isRequired,
-};
+  }
+);
 
 export const ItemStore = createStore({
   name: "ItemStore",

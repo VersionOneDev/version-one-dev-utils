@@ -4,11 +4,14 @@
  *
  **/
 
-import { createStore, createCache } from "version-one-dev-utils/state";
+import {
+  createStore,
+  createSyncAction,
+  createAsyncAction,
+  createCallbackAction,
+} from "version-one-dev-utils/state";
 
 import PropTypes from "prop-types";
-
-const cache = createCache({ lifespan: 100 });
 
 const callbackLoop = (props, cb) => {
   let i = 0;
@@ -25,21 +28,26 @@ const callbackLoop = (props, cb) => {
   };
 };
 
-const sync = (props) => props;
-sync.propTypes = { value: PropTypes.string };
+const sync = createSyncAction((props) => props, {
+  propTypes: { value: PropTypes.string },
+});
 sync.success = (state, action) => action.payload;
 
-const async = (props) => Promise.resolve(props);
-async.propTypes = { value: PropTypes.string };
+const async = createAsyncAction((props) => Promise.resolve(props), {
+  propTypes: { value: PropTypes.string },
+});
 async.success = (state, action) => action.payload;
 
-const callback = (props) => (resolve) => callbackLoop(props, resolve);
-callback.propTypes = { value: PropTypes.string };
+const callback = createCallbackAction(
+  (props) => (resolve) => callbackLoop(props, resolve),
+  {
+    propTypes: { value: PropTypes.string },
+  }
+);
 callback.success = (state, action) => action.payload;
 
 let cachedSyncCount = 0;
-const cachedSync = cache.add(
-  "sync",
+const cachedSync = createSyncAction(
   (props) => {
     cachedSyncCount++;
 
@@ -47,14 +55,12 @@ const cachedSync = cache.add(
       value: props.value + cachedSyncCount.toString(),
     };
   },
-  { lifespan: 100 }
+  { propTypes: { value: PropTypes.string }, cache: { lifespan: 100 } }
 );
-cachedSync.propTypes = { value: PropTypes.string };
 cachedSync.success = (state, action) => action.payload;
 
 let cachedAsyncCount = 0;
-const cachedAsync = cache.add(
-  "sync",
+const cachedAsync = createAsyncAction(
   (props) => {
     cachedAsyncCount++;
 
@@ -62,14 +68,12 @@ const cachedAsync = cache.add(
       value: props.value + cachedAsyncCount.toString(),
     });
   },
-  { lifespan: 100 }
+  { propTypes: { value: PropTypes.string }, cache: { lifespan: 100 } }
 );
-cachedAsync.propTypes = { value: PropTypes.string };
 cachedAsync.success = (state, action) => action.payload;
 
 let cachedCallbackCount = 0;
-const cachedCallback = cache.add(
-  "cachedCallback",
+const cachedCallback = createCallbackAction(
   (props) => {
     cachedCallbackCount++;
 
@@ -82,10 +86,28 @@ const cachedCallback = cache.add(
       );
     };
   },
-  { lifespan: 100 }
+  { propTypes: { value: PropTypes.string }, cache: { lifespan: 100 } }
 );
-cachedCallback.propTypes = { value: PropTypes.string };
 cachedCallback.success = (state, action) => action.payload;
+
+const getCachedValue = createSyncAction(
+  (props) => ({
+    value: "getCachedValue",
+  }),
+  { propTypes: { value: PropTypes.string }, cache: { lifespan: 100 } }
+);
+getCachedValue.success = (state, action) => action.payload;
+
+const setCachedValue = createSyncAction(
+  (props) => {
+    TestStore.cache.set("getCachedValue", props, { value: "setCachedValue" });
+    return {
+      value: "setCachedValue",
+    };
+  },
+  { propTypes: { value: PropTypes.string } }
+);
+setCachedValue.success = (state, action) => action.payload;
 
 export const TestStore = createStore({
   name: "TestStore",
@@ -93,12 +115,19 @@ export const TestStore = createStore({
     value: null,
     numCallbacks: 0,
   },
-  actions: { sync, async, callback, cachedSync, cachedAsync, cachedCallback },
+  actions: {
+    sync,
+    async,
+    callback,
+    cachedSync,
+    cachedAsync,
+    cachedCallback,
+    getCachedValue,
+    setCachedValue,
+  },
   propTypes: PropTypes.shape({
     value: PropTypes.string,
     numCallbacks: PropTypes.number,
   }),
+  cache: { lifespan: 100 },
 });
-
-// Expose the cache to help testing
-TestStore.cache = cache;

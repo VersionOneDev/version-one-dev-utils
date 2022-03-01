@@ -5,8 +5,21 @@ const getKey = (id, props) => id + "__" + JSON.stringify(props);
 /**
  * Cache calls to actions.
  */
-export function createCache(defaults = { lifespan: 60000 }) {
+export function createCache(defaults = { lifespan: 60000, name: "cache" }) {
   const items = {};
+  let interval;
+
+  const updateInterval = () => {
+    const numItems = Object.keys(items).length;
+
+    if (!interval && numItems) {
+      // Set a loop to flush expired items
+      interval = setInterval(flushAll, defaults.lifespan);
+    } else if (interval && !numItems) {
+      clearInterval(interval);
+      interval = null;
+    }
+  };
 
   const flushItem = (key, force = false) => {
     const ts = Date.now();
@@ -19,6 +32,7 @@ export function createCache(defaults = { lifespan: 60000 }) {
       item.listenerCount = 0;
       item.unsubscribe && item.unsubscribe();
       delete items[key];
+      updateInterval();
     } else {
       return item;
     }
@@ -26,9 +40,6 @@ export function createCache(defaults = { lifespan: 60000 }) {
 
   const flushAll = (force) =>
     Object.keys(items).forEach((key) => flushItem(key, force));
-
-  // Set a loop to flush expired items
-  const interval = setInterval(flushAll, defaults.lifespan);
 
   const add = (id, handler, options = { lifespan: defaults.lifespan }) => {
     return (props, actionApi) => {
@@ -116,26 +127,55 @@ export function createCache(defaults = { lifespan: 60000 }) {
         };
 
         items[key] = item;
+        updateInterval();
       }
 
       return item.handler;
     };
   };
 
+  const set = (
+    id,
+    props,
+    payload,
+    options = { lifespan: defaults.lifespan }
+  ) => {
+    const key = getKey(id, props);
+
+    // Force flush any existing cached action with matching key
+    flushItem(key, true);
+
+    // Create a new cached item
+    const item = (items[key] = {
+      ...options,
+      key,
+      ts: Date.now(),
+      payload,
+      unsubscribe: null,
+      active: true,
+      listenerCount: 0,
+      handler: (resolve) => resolve(item.payload),
+    });
+
+    // Set isCached value on handler so createAction can avoid dispatching unnessesary pending events
+    item.handler.isCached = true;
+
+    items[key] = item;
+    updateInterval();
+
+    // Return the payload for convienience
+    return payload;
+  };
+
   const remove = (id, props) => flushItem(getKey(id, props), true);
 
   const removeAll = () => flushAll(true);
 
-  const destroy = () => {
-    clearInterval(interval);
-    removeAll();
-  };
-
   return {
     add,
+    set,
     remove,
     removeAll,
-    destroy,
     items,
   };
 }

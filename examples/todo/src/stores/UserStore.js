@@ -1,11 +1,13 @@
-import { createStore, createCache } from "version-one-dev-utils/state";
+import { createStore, createAsyncAction } from "version-one-dev-utils/state";
 
 import PropTypes from "prop-types";
 
-const cache = createCache();
-
-const get = cache.add("get", (props) =>
-  fetch(`/user/${props.id}`).then((response) => response.json())
+const get = createAsyncAction(
+  (props) => fetch(`/user/${props.id}`).then((response) => response.json()),
+  {
+    propTypes: { id: PropTypes.string.isRequired },
+    cache: true,
+  }
 );
 
 get.success = (state, action) => ({

@@ -1,26 +1,33 @@
-import { createStore, createCache } from "version-one-dev-utils/state";
+import {
+  createStore,
+  createSyncAction,
+  createCallbackAction,
+} from "version-one-dev-utils/state";
 import PropTypes from "prop-types";
 
 import { AuthStore } from "./AuthStore";
 
-const cache = createCache();
-
 let ws;
 
-const watch = cache.add("chat", () => (resolve) => {
-  ws = new WebSocket("/chat");
-  ws.onmessage = (event) => resolve(event.data);
-  return () => ws?.close();
-});
+const watch = createCallbackAction(
+  () => (resolve) => {
+    ws = new WebSocket("/chat");
+    ws.onmessage = (event) => resolve(event.data);
+    return () => ws?.close();
+  },
+  { cache: true }
+);
 
 watch.success = (state, action) => action.payload || ChatStore.initialState;
 
-const add = (props) =>
-  ws?.send({ ...props, type: "add", from: AuthStore.getState().id });
-
-add.propTypes = {
-  message: PropTypes.string.isRequired,
-};
+const add = createSyncAction(
+  (props) => ws?.send({ ...props, type: "add", from: AuthStore.getState().id }),
+  {
+    propTypes: {
+      message: PropTypes.string.isRequired,
+    },
+  }
+);
 
 export const ChatStore = createStore({
   name: "ChatStore",

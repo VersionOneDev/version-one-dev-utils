@@ -214,6 +214,27 @@ describe("cached callback", () => {
   });
 });
 
+describe("Set cache values manually", () => {
+  const props = { value: "none" };
+  let result;
+
+  it("Returns a promise that resolves with action object", async () => {
+    await TestStore.actions.getCachedValue(props);
+    await TestStore.actions.setCachedValue(props);
+    result = await TestStore.actions.getCachedValue(props);
+
+    expect(result).toEqual(
+      createActionObject("TestStore/getCachedValue", props, {
+        value: "setCachedValue",
+      })
+    );
+  });
+
+  it("Updates state", () => {
+    expect(TestStore.getState()).toEqual({ value: "setCachedValue" });
+  });
+});
+
 /**
  * CACHE TESTS - Move these to somewhere rather than exposing the cache object in the TestStore?
  */
