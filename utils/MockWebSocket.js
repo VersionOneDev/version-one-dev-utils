@@ -14,7 +14,7 @@ export class MockWebSocket {
   }
 
   send(value) {
-    return fetch(this.url, {
+    fetch(this.url, {
       method: "SOCKET",
       body: JSON.stringify(value),
     }).then((response) => {

@@ -7,7 +7,7 @@ sidebar_position: 2
 Stores are used to manage blocks of state in an application. They can be created by calling the `createStore` function and passing a config object containing a `name`, `initialState`, and `actions` object.
 
 ```javascript
-import { createStore } from "version-one-dev-utils";
+import { createStore } from "version-one-dev-utils/state";
 
 export const CounterStore = createStore({
   name: "CounterStore",
@@ -18,11 +18,11 @@ export const CounterStore = createStore({
 });
 ```
 
-An optional `propTypes` object can be added to describe the contents of a store's state, providing runtime type checking in the browser console.
-See [Typechecking With PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) for more details.
+Optional `propTypes` and `cache` objects can be added providing runtime type checking of store state and caching options.
+See [Typechecking With PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) and [Caching](caching) for more details.
 
 ```javascript
-import { createStore } from "version-one-dev-utils";
+import { createStore } from "version-one-dev-utils/state";
 import PropTypes from "prop-types";
 
 export const CounterStore = createStore({
@@ -32,6 +32,7 @@ export const CounterStore = createStore({
   },
   actions: {},
   propTypes: PropTypes.objectOf(PropTypes.shape({ count: PropTypes.number })),
+  cache: { lifespan: 60000 },
 });
 ```
 
@@ -44,7 +45,7 @@ This callback should return a value used when rendering the component, if this v
 
 ```jsx
 import React from "react";
-import { useSelector } from "version-one-dev-utils";
+import { useSelector } from "version-one-dev-utils/state";
 
 export function Counter() {
   const count = useSelector((state) => state.CounterStore.count);
@@ -59,7 +60,7 @@ This can be overridden by passing an equality function to the hook as the second
 ```jsx
 import React from "react";
 import { isEqual } from "lodash";
-import { useSelector } from "version-one-dev-utils";
+import { useSelector } from "version-one-dev-utils/state";
 
 export function Counter() {
   const count = useSelector((state) => state.CounterStore.count, isEqual);

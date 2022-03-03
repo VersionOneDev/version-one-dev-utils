@@ -11,45 +11,56 @@ There are 3 types of action: synchronous, asynchronous, and callback actions.
 
 ### Synchronous actions
 
-Synchronous actions should either return a value or throw an error.
+Synchronous actions should be wrapped in the `createSyncAction` helper and may return a value or throw an error.
 
 ```javascript
-const add = (props) => props.value;
+import { createSyncAction } from "version-one-dev-utils/state";
+
+const add = createSyncAction((props) => props.value);
 ```
 
 ### Asynchronous actions
 
-Asynchronous actions can be used when fetching data from a server and should return a promise or use async/await to return a value or throw an error.
+Asynchronous actions can be used when fetching data from a server. They should be wrapped in the `createAsyncAction` helper
+and return a promise or use async/await to return a value or throw an error.
 
 ##### Promise
 
 ```javascript
-const add = (props) => Promise.resolve(props.value);
+import { createAsyncAction } from "version-one-dev-utils/state";
+
+const add = createAsyncAction((props) => Promise.resolve(props.value));
 ```
 
 ##### Async/Await
 
 ```javascript
-const add = async (props) => await goAndFetch(props.value);
+import { createAsyncAction } from "version-one-dev-utils/state";
+
+const add = createAsyncAction(async (props) => await goAndFetch(props.value));
 ```
 
 ### Callback actions
 
 Callback actions can be used to update store state multiple times from a single call of an action, for example when connecting to and receiving updates from a web socket.
-They should return a callback function that accepts resolve and reject methods used to pass values or errors to the store as many times as needed.
+They should be wrapped in the `createCallbackAction` helper and return a callback function that accepts resolve and reject methods used to pass values or errors to the store as many times as needed.
 
 ```javascript
-const add = (props) => (resolve, reject) => {
+import { createCallbackAction } from "version-one-dev-utils/state";
+
+const add = createCallbackAction((props) => (resolve, reject) => {
   /* Increase the counter value by 'props.value' once every second */
   setInterval(() => resolve(props.value), 1000);
-};
+});
 ```
 
 The callback may return an optional unsubscribe function to cleanup any listeners, timers etc. that have been started.
 See [Unsubscribing from callback actions](unsubscribeCallbacks) for more information.
 
 ```javascript
-const add = (props) => (resolve, reject) => {
+import { createCallbackAction } from "version-one-dev-utils/state";
+
+const add = createCallbackAction((props) => (resolve, reject) => {
   /* Increase the counter value by 'props.value' once every second */
   /* Keep a reference to the interval so it can be removed later */
   const interval = setInterval(() => resolve(props.value), 1000);
@@ -59,23 +70,25 @@ const add = (props) => (resolve, reject) => {
     /* Clear the interval */
     clearInterval(interval);
   };
-};
+});
 ```
 
 ## The `props` object
 
-An optional `props` object can be passed when calling an action to help determine the payload with
-[PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) providing runtime type checking if required.
+An optional `props` object can be passed when calling an action to help determine the payload.
+[PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) can be added to the options object of any of the `createSyncAction`,
+`createAsyncAction`, and `createCallbackAction` helpers to provide runtime type checking if required.
 
 ```javascript
+import { createSyncAction } from "version-one-dev-utils/state";
 import PropTypes from "prop-types";
 
-const add = (props) => props.value;
-
-add.propTypes = {
-  /** The value to increase the current count in the store state. **/
-  value: PropTypes.number.isRequired,
-};
+const add = createSyncAction((props) => props.value, {
+  propTypes: {
+    /** The value to increase the current count in the store state. **/
+    value: PropTypes.number.isRequired,
+  },
+});
 ```
 
 ```javascript
@@ -110,7 +123,9 @@ There are 3 types of reducer function (success, error, and pending) and they sho
 When an action successfully returns a payload the success reducer is called.
 
 ```javascript
-const add = (props) => props.value;
+import { createSyncAction } from "version-one-dev-utils/state";
+
+const add = createSyncAction((props) => props.value);
 
 add.success = (state, action) => ({
   ...state,
@@ -150,9 +165,9 @@ add.pending = (state, action) => ({
 Actions can be added to a store by including them in the actions object of the `createStore` config.
 
 ```javascript
-import { createStore } from "version-one-dev-utils";
+import { createStore, createSyncAction } from "version-one-dev-utils";
 
-const add = (props) => props.value;
+const add = createSyncAction((props) => props.value);
 
 add.success = (state, action) => ({
   ...state,

@@ -6,7 +6,6 @@ import { routes } from "./routes";
 import { useSelector } from "version-one-dev-utils/state";
 
 import { AuthStore } from "./stores/AuthStore";
-import { NewStore } from "./stores/NewStore";
 
 import { Header } from "./containers/Header";
 
@@ -22,8 +21,6 @@ export function App() {
 
   useEffect(() => {
     AuthStore.actions.login();
-    NewStore.actions.test({ value: "app" });
-    NewStore.actions.test({ value: "app" });
   }, []);
 
   if (!ready) {

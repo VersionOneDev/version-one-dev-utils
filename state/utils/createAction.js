@@ -94,7 +94,7 @@ export const createAction = (store, type, handler) => {
             // Payload can return an optional 'unsubscribe' method to clean up
             // anything that could cause memory leaks e.g. event listeners, intervals etc.
             return payload(dispatchSuccess, dispatchError);
-          } else if (payload.then && payload.catch) {
+          } else if (payload && payload.then && payload.catch) {
             // Dispatch pending action if promise
             dispatch(action.pending(props, key, undefined, undefined));
             waitForValue(payload).then(dispatchSuccess).catch(dispatchError);

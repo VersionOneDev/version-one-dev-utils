@@ -9,15 +9,15 @@ potential to lead to memory leaks if not removed when finished with.
 To avoid this callback actions can return an `unsubscribe` function to be called by a component when necessary:
 
 ```javascript
-import { createStore } from "version-one-dev-utils";
+import { createStore, createCallbackAction } from "version-one-dev-utils";
 
-const subscribe = (props) => (resolve, reject) => {
+const subscribe = createCallbackAction((props) => (resolve, reject) => {
   const ws = new WebSocket(`/${props.id}`);
   ws.onmessage = (event) => resolve(event.data);
   ws.onerror = () => reject("Websocket error");
   /* Return an unsubscribe function */
   return () => ws.close();
-};
+});
 
 subscribe.success = (state, action) => ({
   ...state,

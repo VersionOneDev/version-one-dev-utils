@@ -4,10 +4,10 @@ const validatedAction = (target, fn, options) => {
 
     let method, payloadType;
 
-    if (typeof result === "function") {
+    if (result instanceof Function) {
       method = "callback";
       payloadType = "function";
-    } else if (result.then && result.catch) {
+    } else if (result && result.then && result.catch) {
       method = "async";
       payloadType = "promise";
     } else {

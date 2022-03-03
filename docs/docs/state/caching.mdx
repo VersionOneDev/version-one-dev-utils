@@ -5,84 +5,107 @@ sidebar_position: 7
 # Caching
 
 Caching can be used to optimise duplicate calls to actions allowing components to request the state they require independently.
-When an action is cached any subsequent calls with matching props will return the cached payload rather than running the action again.
+When an action is cached **any subsequent calls with matching props will return the cached payload** rather than running the action again.
 
-## Creating a cache
+## Configuration
 
-Each store can create it's own cache by calling the `createCache` function. An optional config
-object can be passed to set the `lifespan` (ms) of cached actions (defaults 3600000 milliseconds / 1 hour).
+Each store manages it's own cache and a `cache` object with the following properties can be passed to the `createStore` function for configuration:
 
-```jsx
-import { createCache } from "version-one-dev-utils";
+| Property | Value                                                                                                                  | Default          |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| lifespan | The length of time(ms) actions should remain in the cache. A value of **-1** can be used to permanently cache actions. | 3600000 (1 hour) |
 
-const cache = createCache({ lifespan: 3600000 });
-```
-
-## Adding actions to the cache
-
-Actions can be cached by passing them to the `cache.add` function along with an `id`:
+Example:
 
 ```javascript
-const fetchExample = cache.add("fetchExample", (props) => {
-  return fetch(`https://example.com/${props.value}`);
+import { createStore } from "version-one-dev-utils/state";
+
+export const CounterStore = createStore({
+  name: "CounterStore",
+  initialState: {
+    count: 0,
+  },
+  /** Cache actions for 1 minute */
+  cache: { lifespan: 60000 },
 });
 ```
 
-Any type of action may be cached including callback actions with unsubscribe methods:
+:::note Lifespan and expiry
+Actions that have exceeded their lifespan will be removed then cached again the next time they are called.
+**A lifespan of `-1` can be used to prevent a cached action from expiring and being removed.**
+This is useful for callback actions that should continue to update state indefinitely for example when connecting to a WebSocket.
+:::
+
+## Adding actions to the cache
+
+Actions can be added to the cache by passing a `cache` value to the options of the `createSyncAction`,
+`createAsyncAction`, and `createCallbackAction` helper functions.
 
 ```javascript
-const callbackExample = cache.add(
-  "callbackExample",
-  (props) => (resolve, reject) => {
-    const ws = new WebSocket(`/${props.id}`);
-    ws.onmessage = (event) => resolve(event.data);
-    ws.onerror = () => reject("Websocket error");
-    /* Return an unsubscribe function */
-    return () => ws.close();
-  }
-);
+import { createAsyncAction } from "version-one-dev-utils/state";
+import PropTypes from "prop-types";
+
+const add = createAsyncAction((props) => Promise.resolve(props.value), {
+  propTypes: {
+    value: PropTypes.number.isRequired,
+  },
+  /** Cache the action */
+  cache: true,
+});
 ```
 
-An optional config object can be used to control the lifespan of the individual action:
+#### Setting the lifespan of individual actions
+
+An object with a `lifespan` property can be used instead of a boolean to control the lifespan of the individual action:
 
 ```javascript
-const fetchExample = cache.add(
-  "fetchExample",
-  (props) => {
-    return fetch(`https://example.com/${props.value}`);
+import { createAsyncAction } from "version-one-dev-utils/state";
+import PropTypes from "prop-types";
+
+const add = createAsyncAction((props) => Promise.resolve(props.value), {
+  propTypes: {
+    value: PropTypes.number.isRequired,
   },
-  /* Limit lifespan to 30 seconds for this action only */
+  /** Cache the action with a lifespan of 30 secs */
+  cache: { lifespan: 30000 },
+});
+```
+
+## Accessing the cache API from a store
+
+The cache API allows for manual control over the cache and is exposed by each store using `StoreName.cache`.
+
+### Setting the payload of an action in the cache
+
+An action can be manually cached (without the action itself being called) by calling the `StoreName.cache.update` function, passing the action `type`, `props` and a new `payload`.
+An optional configuration object can be passed to control it's lifespan.
+If an action with matching type and props is already in the cache it will be overridden.
+
+```javascript
+StoreName.cache.set(
+  "add",
+  { value: "1" },
+  { value: "new value" },
+  /** Optional **/
   { lifespan: 30000 }
 );
 ```
 
-:::note Lifespan and expiry
-Actions that have exceeded their lifespan will be periodically cleared from the cache or updated the next time they are called.
-**A lifespan of `-1` can be used to prevent a cached action from expiring.**
-This is useful for callback actions that should continue to update state indefinitely for example when connecting to a WebSocket.
-:::
+### Removing an action from the cache
 
-## Removing an action from the cache
-
-An action can be manually removed from the cache by calling the `remove` function and passing the `id` along with a `props` object.
-If the action has been cached with matching props it will be removed:
+An action can be removed from the cache by calling the `StoreName.cache.remove` function and passing the action `type` and `props`.
+If an action with matching type and props has been cached it will be removed.
+The action will be cached again the next time it is called.
 
 ```javascript
-cache.remove("fetchExample", { value: "1" });
+StoreName.cache.remove("add", { value: "1" });
 ```
 
-## Clearing the entire cache
+### Removing all actions from cache
 
-The entire cache can be cleared by calling the `removeAll` function, can be used when a store is being reset:
-
-```javascript
-cache.removeAll();
-```
-
-## Destroying the cache
-
-If the cache is no longer required the `destroy` method can be used to clear the cache and stop the expiry loop:
+The entire store cache can be cleared by calling the `removeAll` function.
+Actions will be cached again the next time they are called.
 
 ```javascript
-cache.destroy();
+StoreName.cache.removeAll();
 ```
