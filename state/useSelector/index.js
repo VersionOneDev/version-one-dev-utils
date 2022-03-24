@@ -2,15 +2,21 @@ import { useContext, useLayoutEffect, useReducer, useRef } from "react";
 
 import { unstable_batchedUpdates } from "react-dom";
 
+import isEqual from "lodash.isequal";
+
 import { Store, StoreContext } from "../Store";
 
 // Set up a batch to limit calls to render
 const listeners = [];
 
+let currentState = {};
+
 Store.subscribe(() => {
-  unstable_batchedUpdates(() => {
-    for (let i in listeners) listeners[i]();
-  });
+  if (!isEqual(currentState, Store.getState())) {
+    unstable_batchedUpdates(() => {
+      for (let i in listeners) listeners[i]();
+    });
+  }
 });
 
 const Subscribe = (listener) => {
@@ -19,7 +25,7 @@ const Subscribe = (listener) => {
 };
 
 // Hook
-export const useSelector = (selector, equalityFn = (a, b) => a === b) => {
+export const useSelector = (selector, equalityFn = isEqual) => {
   // Toggle between 0 and 1 to force a render
   const [, forceRender] = useReducer((s) => (s ? 0 : 1), 0);
 
