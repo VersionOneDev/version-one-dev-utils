@@ -186,7 +186,7 @@ export const useForm = (config) => {
         form.current.isSubmitting = true;
         forceRender();
 
-        Promise.resolve(_config.onSubmit(values.current)).then(() => {
+        Promise.resolve(_config.onSubmit(values.current)).finally(() => {
           form.current.isSubmitting = false;
           forceRender();
         });
