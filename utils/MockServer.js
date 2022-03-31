@@ -129,3 +129,14 @@ export class MockServer {
     return this.nativeFetch(url, config);
   }
 }
+
+let server;
+
+MockServer.get = (db) => {
+  if (!server) {
+    server = new MockServer({ baseURL: "" });
+  }
+
+  server.db = { ...server.db, ...db };
+  return server;
+};
