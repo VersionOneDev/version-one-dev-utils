@@ -10,7 +10,7 @@ export class MockServer {
     this.db = config.db;
     this.routes = {};
 
-    this.nativeFetch = window.fetch;
+    this.nativeFetch = window.fetch.bind(window);
     window.fetch = this.fetch.bind(this);
     window.WebSocket = MockWebSocket;
   }
