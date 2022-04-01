@@ -212,8 +212,15 @@ export const useForm = (config) => {
     forceRender();
   }, [forceRender]);
 
+  const registerIfFieldMissing = (name) => {
+    // Fields must be registered before setValue/setValues can update them
+    // Subsequent calls to register the field during a render will still work
+    !fields[name] && form.register(name);
+  };
+
   const setValue = useCallback(
     (name, value) => {
+      registerIfFieldMissing(name);
       values.current[name] = value;
       validate([name], "change");
     },
@@ -222,6 +229,7 @@ export const useForm = (config) => {
 
   const setValues = useCallback(
     (v) => {
+      Object.keys(v).forEach(registerIfFieldMissing);
       values.current = { ...values.current, ...v };
       validate(Object.keys(v), "change");
     },
