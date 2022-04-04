@@ -177,6 +177,7 @@ export const useForm = (config) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    e.stopPropagation();
 
     // Validate all fields
     validate(Object.keys(fields.current), e.type).then(() => {
