@@ -1,7 +1,9 @@
 const addPromiseMethod = (scope, name) => {
   return (callback) => {
     scope.promise = scope.promise[name]((value) => {
-      !scope.destroyed && callback(value);
+      if (!scope.destroyed) {
+        return callback(value);
+      }
     });
     return scope.api;
   };
@@ -17,7 +19,7 @@ export class DisposablePromise {
 
     this.api = () => {
       this.destroyed = true;
-      return this.disposer();
+      return this.disposer && this.disposer();
     };
 
     this.api.then = addPromiseMethod(this, "then");
