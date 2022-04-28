@@ -32,6 +32,7 @@ export const useForm = (config) => {
     isValid: true,
     isValidating: false,
     isSubmitting: false,
+    isSubmitted: false,
   });
 
   const [state, setState] = useDebounce(
@@ -189,6 +190,7 @@ export const useForm = (config) => {
 
         Promise.resolve(_config.onSubmit(values.current)).finally(() => {
           form.current.isSubmitting = false;
+          form.current.isSubmitted = true;
           forceRender();
         });
       }
