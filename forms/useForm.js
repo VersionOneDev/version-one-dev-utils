@@ -152,12 +152,15 @@ export const useForm = (config) => {
               fields.current[name].isDirty = true;
               form.current.isDirty = true;
 
-              // Validate field if mode matches or force render now
-              mode.trigger.includes("change") ||
-              (fields.current[name].isValidated &&
-                mode.retrigger.includes("change"))
-                ? validate([name], "change")
-                : forceRender();
+              // Wrap in set timeout in case previous validation is still running
+              setTimeout(() => {
+                // Validate field if mode matches or force render now
+                mode.trigger.includes("change") ||
+                (fields.current[name].isValidated &&
+                  mode.retrigger.includes("change"))
+                  ? validate([name], "change")
+                  : forceRender();
+              });
             } else {
               console.log("ignore change", name);
             }
