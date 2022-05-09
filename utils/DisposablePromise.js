@@ -12,6 +12,8 @@ function isThenable(val) {
 export class DisposablePromise {
   constructor(callback) {
     this.toString = this.toString.bind(this);
+    this._resolve = this._resolve.bind(this);
+    this._reject = this._reject.bind(this);
 
     this.state = STATE.PENDING;
     this.value = undefined;
@@ -34,13 +36,13 @@ export class DisposablePromise {
     return cancelFn;
   }
 
-  _resolve = (value) => {
+  _resolve(value) {
     this.updateResult(value, STATE.FULFILLED);
-  };
+  }
 
-  _reject = (error) => {
+  _reject(error) {
     this.updateResult(error, STATE.REJECTED);
-  };
+  }
 
   updateResult(value, state) {
     // This is to make the processing async
