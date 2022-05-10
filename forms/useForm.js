@@ -54,21 +54,38 @@ export const useForm = (config) => {
     });
   }, [setState]);
 
+  // Keep track of last time validate was called so we can ignore out of date results
+  const validateTimes = useRef({
+    // Last time any validation was called
+    __any: Date.now(),
+    // Individual field timestamps will go in here
+  });
+
   const validate = useCallback(
     (names, type) => {
+      const ts = (validateTimes.current.__any = Date.now());
+
       form.current.isValidating = true;
       forceRender();
 
       return Promise.all(
         names.map((name) => {
+          validateTimes.current[name] = ts;
+
+          const isActive = () => ts === validateTimes.current[name];
+
           return Promise.resolve(
             _config.schema[name]
               ? _config.schema[name].validate(values.current[name])
               : null
           )
-            .then(() => delete results.current[name])
-            .catch((err) => (results.current[name] = err.errors[0]))
+            .then(() => isActive() && delete results.current[name])
+            .catch(
+              (err) => isActive() && (results.current[name] = err.errors[0])
+            )
             .then(() => {
+              if (!isActive()) return;
+
               // Update field and errors if we're not registering a new field
               if (type !== "register") {
                 const error = results.current[name];
@@ -92,8 +109,10 @@ export const useForm = (config) => {
             });
         })
       ).then(() => {
-        form.current.isValidating = false;
-        forceRender();
+        if (validateTimes.current.__any === ts) {
+          form.current.isValidating = false;
+          forceRender();
+        }
       });
     },
     [forceRender, _config.schema]
