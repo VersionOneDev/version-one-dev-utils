@@ -199,8 +199,8 @@ export const useForm = (config) => {
   );
 
   const onSubmit = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e?.preventDefault();
+    e?.stopPropagation();
 
     // Validate all fields
     validate(Object.keys(fields.current), e.type).then(() => {
@@ -270,6 +270,7 @@ export const useForm = (config) => {
       onSubmit,
     },
     register,
+    submit: onSubmit,
     reset,
     setValue,
     setValues,

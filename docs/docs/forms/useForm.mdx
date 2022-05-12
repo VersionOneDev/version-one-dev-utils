@@ -256,6 +256,10 @@ export function Form() {
 }
 ```
 
+## Manually submitting the form
+
+By default the form will be submitted when the onSubmit event is fired but the [`form.submit`](#formsubmit) function can be used when manual submission is required.
+
 ## Resetting the form
 
 The [`form.reset`](#formreset) function can be called to reset or clear the form.
@@ -378,6 +382,14 @@ form.register("name", (fieldProps) => <input {...fieldProps} />);
 ```
 
 **Returns:** `element`
+
+### form.submit()
+
+**`function`**
+
+Submits the form.
+
+**Returns:** `undefined`
 
 ### form.reset()
 
