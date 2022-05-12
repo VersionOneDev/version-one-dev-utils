@@ -203,7 +203,7 @@ export const useForm = (config) => {
     e?.stopPropagation();
 
     // Validate all fields
-    validate(Object.keys(fields.current), e.type).then(() => {
+    validate(Object.keys(fields.current), "submit").then(() => {
       // If form is valid...
       if (form.current.isValid) {
         // ... submit it
