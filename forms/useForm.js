@@ -203,17 +203,18 @@ export const useForm = (config) => {
     e?.stopPropagation();
 
     // Validate all fields
-    validate(Object.keys(fields.current), "submit").then(() => {
+    return validate(Object.keys(fields.current), "submit").then(() => {
       // If form is valid...
       if (form.current.isValid) {
         // ... submit it
         form.current.isSubmitting = true;
         forceRender();
 
-        Promise.resolve(_config.onSubmit(values.current)).finally(() => {
+        return Promise.resolve(_config.onSubmit(values.current)).finally(() => {
           form.current.isSubmitting = false;
           form.current.isSubmitted = true;
           forceRender();
+          return Promise.resolve();
         });
       }
     });
