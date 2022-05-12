@@ -49,7 +49,13 @@ This will move to the new route and add it to the routing history so it will rem
 ```jsx
 const { push, routes } = useRoutes();
 
-return <button onClick={() => push(routes.PAGE_TWO)}>Go to page Two</button>;
+return (
+  <button
+    onClick={() => push(routes.PAGE_TWO, /* Optional state object */ state)}
+  >
+    Go to page Two
+  </button>
+);
 ```
 
 ### Replace
@@ -60,7 +66,13 @@ The replace function will switch to the new route and replace the current route 
 ```jsx
 const { replace, routes } = useRoutes();
 
-return <button onClick={() => replace(routes.PAGE_TWO)}>Go to page Two</button>;
+return (
+  <button
+    onClick={() => replace(routes.PAGE_TWO, /* Optional state object */ state)}
+  >
+    Go to page Two
+  </button>
+);
 ```
 
 ## Accessing the current state of the router

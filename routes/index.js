@@ -51,10 +51,10 @@ export const useRoutes = () => {
       hash: _location.hash,
       params: _route.params,
       query,
-      push: (route, params, query) =>
-        _history.push(getPath(route, params, query)),
-      replace: (route, params, query) =>
-        _history.replace(getPath(route, params, query)),
+      push: (route, params, query, state) =>
+        _history.push(getPath(route, params, query), state),
+      replace: (route, params, query, state) =>
+        _history.replace(getPath(route, params, query), state),
       link: getPath,
       match: (path) => matchPath(_location.pathname, { path }),
     }),
