@@ -36,15 +36,16 @@ export const useSelector = (selector, equalityFn = isEqual) => {
   const context = useContext(StoreContext);
   const storeState = context || Store.getState();
 
-  let selectedState;
+  let selectedState = latestSelectedState.current;
 
   if (
     selector !== latestSelector.current ||
     storeState !== latestStoreState.current
   ) {
-    selectedState = selector(storeState);
-  } else {
-    selectedState = latestSelectedState.current;
+    const newSelectedState = selector(storeState);
+    if (!equalityFn(newSelectedState, selectedState)) {
+      selectedState = newSelectedState;
+    }
   }
 
   useLayoutEffect(() => {
