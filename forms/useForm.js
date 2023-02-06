@@ -149,10 +149,11 @@ export const useForm = (config) => {
               : forceRender();
           },
           onInput: (e) => {
+            // check for autofill values
             if (
               mode.trigger.includes("input") &&
               e.nativeEvent &&
-              e.nativeEvent.inputType !== "insertText"
+              e.nativeEvent.inputType === "insertReplacementText"
             ) {
               validate([name], "input");
             }
