@@ -154,12 +154,12 @@ const form = useForm({
 A validation `mode` can be passed to the [`useForm`](#useform) hook to modify when validation occurs.
 The following modes are available:
 
-| Mode      | Validation occurs                                                                                      |         |
-| --------- | ------------------------------------------------------------------------------------------------------ | ------- |
-| onBlur    | On a single field when the `blur` event is fired.                                                      |         |
-| onChange  | On a single field whenever it's value changes.                                                         |         |
-| onTouched | On a single field when the first `blur` event is fired **and** whenever it's value changes thereafter. | default |
-| onSubmit  | On all fields when the form is submitted.                                                              |         |
+| Mode      | Validation occurs                                                                                                                       |         |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| onBlur    | On a single field when the `blur` event is fired.                                                                                       |         |
+| onChange  | On a single field whenever it's value changes.                                                                                          |         |
+| onTouched | On a single field when the first `blur` event is fired or when a field is `auto-filled` **and** whenever it's value changes thereafter. | default |
+| onSubmit  | On all fields when the form is submitted.                                                                                               |         |
 
 ```jsx
 import { useForm } from "version-one-dev-utils";

@@ -6,7 +6,7 @@ const MODES = {
   onBlur: { trigger: ["blur", "submit"], retrigger: [] },
   onChange: { trigger: ["change", "submit"], retrigger: [] },
   onSubmit: { trigger: ["submit"], retrigger: ["change"] },
-  onTouched: { trigger: ["blur", "submit"], retrigger: ["change"] },
+  onTouched: { trigger: ["blur", "submit", "input"], retrigger: ["change"] },
 };
 
 const DEFAULT_CONFIG = {
@@ -147,6 +147,15 @@ export const useForm = (config) => {
             mode.trigger.includes("blur")
               ? validate([name], "blur")
               : forceRender();
+          },
+          onInput: (e) => {
+            if (
+              mode.trigger.includes("input") &&
+              e.nativeEvent &&
+              e.nativeEvent.inputType !== "insertText"
+            ) {
+              validate([name], "input");
+            }
           },
           onChange: (arg) => {
             const isReactEvent = arg && !!arg.nativeEvent;
