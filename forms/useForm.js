@@ -153,7 +153,7 @@ export const useForm = (config) => {
             if (
               mode.trigger.includes("input") &&
               e.nativeEvent &&
-              e.nativeEvent.inputType === "insertReplacementText"
+              e.nativeEvent.target.matches(":autofill")
             ) {
               validate([name], "input");
             }
