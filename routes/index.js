@@ -49,6 +49,7 @@ export const useRoutes = () => {
       route: _route.path,
       path: _location.pathname,
       hash: _location.hash,
+      state: _location.state,
       params: _route.params,
       query,
       push: (route, params, query, state) =>
