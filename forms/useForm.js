@@ -13,6 +13,7 @@ const DEFAULT_CONFIG = {
   mode: "onTouched",
   schema: {},
   defaultValues: {},
+  onSubmitValidationError: () => {},
 };
 
 export const useForm = (config) => {
@@ -204,13 +205,14 @@ export const useForm = (config) => {
       e.stopPropagation();
     }
 
+    form.current.isSubmitting = true;
+    forceRender();
+
     // Validate all fields
     return validate(Object.keys(fields.current), "submit").then(() => {
       // If form is valid...
       if (form.current.isValid) {
         // ... submit it
-        form.current.isSubmitting = true;
-        forceRender();
 
         return Promise.resolve(_config.onSubmit(values.current)).finally(() => {
           form.current.isSubmitting = false;
@@ -218,6 +220,10 @@ export const useForm = (config) => {
           forceRender();
           return Promise.resolve();
         });
+      } else {
+        form.current.isSubmitting = false;
+        forceRender();
+        _config.onSubmitValidationError(errors.current);
       }
     });
   };
