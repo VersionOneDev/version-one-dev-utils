@@ -260,6 +260,11 @@ export function Form() {
 
 By default the form will be submitted when the onSubmit event is fired but the [`form.submit`](#formsubmit) function can be used when manual submission is required.
 
+## Handling validation errors when submitting the form
+
+Validation will always occur when the form is submitted and the `onSubmit` function passed to the [`useForm`](#useform) hook will only be called if the form is valid.
+A `onSubmitValidationError` function can also be passed to the [`useForm`](#useform) hook if required.
+
 ## Resetting the form
 
 The [`form.reset`](#formreset) function can be called to reset or clear the form.
@@ -273,12 +278,13 @@ Default values will be applied to the fields, errors will be cleared and form st
 
 Accepts a `config` object with the following properties:
 
-| Property      | Type       | Required           | Description                                                                       |
-| ------------- | ---------- | ------------------ | --------------------------------------------------------------------------------- |
-| schema        | `object`   |                    | Schema used to validate the form fields.                                          |
-| defaultValues | `object`   |                    | Default values to pass to form fields.                                            |
-| mode          | `string`   |                    | The validation mode: "onBlur", "onChange", "onSubmit", and "onTouched" (default). |
-| onSubmit      | `function` | :white_check_mark: | A function called with a `values` object when the form is submitted.              |
+| Property                | Type       | Required           | Description                                                                          |
+| ----------------------- | ---------- | ------------------ | ------------------------------------------------------------------------------------ |
+| schema                  | `object`   |                    | Schema used to validate the form fields.                                             |
+| defaultValues           | `object`   |                    | Default values to pass to form fields.                                               |
+| mode                    | `string`   |                    | The validation mode: "onBlur", "onChange", "onSubmit", and "onTouched" (default).    |
+| onSubmit                | `function` | :white_check_mark: | A function called with a `values` object when the form is submitted.                 |
+| onSubmitValidationError | `function` |                    | A function called with an `errors` object when the form is submitted but is invalid. |
 
 **Example:**
 
@@ -288,6 +294,7 @@ const form = useForm({
   defaultValues,
   mode,
   onSubmit,
+  onSubmitValidationError,
 });
 ```
 
