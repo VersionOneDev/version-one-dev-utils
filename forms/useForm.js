@@ -288,6 +288,7 @@ export const useForm = (config) => {
     reset,
     setValue,
     setValues,
+    defaultValues: _config.defaultValues,
     ...state,
   };
 };
