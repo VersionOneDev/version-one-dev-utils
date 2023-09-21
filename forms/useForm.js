@@ -17,15 +17,20 @@ const DEFAULT_CONFIG = {
 };
 
 export const useForm = (config) => {
-  const _config = useMemo(() => ({ ...DEFAULT_CONFIG, ...config }), [config]);
-
-  const mode = MODES[_config.mode];
-
   const results = useRef({});
   const fields = useRef({});
   const props = useRef({});
   const values = useRef({});
   const errors = useRef({});
+  const schema = useRef({});
+
+  const _config = useMemo(() => {
+    const value = { ...DEFAULT_CONFIG, ...config };
+    schema.current = value.schema;
+    return value;
+  }, [config]);
+
+  const mode = MODES[_config.mode];
 
   const form = useRef({
     isDirty: false,
@@ -76,8 +81,8 @@ export const useForm = (config) => {
           const isActive = () => ts === validateTimes.current[name];
 
           return Promise.resolve(
-            _config.schema[name]
-              ? _config.schema[name].validate(values.current[name])
+            schema.current[name]
+              ? schema.current[name].validate(values.current[name])
               : null
           )
             .then(() => isActive() && delete results.current[name])
@@ -116,7 +121,7 @@ export const useForm = (config) => {
         }
       });
     },
-    [forceRender, _config.schema]
+    [forceRender]
   );
 
   const register = useCallback(
