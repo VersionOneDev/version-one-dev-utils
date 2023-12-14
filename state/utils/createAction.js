@@ -17,9 +17,9 @@ export const getKey = (action) => {
   return action.meta && action.meta.key ? "/" + action.meta.key : "";
 };
 
-const prepareAction = (props, key, payload, error) => {
+const prepareAction = (props, key, payload, error, cached = false) => {
   return {
-    meta: { key, props },
+    meta: { key, props, cached },
     payload,
     error,
   };
@@ -75,15 +75,19 @@ export const createAction = (store, type, handler) => {
           getState,
         };
 
-        const dispatchSuccess = (value) =>
-          resolve(dispatch(action.success(props, key, value, undefined)));
-
         const dispatchError = (error) =>
           reject(dispatch(action.error(props, key, null, error)));
 
         // Get the payload from the action handler
         try {
           const payload = handler(props, actionApi);
+
+          const dispatchSuccess = (value) =>
+            resolve(
+              dispatch(
+                action.success(props, key, value, undefined, payload.isCached)
+              )
+            );
 
           if (payload instanceof Function) {
             // Dispatch pending action (ignoring cached values) and run the callback
