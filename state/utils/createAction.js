@@ -85,7 +85,7 @@ export const createAction = (store, type, handler) => {
           const dispatchSuccess = (value) =>
             resolve(
               dispatch(
-                action.success(props, key, value, undefined, payload.isCached)
+                action.success(props, key, value, undefined, payload?.isCached)
               )
             );
 
