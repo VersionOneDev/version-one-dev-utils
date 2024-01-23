@@ -218,7 +218,7 @@ export const useForm = (config) => {
       // If form is valid...
       if (form.current.isValid) {
         // ... submit it
-
+        console.log("values.current", values.current);
         return Promise.resolve(_config.onSubmit(values.current)).finally(() => {
           form.current.isSubmitting = false;
           form.current.isSubmitted = true;
