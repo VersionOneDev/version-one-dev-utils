@@ -82,6 +82,24 @@ const incomplete = createAsyncAction(
   }
 );
 
+const exclamationStrings = (value) => {
+  if (Array.isArray(value)) {
+    return value.map((item) => exclamationStrings(item));
+  } else if (
+    typeof value === "object" &&
+    value !== null &&
+    value !== undefined
+  ) {
+    const res = {};
+    for (const [key, val] of Object.entries(value)) {
+      res[key] = exclamationStrings(val);
+    }
+    return res;
+  } else if (typeof value === "string") return value + "!";
+  // All other values
+  else return value;
+};
+
 export const ItemStore = createStore({
   name: "ItemStore",
   initialState: {},
@@ -95,4 +113,5 @@ export const ItemStore = createStore({
       completed: PropTypes.bool,
     })
   ),
+  middleware: exclamationStrings,
 });
