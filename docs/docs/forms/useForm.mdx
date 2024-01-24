@@ -278,14 +278,14 @@ Default values will be applied to the fields, errors will be cleared and form st
 
 Accepts a `config` object with the following properties:
 
-| Property                | Type       | Required           | Description                                                                                                                                                 |
-| ----------------------- | ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| schema                  | `object`   |                    | Schema used to validate the form fields.                                                                                                                    |
-| defaultValues           | `object`   |                    | Default values to pass to form fields.                                                                                                                      |
-| mode                    | `string`   |                    | The validation mode: "onBlur", "onChange", "onSubmit", and "onTouched" (default).                                                                           |
-| onSubmit                | `function` | :white_check_mark: | A function called with a `values` object when the form is submitted.                                                                                        |
-| onSubmitValidationError | `function` |                    | A function called with an `errors` object when the form is submitted but is invalid.                                                                        |
-| onSanitize              | `function` |                    | A function which sanatizes the value of form fields when they are set and/or updated. The function must be able to accept an individual value or all values |
+| Property                | Type       | Required           | Description                                                                                                                                                              |
+| ----------------------- | ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| schema                  | `object`   |                    | Schema used to validate the form fields.                                                                                                                                 |
+| defaultValues           | `object`   |                    | Default values to pass to form fields.                                                                                                                                   |
+| mode                    | `string`   |                    | The validation mode: "onBlur", "onChange", "onSubmit", and "onTouched" (default).                                                                                        |
+| onSubmit                | `function` | :white_check_mark: | A function called with a `values` object when the form is submitted.                                                                                                     |
+| onSubmitValidationError | `function` |                    | A function called with an `errors` object when the form is submitted but is invalid.                                                                                     |
+| onSanitize              | `function` |                    | A function which sanatizes the value of form fields when they are set and/or updated. The function must be able to accept an individual value or all values in the form. |
 
 **Example:**
 
