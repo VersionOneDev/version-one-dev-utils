@@ -14,6 +14,7 @@ const DEFAULT_CONFIG = {
   schema: {},
   defaultValues: {},
   onSubmitValidationError: () => {},
+  onSanitize: (value) => value,
 };
 
 export const useForm = (config) => {
@@ -135,7 +136,7 @@ export const useForm = (config) => {
         };
 
         // Add default value
-        values.current[name] = _config.defaultValues[name];
+        values.current[name] = _config.onSanitize(_config.defaultValues[name]);
 
         validate([name], "register");
 
@@ -172,7 +173,7 @@ export const useForm = (config) => {
 
             if (value !== values.current[name]) {
               // Update the value
-              values.current[name] = value;
+              values.current[name] = _config.onSanitize(value);
               // Field and form are dirty
               fields.current[name].isDirty = true;
               form.current.isDirty = true;
@@ -263,7 +264,7 @@ export const useForm = (config) => {
   const setValue = useCallback(
     (name, value) => {
       registerIfFieldMissing(name);
-      values.current[name] = value;
+      values.current[name] = _config.onSanitize(value);
       validate([name], "change");
     },
     [validate, registerIfFieldMissing]
@@ -272,7 +273,8 @@ export const useForm = (config) => {
   const setValues = useCallback(
     (v) => {
       Object.keys(v).forEach(registerIfFieldMissing);
-      values.current = { ...values.current, ...v };
+      const sanitizedValues = _config.onSanitize(v);
+      values.current = { ...values.current, ...sanitizedValues };
       validate(Object.keys(v), "change");
     },
     [validate, registerIfFieldMissing]
@@ -292,3 +294,5 @@ export const useForm = (config) => {
     ...state,
   };
 };
+
+// Allow onSanitize to be a dependancy in setValue, setValues and onChange
