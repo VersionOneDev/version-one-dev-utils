@@ -36,7 +36,7 @@ export const CounterStore = createStore({
 });
 ```
 
-An optional `mapProps` function can also be added to change props passed to actions before they get to the reducer.
+An optional `mapProps` function can also be added to change props before the action function.
 The function accepts three arguements- `props` (the props sent into the action), `type` (which action was fired, i.e- "add") and `key` (the key of the action if one was added).
 The function must return a value which is the updated props.
 
