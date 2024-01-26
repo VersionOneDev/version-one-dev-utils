@@ -36,6 +36,26 @@ export const CounterStore = createStore({
 });
 ```
 
+An optional `mapProps` function can also be added to change props passed to actions before they get to the reducer.
+The function accepts three arguements- `props` (the props sent into the action), `type` (which action was fired, i.e- "add") and `key` (the key of the action if one was added).
+The function must return a value which is the updated props.
+
+```javascript
+import { createStore } from "version-one-dev-utils/state";
+import PropTypes from "prop-types";
+
+const squareCount = (count) => count * count;
+
+export const CounterStore = createStore({
+  name: "CounterStore",
+  initialState: {
+    count: 0,
+  },
+  actions: {},
+  mapProps: (props, name, key) => ({ count: squareCount(props.count) }),
+});
+```
+
 ## Accessing State with the useSelector Hook
 
 React components can use the `useSelector` hook to access store state.

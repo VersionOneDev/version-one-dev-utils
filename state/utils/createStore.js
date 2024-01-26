@@ -11,7 +11,7 @@ export const createStore = ({
   actions = {},
   cache: cacheOptions = {},
   propTypes,
-  mapProps = (props, name, key) => props,
+  mapProps = (props, type, key) => props,
 }) => {
   /* Caching */
   const cache = createCache({ ...cacheOptions, name });
