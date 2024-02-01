@@ -1,0 +1,31 @@
+---
+sidebar_position: 8
+---
+
+# Mapping Props
+
+An optional `mapProps` function can be added when creating a store to allow props to be modified/sanitised before an action is called.
+
+It will receive the original props, action name, and key which should be used to map and return a props object to pass on to the action.
+
+```javascript
+import { createStore } from "version-one-dev-utils/state";
+import PropTypes from "prop-types";
+
+const squareCount = (count) => count * count;
+
+export const CounterStore = createStore({
+  name: "CounterStore",
+  initialState: {
+    count: 0,
+  },
+  actions: {},
+  mapProps: (props, name, key) => {
+    if (name === "add") {
+      return { count: squareCount(props.count) };
+    } else {
+      return props;
+    }
+  },
+});
+```

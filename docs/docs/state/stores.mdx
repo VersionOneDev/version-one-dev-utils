@@ -18,8 +18,8 @@ export const CounterStore = createStore({
 });
 ```
 
-Optional `propTypes` and `cache` objects can be added providing runtime type checking of store state and caching options.
-See [Typechecking With PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) and [Caching](caching) for more details.
+Optional `propTypes`, `mapProps`, and `cache` values can be added providing runtime type checking of store state, pre-action mapping of props and caching options.
+See [Typechecking With PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html), [Mapping Props](mappingProps) and [Caching](caching) for more details.
 
 ```javascript
 import { createStore } from "version-one-dev-utils/state";
@@ -32,27 +32,8 @@ export const CounterStore = createStore({
   },
   actions: {},
   propTypes: PropTypes.objectOf(PropTypes.shape({ count: PropTypes.number })),
+  mapProps: (props, name, key) => ({ count: Number(props.count) }),
   cache: { lifespan: 60000 },
-});
-```
-
-An optional `mapProps` function can also be added to change props before the action function.
-The function accepts three arguements- `props` (the props sent into the action), `type` (which action was fired, i.e- "add") and `key` (the key of the action if one was added).
-The function must return a value which is the updated props.
-
-```javascript
-import { createStore } from "version-one-dev-utils/state";
-import PropTypes from "prop-types";
-
-const squareCount = (count) => count * count;
-
-export const CounterStore = createStore({
-  name: "CounterStore",
-  initialState: {
-    count: 0,
-  },
-  actions: {},
-  mapProps: (props, name, key) => ({ count: squareCount(props.count) }),
 });
 ```
 
