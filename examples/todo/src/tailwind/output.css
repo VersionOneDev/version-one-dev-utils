@@ -921,23 +921,29 @@ video {
 .duration-300 {
 	transition-duration: 300ms;
 }
+
 .hover\:text-violet-600:hover {
 	--tw-text-opacity: 1;
 	color: rgba(124, 58, 237, var(--tw-text-opacity));
 }
+
 .hover\:text-blue-600:hover {
 	--tw-text-opacity: 1;
 	color: rgba(37, 99, 235, var(--tw-text-opacity));
 }
+
 .hover\:no-underline:hover {
 	text-decoration: none;
 }
+
 .hover\:opacity-100:hover {
 	opacity: 1;
 }
+
 .hover\:opacity-80:hover {
 	opacity: 0.8;
 }
+
 .focus\:border-blue-500:focus {
 	--tw-border-opacity: 1;
 	border-color: rgba(59, 130, 246, var(--tw-border-opacity));

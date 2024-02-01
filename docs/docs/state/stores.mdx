@@ -18,8 +18,8 @@ export const CounterStore = createStore({
 });
 ```
 
-Optional `propTypes` and `cache` objects can be added providing runtime type checking of store state and caching options.
-See [Typechecking With PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html) and [Caching](caching) for more details.
+Optional `propTypes`, `mapProps`, and `cache` values can be added providing runtime type checking of store state, pre-action mapping of props and caching options.
+See [Typechecking With PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html), [Mapping Props](mappingProps) and [Caching](caching) for more details.
 
 ```javascript
 import { createStore } from "version-one-dev-utils/state";
@@ -32,6 +32,7 @@ export const CounterStore = createStore({
   },
   actions: {},
   propTypes: PropTypes.objectOf(PropTypes.shape({ count: PropTypes.number })),
+  mapProps: (props, name, key) => ({ count: Number(props.count) }),
   cache: { lifespan: 60000 },
 });
 ```

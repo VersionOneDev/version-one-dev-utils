@@ -11,6 +11,7 @@ export const createStore = ({
   actions = {},
   cache: cacheOptions = {},
   propTypes,
+  mapProps = (props, type, key) => props,
 }) => {
   /* Caching */
   const cache = createCache({ ...cacheOptions, name });
@@ -46,7 +47,10 @@ export const createStore = ({
       : null;
 
     const action = createAction(name, type, cached || def);
-    const dispatchedAction = (props, key) => Store.dispatch(action(props, key));
+
+    const dispatchedAction = (props, key) => {
+      return Store.dispatch(action(mapProps(props, type, key), key));
+    };
     // Copy action properties
     for (let key in action) dispatchedAction[key] = action[key];
     parsedActions[type] = dispatchedAction;
