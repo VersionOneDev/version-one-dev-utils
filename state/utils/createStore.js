@@ -77,7 +77,7 @@ export const createStore = ({
     reducer = (state, action) => {
       const result = mergedReducerMethods(state, action);
 
-      if (propTypes) {
+      if (propTypes && action.type.includes(name)) {
         PropTypes.checkPropTypes(
           { result: propTypes },
           { result },
