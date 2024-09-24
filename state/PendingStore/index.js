@@ -1,4 +1,6 @@
-import { statuses, getType, getKey } from "../utils/createAction";
+import { getKey } from "../utils/getKey";
+import { getType } from "../utils/getType";
+import { statuses } from "../utils/statuses";
 
 export const PendingStore = {
   name: "PendingStore",

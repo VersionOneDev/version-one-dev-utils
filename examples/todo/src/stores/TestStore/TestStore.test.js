@@ -256,7 +256,9 @@ describe("Clearing the cache", () => {
   it("Is emptied when all items are removed", () => {
     TestStore.actions.cachedSync({ value: "Cached Sync Example" });
     TestStore.actions.cachedAsync({ value: "Cached Async Example" });
-    TestStore.actions.cachedCallback({ value: "Cached Callback Example" });
+    TestStore.actions.cachedCallback({
+      value: "Cached Callback Example",
+    });
     TestStore.cache.removeAll();
     expect(TestStore.cache.items).toEqual({});
   });

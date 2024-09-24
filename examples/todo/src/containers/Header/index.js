@@ -10,8 +10,8 @@ import { UserAvatar } from "../../components/UserAvatar";
 import Logo from "./logo.svg";
 
 export function Header(props) {
-  const auth = useSelector((state) => state.AuthStore);
-  const user = useSelector((state) => state.UserStore[auth.id]);
+  const auth = useSelector(() => AuthStore.getState());
+  const user = useSelector(() => UserStore.select.byId(auth.id));
 
   useEffect(() => {
     UserStore.actions.get(auth);

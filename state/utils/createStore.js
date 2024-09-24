@@ -1,6 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { createAction, statuses } from "./createAction";
-import PropTypes from "prop-types";
+import { createStoreAction, statuses } from "./createStoreAction";
 
 import { Store } from "../Store";
 import { createCache } from "./createCache";
@@ -9,31 +8,20 @@ export const createStore = ({
   name = "",
   initialState = {},
   actions = {},
-  cache: cacheOptions = {},
-  propTypes,
+  select = {},
   mapProps = (props, type, key) => props,
 }) => {
   /* Caching */
-  const cache = createCache({ ...cacheOptions, name });
+  const cache = createCache(name);
 
   /* Default actions */
-
-  // TODO -Fix default actions
 
   // Reset the store to it's initial state.
   const reset = () => {};
   reset.success = () => initialState;
 
-  // Replace the current state with the payload.
-  const replace = (payload) => payload;
-  replace.success = (state, action) => action.payload;
-
-  // Merge the payload into the current state.
-  const merge = (payload) => payload;
-  merge.success = (state, action) => ({ ...state, ...action.payload });
-
   /* Compose all actions. */
-  const defaultActions = { reset, replace, merge };
+  const defaultActions = { reset };
   const parsedActions = {};
   const reducerMethods = {};
 
@@ -42,14 +30,27 @@ export const createStore = ({
   Object.keys(allActions).forEach((type) => {
     const def = allActions[type];
     // Apply caching options
-    const cached = def.cache
-      ? cache.add(type, def, typeof def.cache === "object" && def.cache)
-      : null;
+    let cached;
 
-    const action = createAction(name, type, cached || def);
+    if (def.type === "cached") {
+      cached = cache.add(type, def, def.lifespan);
+    } else if (def.type === "callback") {
+      cached = cache.add(type, def, 1000);
+    }
+
+    const action = createStoreAction(name, type, cached || def);
+
+    if (def.type === "cached") {
+      action.cache = {
+        set: (props, payload, options) =>
+          cache.set(type, props, payload, options),
+        empty: (props) => cache.remove(type, props),
+      };
+    }
 
     const dispatchedAction = (props, key) => {
-      return Store.dispatch(action(mapProps(props, type, key), key));
+      const value = action(mapProps(props, type, key), key);
+      return Store.dispatch(value);
     };
     // Copy action properties
     for (let key in action) dispatchedAction[key] = action[key];
@@ -69,42 +70,19 @@ export const createStore = ({
     }
   });
 
-  const mergedReducerMethods = createReducer(initialState, reducerMethods);
-  let reducer;
-
-  // Apply propTypes check to state
-  if (propTypes) {
-    reducer = (state, action) => {
-      const result = mergedReducerMethods(state, action);
-
-      // Only check prop types if action belongs to the current store
-      if (propTypes && action.type.split('/')[0] === name) {
-        PropTypes.checkPropTypes(
-          { result: propTypes },
-          { result },
-          "state",
-          action.type
-        );
-        PropTypes.resetWarningCache();
-      }
-
-      return result;
-    };
-  } else {
-    reducer = mergedReducerMethods;
-  }
+  const reducer = createReducer(initialState, reducerMethods);
 
   Store.add(name, reducer);
 
   return {
     name,
     initialState,
-    propTypes,
     reducer,
     cache,
+    select,
     byKey: (key) => `${name}/*/${key}`,
     toString: () => name,
-    actions: parsedActions,
     getState: () => Store.getState()[name] || initialState,
+    actions: parsedActions,
   };
 };

@@ -1,0 +1,74 @@
+{
+  "name": "react-app",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "moment": "^2.29.1",
+    "react-select": "^5.0.0",
+    "version-one-dev-utils": "file:../.."
+  },
+  "scripts": {
+    "update": "ncu -u",
+    "start": "run-p start:**",
+    "start:tailwind": "TAILWIND_MODE=watch postcss src/tailwind/index.css -o src/tailwind/output.css --watch",
+    "start:storybook": "start-storybook -p 6006 -s public",
+    "start:test": "react-scripts test --setupFiles ./.storybook/setupFiles.js --setupFilesAfterEnv ./.storybook/setupTests.js",
+    "start:react-scripts": "react-scripts start",
+    "build": "run-s build:**",
+    "build:lint": "eslint src/",
+    "build:tailwind": "postcss src/tailwind/index.css -o src/tailwind/output.css --minify",
+    "build:test": "react-scripts test --watchAll=false --setupFiles ./.storybook/setupFiles.js --setupFilesAfterEnv ./.storybook/setupTests.js",
+    "build:react-scripts": "react-scripts build"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build:lint",
+      "pre-push": "npm run build:lint"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "eslint:recommended",
+      "plugin:prettier/recommended",
+      "plugin:react/recommended"
+    ],
+    "settings": {
+      "react": {
+        "version": "17"
+      }
+    },
+    "parser": "babel-eslint",
+    "env": {
+      "es6": true,
+      "node": true,
+      "browser": true
+    },
+    "rules": {
+      "no-console": 0,
+      "prettier/prettier": "error"
+    }
+  },
+  "browserslist": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 edge version",
+    "last 1 safari version",
+    "last 1 ie version",
+    "last 1 ios_saf version",
+    "last 1 and_chr version"
+  ],
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!version-one-dev-utils*)"
+    ]
+  },
+  "postcss": {
+    "plugins": {
+      "tailwindcss": {
+        "config": "./src/tailwind/tailwind.config.js"
+      },
+      "autoprefixer": {}
+    }
+  }
+}

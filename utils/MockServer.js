@@ -9,6 +9,7 @@ export class MockServer {
     this.baseURL = config.baseURL;
     this.db = config.db;
     this.routes = {};
+    this.debug = config.debug;
 
     this.nativeFetch = window.fetch.bind(window);
     window.fetch = this.fetch.bind(this);
@@ -20,7 +21,10 @@ export class MockServer {
       this.routes[path] = {};
     }
 
-    this.routes[path][method] = cb;
+    this.routes[path][method] = (...args) => {
+      if (this.debug) console.log("MockServer: ", method, path, ...args);
+      return cb(...args);
+    };
     return this;
   }
 

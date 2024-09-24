@@ -42,7 +42,7 @@ export const useSelector = (selector, equalityFn = isEqual) => {
     selector !== latestSelector.current ||
     storeState !== latestStoreState.current
   ) {
-    const newSelectedState = selector(storeState);
+    const newSelectedState = selector();
     if (!equalityFn(newSelectedState, selectedState)) {
       selectedState = newSelectedState;
     }

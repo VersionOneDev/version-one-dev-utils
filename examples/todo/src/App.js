@@ -15,9 +15,10 @@ import { Item } from "./containers/Item";
 import { Chat } from "./containers/Chat";
 
 import { Notification } from "./containers/Notification";
+import { Test } from "./containers/Test";
 
 export function App() {
-  const ready = useSelector((state) => state.AuthStore.ready);
+  const ready = useSelector(() => AuthStore.getState().ready);
 
   useEffect(() => {
     AuthStore.actions.login();
@@ -35,6 +36,9 @@ export function App() {
           <div className="flex-1 p-8">
             <Router>
               <Switch>
+                <Route path="/test">
+                  <Test />
+                </Route>
                 <Route path={routes.HOME} exact>
                   <div className="mb-10">
                     <AddTodo />

@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { useSelector } from "../useSelector";
 import { compareActionTargets } from "../utils/compareActionTargets";
 import { ErrorStore } from "../ErrorStore";
+import { Store } from "../Store";
 
 const storeName = "ErrorStore";
 
@@ -11,8 +12,8 @@ export const useErrors = (...targets) => {
   // Get a list of all errors matching everything in the filter cache
   // useSelector will cause the component to re-render
   const passed = useSelector(
-    (state) => {
-      let value = state[storeName];
+    () => {
+      let value = Store.getState()[storeName];
       // If there is no value then give up
       if (!value || !value.length) return [];
 

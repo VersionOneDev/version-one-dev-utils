@@ -5,7 +5,7 @@
  **/
 
 import {
-  createStore,
+  createLegacyStore,
   createSyncAction,
   createAsyncAction,
   createCallbackAction,
@@ -109,7 +109,7 @@ const setCachedValue = createSyncAction(
 );
 setCachedValue.success = (state, action) => action.payload;
 
-export const TestStore = createStore({
+export const TestStore = createLegacyStore({
   name: "TestStore",
   initialState: {
     value: null,

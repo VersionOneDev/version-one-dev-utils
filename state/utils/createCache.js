@@ -1,11 +1,13 @@
-import { waitForValue } from "../../utils/waitForValue";
-
 const getKey = (id, props) => id + "__" + JSON.stringify(props);
 
 /**
  * Cache calls to actions.
  */
-export function createCache(defaults = { lifespan: 60000, name: "cache" }) {
+
+const DEFAULTS = { lifespan: 60000, interval: 5000, name: "cache" };
+
+export function createCache(defaults) {
+  defaults = { ...DEFAULTS, ...defaults };
   const items = {};
   let interval;
 
@@ -14,151 +16,142 @@ export function createCache(defaults = { lifespan: 60000, name: "cache" }) {
 
     if (!interval && numItems) {
       // Set a loop to flush expired items
-      interval = setInterval(flushAll, defaults.lifespan);
+      interval = setInterval(flushAll, defaults.interval);
     } else if (interval && !numItems) {
       clearInterval(interval);
       interval = null;
     }
   };
 
-  const flushItem = (key, force = false) => {
-    const ts = Date.now();
+  /**
+   * Flush items from the cache
+   * If force: true  Item will be removed regardless of state
+   * If force: false Items without unsubscribe methods will be removed once they reach their lifespan
+   *                 Items with unsubscribe methods will be skipped over until all requests are cleared to avoid accidental cleanup.
+   */
+  const flushItem = (key, force = false, ts = 0) => {
+    ts = ts || Date.now();
     const item = items[key];
 
-    if (
-      item &&
-      ((item.lifespan !== -1 && ts - item.ts >= item.lifespan) || force)
-    ) {
-      item.listenerCount = 0;
-      item.unsubscribe && item.unsubscribe();
+    const remove = () => {
       delete items[key];
       updateInterval();
-    } else {
-      return item;
+    };
+
+    if (item) {
+      if (force) return remove();
+      if (item.lifespan !== -1 && item.ts && ts - item.ts >= item.lifespan) {
+        item.unsubscribe && item.unsubscribe();
+        return remove();
+      }
     }
+
+    return item;
   };
 
-  const flushAll = (force) =>
-    Object.keys(items).forEach((key) => flushItem(key, force));
+  const flushAll = (force) => {
+    const now = Date.now();
+    Object.keys(items).forEach((key) => flushItem(key, force, now));
+  };
 
-  const add = (id, handler, options = { lifespan: defaults.lifespan }) => {
-    return (props, actionApi) => {
+  const add = (id, handler, lifespan = DEFAULTS.lifespan) => {
+    const cacheHandler = (props, actionApi) => {
       const key = getKey(id, props);
 
       // Flush item returns active items and clears any that have expired
       let item = flushItem(key);
 
-      if (!items[key]) {
-        item = {
-          ...options,
-          key,
-          ts: Date.now(),
-          payload: null,
-          unsubscribe: null,
-          active: true,
-          listenerCount: 0,
-          handler: (resolve, reject) => {
+      if (handler.type === "callback") {
+        return (resolve, reject) => {
+          const request = { resolve, reject };
+
+          // Callbacks will override cache.set values since they should be watching/subscribing to changing state
+          if (!item || !item.unsubscribe) {
+            item = {
+              lifespan,
+              key,
+              ts: null,
+              payload: null,
+              unsubscribe: null,
+              requests: [request],
+            };
+
             try {
-              if (!item.payload) {
-                item.payload = handler(props, actionApi);
-              }
+              const callback = handler(props, actionApi);
+              item.unsubscribe = callback(
+                (payload) => {
+                  item.payload = payload;
+                  item.requests.forEach((req) => req.resolve(payload));
+                },
+                (error) => {
+                  item.requests.forEach((req) => req.reject(error));
+                  // Remove from cache if error
+                  flushItem(key, true);
+                }
+              );
 
-              const done = (v) => {
-                // Set isCached value on handler so createAction can avoid dispatching unnessesary pending events
-                item.handler.isCached = true;
-                // Resolve with value
-                resolve(v);
-              };
-
-              if (item.payload instanceof Function) {
-                // Callback
-                // Wrap in a promise so subsequent calls to action are treated as async and do not cause the payload creator to fire multiple times.
-                // The initial call to action can continue to fire resolve/reject callbacks to allow updates from web sockets, firebase etc.
-                item.payload = new Promise((resolvePromise, rejectPromise) => {
-                  // Unsubscribe method can be used to clean up event listeners, stop intervals etc.
-                  // that may be used when action is making multiple callbacks
-                  const unsubscribe = item.payload(
-                    (v) => {
-                      // Update the item payload so the latest value is returned in subsequent calls to action
-                      item.payload = Promise.resolve(v);
-                      done(v);
-                      resolvePromise(v);
-                    },
-                    (e) => {
-                      reject(e);
-                      rejectPromise(e);
-                    }
-                  );
-
-                  let fired = false;
-
-                  item.unsubscribe = () => {
-                    // We should only be able to hit unsubscribe once for each time an action is dispatched to keep the listener count valid
-                    if (!fired) {
-                      fired = true;
-                      item.listenerCount--;
-
-                      if (item.active && item.listenerCount < 1) {
-                        item.active = false;
-                        item.listenerCount = 0;
-                        // Remove from the cache
-                        delete items[key];
-                        // Call unsubscribe to remove any listeners, intervals etc. created when the action was fired
-                        return unsubscribe && unsubscribe();
-                      }
-                    }
-                  };
-                });
-              } else if (item.payload.then && item.payload.catch) {
-                // Async
-                waitForValue(item.payload).then(done).catch(reject);
-              } else {
-                // Sync
-                done(item.payload);
-              }
+              items[key] = item;
+              updateInterval();
             } catch (error) {
-              reject(error);
+              item.requests.forEach((req) => req.reject(error));
+              // Remove from cache if error
+              flushItem(key, true);
             }
+          } else {
+            // Already in cache
+            // Clear timestamp if set since callback should remain alive whilst something is subscribed to it
+            item.ts = null;
+            item.requests.push(request);
 
-            item.listenerCount++;
+            if (item.payload) {
+              request.resolve(item.payload);
+            }
+          }
 
-            return item.unsubscribe;
-          },
+          // Return an unsubscribe function
+          // We should only be able to hit unsubscribe once for each time an action is dispatched to keep the requests array valid
+          let unsubscribed = false;
+          return () => {
+            if (!unsubscribed) {
+              unsubscribed = true;
+              const index = item.requests.indexOf(request);
+              if (index != -1) item.requests.splice(index, 1);
+              if (!item.requests.length) {
+                // If there are no requests left set a timestamp so item can time out of cache
+                item.ts = Date.now();
+              }
+            }
+          };
         };
+      } else {
+        if (!item) {
+          try {
+            set(id, props, handler(props, actionApi), lifespan);
+          } catch (error) {
+            // Remove from cache if error
+            return Promise.reject(error);
+          }
+        }
 
-        items[key] = item;
-        updateInterval();
+        return items[key].payload;
       }
-
-      return item.handler;
     };
+
+    cacheHandler.type = handler.type;
+
+    return cacheHandler;
   };
 
-  const set = (
-    id,
-    props,
-    payload,
-    options = { lifespan: defaults.lifespan }
-  ) => {
+  const set = (id, props, payload, lifespan = DEFAULTS.lifespan) => {
     const key = getKey(id, props);
 
-    // Force flush any existing cached action with matching key
-    flushItem(key, true);
-
-    // Create a new cached item
-    const item = (items[key] = {
-      ...options,
-      key,
-      ts: Date.now(),
-      payload,
-      unsubscribe: null,
-      active: true,
-      listenerCount: 0,
-      handler: (resolve) => resolve(item.payload),
-    });
-
-    // Set isCached value on handler so createAction can avoid dispatching unnessesary pending events
-    item.handler.isCached = true;
+    const item = flushItem(key) || { key, unsubscribe: null, requests: [] };
+    // Only set timestamp if item is not a callback type with an unsubscribe function
+    if (!item.unsubscribe || !item.requests.length) item.ts = Date.now();
+    item.lifespan = lifespan;
+    item.payload = payload;
+    // Call resolve on any existing requests
+    item.requests.forEach((req) => req.resolve(payload));
 
     items[key] = item;
     updateInterval();

@@ -5,6 +5,7 @@ import data from "../mock.json";
 const server = new MockServer({
   baseURL: "",
   db: data,
+  debug: true,
 });
 
 server.get("/login", (req, db) => ({ body: db.AuthStore }));

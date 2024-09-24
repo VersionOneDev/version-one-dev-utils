@@ -1,7 +1,9 @@
 import { createAction } from "@reduxjs/toolkit";
 
-import { statuses, getType, getKey } from "../utils/createAction";
 import { compareActionTargets } from "../utils/compareActionTargets";
+import { getKey } from "../utils/getKey";
+import { getType } from "../utils/getType";
+import { statuses } from "../utils/statuses";
 
 import { Store } from "../Store";
 

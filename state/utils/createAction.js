@@ -1,133 +1,15 @@
-import { createAction as createActionI } from "@reduxjs/toolkit";
-import PropTypes from "prop-types";
-import { waitForValue } from "../../utils/waitForValue";
-import { DisposablePromise } from "../../utils/DisposablePromise";
-
-export const statuses = { PENDING: "/pending", ERROR: "/error" };
-
-export const getType = (action) => {
-  let { type } = action;
-  Object.values(statuses).forEach(
-    (status) => (type = type.replace(status, ""))
-  );
-  return type;
+export const createAction = (fn) => {
+  fn.type = "default";
+  return fn;
 };
 
-export const getKey = (action) => {
-  return action.meta && action.meta.key ? "/" + action.meta.key : "";
+export const createCachedAction = (fn, lifespan) => {
+  fn.lifespan = lifespan;
+  fn.type = "cached";
+  return fn;
 };
 
-const prepareAction = (props, key, payload, error, cached = false) => {
-  return {
-    meta: { key, props, cached },
-    payload,
-    error,
-  };
-};
-
-/**
- * CREATING ACTIONS:
- *
- * Action methods should return a value, promise, or a callback function that should accept resolve and reject as arguments.
- * Promises and callbacks will trigger a PENDING state, values will not.
- * Callbacks will remain in pending state until resolve or reject is called for the FIRST time.
- *
- * Examples:
- *
- * const myAction = (props) => props;
- *
- * const myAction = (props) => Promise.resolve(props);
- *
- * const myAction = (props) => (resolve, reject) => setInterval(resolve, 2000, props);
- *
- */
-
-export const createAction = (store, type, handler) => {
-  const action = (props, key) => (dispatch, getState) => {
-    // Check props is an object
-    if (props) {
-      const propsType = typeof props;
-      if (propsType !== "object") {
-        throw new Error(
-          `Invalid type ${propsType} passed to ${store}.actions.${type}, props must be an object`
-        );
-      }
-    }
-
-    // Validate payload - will throw a warning in the console if invalid.
-    if (handler.propTypes) {
-      PropTypes.checkPropTypes(
-        handler.propTypes,
-        props,
-        "prop",
-        `${store}.actions.${type}`
-      );
-
-      PropTypes.resetWarningCache();
-    }
-
-    // ReduxThunk thunk will pass a dispatch function but Storybook won't
-    // Only do the work if using ReduxThunk
-    if (dispatch) {
-      return new DisposablePromise((resolve, reject) => {
-        const actionApi = {
-          dispatch,
-          getState,
-        };
-
-        const dispatchError = (error) =>
-          reject(dispatch(action.error(props, key, null, error)));
-
-        // Get the payload from the action handler
-        try {
-          const payload = handler(props, actionApi);
-
-          const dispatchSuccess = (value) =>
-            resolve(
-              dispatch(
-                action.success(props, key, value, undefined, payload?.isCached)
-              )
-            );
-
-          if (payload instanceof Function) {
-            // Dispatch pending action (ignoring cached values) and run the callback
-            if (!payload.isCached) {
-              dispatch(action.pending(props, key));
-            }
-            // Callbacks can be called multiple times e.g. when using a WebSocket
-            // Payload can return an optional 'unsubscribe' method to clean up
-            // anything that could cause memory leaks e.g. event listeners, intervals etc.
-            return payload(dispatchSuccess, dispatchError);
-          } else if (payload && payload.then && payload.catch) {
-            // Dispatch pending action if promise
-            dispatch(action.pending(props, key, undefined, undefined));
-            waitForValue(payload).then(dispatchSuccess).catch(dispatchError);
-          } else {
-            dispatchSuccess(payload);
-          }
-        } catch (error) {
-          dispatchError(error);
-        }
-      });
-    } else {
-      // Return the action for logging in Storybook
-      return Promise.resolve({ type: action.toString(), props, key });
-    }
-  };
-
-  action.toString = () => `${store}/${type}`;
-  action.byKey = (key) => `${action.toString()}/${key}`;
-  action.success = createActionI(action.toString(), prepareAction);
-  action.error = createActionI(
-    `${action.toString()}${statuses.ERROR}`,
-    prepareAction
-  );
-  action.pending = createActionI(
-    `${action.toString()}${statuses.PENDING}`,
-    prepareAction
-  );
-
-  action.propTypes = handler.propTypes;
-
-  return action;
+export const createCallbackAction = (fn) => {
+  fn.type = "callback";
+  return fn;
 };

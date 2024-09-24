@@ -22,6 +22,8 @@ function Input(props) {
 Input.propTypes = {
   "data-testid": PropTypes.string,
   className: PropTypes.string,
+  defaultValue: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 export { Input };

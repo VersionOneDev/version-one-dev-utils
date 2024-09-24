@@ -13,8 +13,8 @@ export function Notification() {
 
   React.useEffect(() => {
     if (error) {
-      if (message.value !== error.value) {
-        setMessage({ type: "Error", value: error.value });
+      if (message.value !== error.value.message) {
+        setMessage({ type: "Error", value: error.value.message });
       }
     } else if (pending) {
       if (pending.type !== message.value) {

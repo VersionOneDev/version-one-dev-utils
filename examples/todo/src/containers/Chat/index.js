@@ -4,15 +4,15 @@ import classnames from "classnames";
 import moment from "moment";
 
 import { useForm } from "version-one-dev-utils/forms";
-import { useSelector } from "version-one-dev-utils/state";
+import { useLegacySelector } from "version-one-dev-utils/state";
 
 import { ChatStore } from "../../stores/ChatStore";
 import { UserStore } from "../../stores/UserStore";
 
 export function Chat(props) {
-  const userId = useSelector((state) => state.AuthStore.id);
-  const items = useSelector((state) => state.ChatStore);
-  const users = useSelector((state) => state.UserStore);
+  const userId = useLegacySelector((state) => state.AuthStore.id);
+  const items = useLegacySelector((state) => state.ChatStore);
+  const users = useLegacySelector((state) => state.UserStore);
 
   useEffect(() => ChatStore.actions.watch(), []);
 
