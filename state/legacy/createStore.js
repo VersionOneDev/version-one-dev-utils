@@ -69,7 +69,12 @@ export const createStore = ({
     }
   });
 
-  const mergedReducerMethods = createReducer(initialState, reducerMethods);
+  const mergedReducerMethods = createReducer(initialState, (builder) => {
+    Object.keys(reducerMethods).forEach((key) =>
+      builder.addCase(key, reducerMethods[key])
+    );
+  });
+
   let reducer;
 
   // Apply propTypes check to state

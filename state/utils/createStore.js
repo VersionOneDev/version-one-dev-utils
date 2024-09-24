@@ -70,7 +70,11 @@ export const createStore = ({
     }
   });
 
-  const reducer = createReducer(initialState, reducerMethods);
+  const reducer = createReducer(initialState, (builder) => {
+    Object.keys(reducerMethods).forEach((key) =>
+      builder.addCase(key, reducerMethods[key])
+    );
+  });
 
   Store.add(name, reducer);
 
