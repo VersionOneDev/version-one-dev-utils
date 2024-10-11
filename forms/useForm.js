@@ -70,6 +70,7 @@ export const useForm = (config) => {
 
   const validate = useCallback(
     (names, type) => {
+      console.log("VALIDATE 1", names, type);
       const ts = (validateTimes.current.__any = Date.now());
 
       form.current.isValidating = true;
@@ -77,6 +78,8 @@ export const useForm = (config) => {
 
       return Promise.all(
         names.map((name) => {
+          console.log("VALIDATE 2", name, type);
+
           validateTimes.current[name] = ts;
 
           const isActive = () => ts === validateTimes.current[name];
@@ -91,11 +94,19 @@ export const useForm = (config) => {
               (err) => isActive() && (results.current[name] = err.errors[0])
             )
             .then(() => {
-              if (!isActive()) return;
+              if (!isActive()) {
+                console.log("VALIDATE 3", name, type);
+
+                return;
+              }
+
+              console.log("VALIDATE 4", name, type);
 
               // Update field and errors if we're not registering a new field
               if (type !== "register") {
                 const error = results.current[name];
+
+                console.log("VALIDATE 5", name, type, error);
 
                 // Update field
                 fields.current[name].isValidated = true;
@@ -113,6 +124,8 @@ export const useForm = (config) => {
               form.current.isValid = !Object.keys(results.current).length;
 
               forceRender();
+
+              console.log("VALIDATE 6", name, type);
             });
         })
       ).then(() => {
@@ -280,12 +293,9 @@ export const useForm = (config) => {
     [validate, registerIfFieldMissing]
   );
 
-  const validateAll = useCallback(
-    (v) => {
-      validate(Object.keys(values.current), "manual");
-    },
-    [validate]
-  );
+  const validateAll = useCallback(() => {
+    validate(Object.keys(values.current), "manual");
+  }, [validate]);
 
   return {
     props: {
