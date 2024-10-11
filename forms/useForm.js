@@ -294,7 +294,7 @@ export const useForm = (config) => {
   );
 
   const validateAll = useCallback(() => {
-    validate(Object.keys(values.current), "manual");
+    return validate(Object.keys(values.current), "manual");
   }, [validate]);
 
   return {
