@@ -280,11 +280,19 @@ export const useForm = (config) => {
     [validate, registerIfFieldMissing]
   );
 
+  const validateAll = useCallback(
+    (v) => {
+      validate(Object.keys(values.current), "manual");
+    },
+    [validate]
+  );
+
   return {
     props: {
       noValidate: true,
       onSubmit,
     },
+    validate: validateAll,
     register,
     submit: onSubmit,
     reset,
