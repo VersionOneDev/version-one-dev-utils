@@ -96,7 +96,7 @@ export const useForm = (config) => {
               }
 
               // Update field and errors if we're not registering a new field
-              if (type !== "xregister") {
+              if (type !== "register") {
                 const error = results.current[name];
 
                 // Update field
