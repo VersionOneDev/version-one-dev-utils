@@ -114,8 +114,6 @@ export const useForm = (config) => {
               // Update form
               form.current.isValid = !Object.keys(results.current).length;
 
-              console.error("invalid keys", Object.keys(results.current));
-
               forceRender();
             });
         })
