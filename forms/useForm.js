@@ -70,7 +70,6 @@ export const useForm = (config) => {
 
   const validate = useCallback(
     (names, type) => {
-      console.error("VALIDATE 1", names, type);
       const ts = (validateTimes.current.__any = Date.now());
 
       form.current.isValidating = true;
@@ -78,8 +77,6 @@ export const useForm = (config) => {
 
       return Promise.all(
         names.map((name) => {
-          console.error("VALIDATE 2", name, type);
-
           validateTimes.current[name] = ts;
 
           const isActive = () => ts === validateTimes.current[name];
@@ -95,18 +92,12 @@ export const useForm = (config) => {
             )
             .then(() => {
               if (!isActive()) {
-                console.error("VALIDATE 3", name, type);
-
                 return;
               }
-
-              console.error("VALIDATE 4", name, type);
 
               // Update field and errors if we're not registering a new field
               if (type !== "register") {
                 const error = results.current[name];
-
-                console.error("VALIDATE 5", name, type, error);
 
                 // Update field
                 fields.current[name].isValidated = true;
@@ -124,8 +115,6 @@ export const useForm = (config) => {
               form.current.isValid = !Object.keys(results.current).length;
 
               forceRender();
-
-              console.error("VALIDATE 6", name, type);
             });
         })
       ).then(() => {
