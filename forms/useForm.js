@@ -96,7 +96,7 @@ export const useForm = (config) => {
               }
 
               // Update field and errors if we're not registering a new field
-              if (type !== "register") {
+              if (type !== "xregister") {
                 const error = results.current[name];
 
                 // Update field
@@ -113,6 +113,8 @@ export const useForm = (config) => {
 
               // Update form
               form.current.isValid = !Object.keys(results.current).length;
+
+              console.error("invalid keys", Object.keys(results.current));
 
               forceRender();
             });
