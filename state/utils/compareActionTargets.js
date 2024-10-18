@@ -23,7 +23,7 @@ const delimiter = "/";
   return true;
 };*/
 
-export const compareActionTargets = (action, target) => {
+export const compareActionTargets = (action, target = "*") => {
   let splitTarget;
 
   if (target.includes(delimiter)) {
