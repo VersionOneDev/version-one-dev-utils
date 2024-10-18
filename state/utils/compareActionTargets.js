@@ -26,6 +26,7 @@ const delimiter = "/";
 export const compareActionTargets = (action, target = "*") => {
   let splitTarget;
 
+  console.error("target", target);
   if (target.includes(delimiter)) {
     // Split
     splitTarget = target.split(delimiter);
